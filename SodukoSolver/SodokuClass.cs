@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// import both classes whose functions will be used
+using static SodukoSolver.ValidatingFunctions;
+using static SodukoSolver.SolvingFunctions;
+
 namespace SodukoSolver
 {
     // this is a class for the soduko board
@@ -47,11 +51,15 @@ namespace SodukoSolver
             Console.WriteLine("Please enter the board string");
             boardString = Console.ReadLine();
 
+            
             // if the given board string passed the validation,
             // create the board
+            if (Validate(rows, cols, boardString) == true)
+            {
+                // create the board
+                //CreateBoard();
+            }
 
-            // create the board
-            CreateBoard();
         }
 
 
@@ -77,109 +85,5 @@ namespace SodukoSolver
                 }
             }
         }
-
-
-        // PrintBoard method that prints the board to the console
-        public void PrintBoard()
-        {
-            // Find the maximum length of the string representation of any element in the board
-            int maxLength = 0;
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < cols; j++)
-                {
-                    int length = board[i, j].ToString().Length;
-                    if (length > maxLength)
-                    {
-                        maxLength = length;
-                    }
-                }
-            }
-
-            // Calculate the width of each square
-            int squareWidth = maxLength + 2;
-
-            // Calculate the size of the sub-squares (if any)
-            int subSquareSize = (int)Math.Sqrt(rows);
-
-            // Print the top border
-            Console.Write(" ");
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < squareWidth; j++)
-                {
-                    Console.Write("-");
-                }
-                if ((i + 1) % subSquareSize == 0 && i != rows - 1)
-                {
-                    Console.Write("+");
-                }
-            }
-            Console.WriteLine();
-
-            // Print the rows
-            for (int i = 0; i < rows; i++)
-            {
-                // Print the left border
-                Console.Write("|");
-
-                // Print the elements in the row
-                for (int j = 0; j < cols; j++)
-                {
-                    string element = board[i, j].ToString();
-                    int padding = (squareWidth - element.Length) / 2;
-                    for (int k = 0; k < padding; k++)
-                    {
-                        Console.Write(" ");
-                    }
-                    Console.Write(element);
-                    for (int k = 0; k < padding; k++)
-                    {
-                        Console.Write(" ");
-                    }
-                    if ((j + 1) % subSquareSize == 0 && j != cols - 1)
-                    {
-                        Console.Write("|");
-                    }
-                }
-
-                // Print the right border
-                Console.WriteLine();
-
-                // Print the bottom border for the row
-                if ((i + 1) % subSquareSize == 0 && i != rows - 1)
-                {
-                    Console.Write(" ");
-                    for (int j = 0; j < cols; j++)
-                    {
-                        for (int k = 0; k < squareWidth; k++)
-                        {
-                            Console.Write("-");
-                        }
-                        if ((j + 1) % subSquareSize == 0 && j != cols - 1)
-                        {
-                            Console.Write("+");
-                        }
-                    }
-                    Console.WriteLine();
-                }
-            }
-
-            // Print the bottom border
-            Console.Write(" ");
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < squareWidth; j++)
-                {
-                    Console.Write("-");
-                }
-                if ((i + 1) % subSquareSize == 0 && i != rows - 1)
-                {
-                    Console.Write("+");
-                }
-            }
-            Console.WriteLine();
-        }
-
     }
 }

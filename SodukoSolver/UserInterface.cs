@@ -28,7 +28,7 @@ namespace SodukoSolver
                 board = new SodokuBoard();
 
                 // print the board
-                board.PrintBoard();
+                //board.PrintBoard();
                 
                 // solve the board
                 //board.Solve();
