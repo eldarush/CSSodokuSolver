@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 // import both classes whose functions will be used
 using static SodukoSolver.ValidatingFunctions;
 using static SodukoSolver.SolvingFunctions;
+using static SodukoSolver.HelperFunctions;
 
 namespace SodukoSolver
 {
@@ -30,6 +31,19 @@ namespace SodukoSolver
             return size;
         }
 
+        // getter for the board
+        public int[,] getBoard()
+        {
+            return board;
+        }
+
+        // setter for the board
+        public void setBoard(int[,] board)
+        {
+            this.board = board;
+        }
+
+
         // Constructor that asks the user for board dimensions and board string
         // and then creates the board
         public SodokuBoard()
@@ -37,45 +51,37 @@ namespace SodukoSolver
             // ask the user for the board dimensions
             Console.WriteLine("Please enter the number of rows and columns for the board");
             Console.Write("Size: ");
-            size = Convert.ToInt32(Console.ReadLine());
-
-            // ask the user for the board string
-            Console.WriteLine("Please enter the board string");
-            boardString = Console.ReadLine();
-
-            
-            // if the given board string passed the validation,
-            // create the board
-            if (Validate(size, boardString) == true)
+            String tempSize = Console.ReadLine();
+            bool isNumber = false;
+            // check if the input is a number
+            while (!isNumber)
             {
-                // create the board
-                //CreateBoard();
-            }
-
-        }
-
-
-        // CreateBoard method that creates the board from the board string
-        private void CreateBoard()
-        {
-            // create the board
-            board = new int[size, size];
-
-            // create a counter to keep track of the index of the board string
-            int counter = 0;
-
-            // loop through the board and add the values from the board string
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
+                isNumber = int.TryParse(tempSize, out size);
+                if (!isNumber)
                 {
-                    // add the value from the board string to the board
-                    board[i, j] = Convert.ToInt32(boardString[counter].ToString());
-
-                    // increment the counter
-                    counter++;
+                    Console.WriteLine("Please enter a valid number");
+                    Console.Write("Size: ");
+                    tempSize = Console.ReadLine();
                 }
             }
+            // when a number was entered, convert it to an int
+            size = int.Parse(tempSize);
+
+            // ask the user for the board string
+            Console.WriteLine("Please enter the board string:");
+            boardString = Console.ReadLine();
+
+
+            // if the given board string passed the validation,
+            // create the board
+            if (Validate(size, boardString))
+            {
+                // copy the board that the testing was done on
+                // because it is valid
+                board = ValidatingFunctions.Vboard;
+            }
+
         }
+
     }
 }

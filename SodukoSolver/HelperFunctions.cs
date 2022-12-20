@@ -108,7 +108,7 @@ namespace SodukoSolver
                 }
 
                 // Print the right border
-                Console.WriteLine();
+                Console.WriteLine("|");
 
                 // Print the bottom border for the row
                 if ((i + 1) % subSquareSize == 0 && i != size - 1)
