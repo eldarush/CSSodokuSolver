@@ -15,10 +15,10 @@ namespace SodukoSolver
         // TODO add the validation functions here
 
         // main validation function that will call all the other validation functions
-        public static bool Validate(int rows, int cols, string boardString)
+        public static bool Validate(int size, string boardString)
         {
             // check if the board string is the correct length
-            if (boardString.Length != rows * cols)
+            if (boardString.Length != size * size)
             {
                 Console.WriteLine("The board string is not the correct length");
                 return false;
@@ -32,16 +32,16 @@ namespace SodukoSolver
             }
 
             // check if the board dimensions are valid
-            if (!ValidateBoardDimensions(rows, cols))
+            if (!ValidateBoardDimensions(size))
             {
                 return false;
             }
-
+            
             // copy the board string to the board
-            Vboard = CreateBoard(rows, cols, boardString);
+            Vboard = CreateBoard(size, boardString);
 
             // check if the board is valid
-            if (!ValidateBoard(Vboard, rows, cols))
+            if (!ValidateBoard(Vboard, size))
             {
                 return false;
             }
@@ -84,10 +84,10 @@ namespace SodukoSolver
         // this function will validate the board dimensions
         // it will return true if the board dimensions are valid
         // and false if the board dimensions are invalid
-        private static bool ValidateBoardDimensions(int rows, int cols)
+        private static bool ValidateBoardDimensions(int size)
         {
-            // if the board dimensions are less than 1
-            if (rows < 1 || cols < 1)
+            // if the board size is less than 1
+            if (size < 1 )
             {
                 // return false
                 return false;
@@ -104,7 +104,7 @@ namespace SodukoSolver
         // this function will validate the board
         // it will return true if the board is valid
         // and false if the board is invalid
-        private static bool ValidateBoard(int[,] board, int rows, int cols)
+        private static bool ValidateBoard(int[,] board, int size)
         {
             // if the board is null
             if (board == null)
@@ -114,12 +114,12 @@ namespace SodukoSolver
             }
 
             // go over the valid board and check if it is valid
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < size; i++)
             {
-                for (int j = 0; j < cols; j++)
+                for (int j = 0; j < size; j++)
                 {
                     // if the current cell is not valid
-                    if (!ValidateCell(board, i, j, rows, cols))
+                    if (!ValidateCell(board, i, j, size))
                     {
                         // return false
                         return false;
@@ -134,7 +134,7 @@ namespace SodukoSolver
         // this function will validate a cell
         // it will return true if the cell is valid
         // and false if the cell is invalid
-        private static bool ValidateCell(int[,] board, int Crow, int Ccol, int rows, int cols)
+        private static bool ValidateCell(int[,] board, int Crow, int Ccol, int size)
         {
             // if the cell is not valid
             // TODO: change 0 and 9 to min and max possible given value
@@ -148,7 +148,7 @@ namespace SodukoSolver
             int cellValue = board[Crow, Ccol];
 
             // go over the row and check if the cell value is not repeated
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < size; i++)
             {
                 // if the current cell is not the current cell
                 if (i != Crow)
@@ -161,9 +161,9 @@ namespace SodukoSolver
                     }
                 }
             }
-
+            
             // go over the column and check if the cell value is not repeated
-            for (int i = 0; i < cols; i++)
+            for (int i = 0; i < size; i++)
             {
                 // if the current cell is not the current cell
                 if (i != Ccol)
@@ -179,8 +179,8 @@ namespace SodukoSolver
 
             // go over the sub square and check if the cell value is not repeated
 
-            // check if rows and cols are square numbers
-            if (!(Math.Sqrt(rows) % 1 != 0 || Math.Sqrt(cols) % 1 != 0))
+            // check if size is a sqaure number
+            if (!(Math.Sqrt(size) % 1 != 0 ))
             {
                 // if one of the rows or cols are not square numbers,
                 // that means that the board is not a square board
@@ -192,8 +192,8 @@ namespace SodukoSolver
             else
             {
                 // save the values of the rows and cols of the sub squares
-                int srow = (int)Math.Sqrt(rows);
-                int scol = (int)Math.Sqrt(cols);
+                int srow = (int)Math.Sqrt(size);
+                int scol = (int)Math.Sqrt(size);
 
                 // go over the sub squares and check if the cell value appears in the sub square
 

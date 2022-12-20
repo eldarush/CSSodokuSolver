@@ -7,34 +7,43 @@ using System.Threading.Tasks;
 namespace SodukoSolver
 {
     // main class that will run the program
-    class Program
+    class UserInterface
     {
-        // main method that will run the program
-        static void Main(string[] args)
+        // create a soduko board object
+        static SodokuBoard board;
+        
+        // function that will run the program
+        public static void Run()
         {
-            // create a new soduko board object
-            // inside this object the board will be created from the user input
-            SodokuBoard board;
+            // print welcome message
+            PrintWelcomeMessage();
+        }
 
-            // TODO: add welcome message and instructions on the first run
-            // TODO: add a menu to the program
-            // TODO: add a solving and validating method to the program
-            // TODO: add exception handling to the program
-            
-            while (Console.ReadLine() != "q")
+        // function that will print the welcome message
+        private static void PrintWelcomeMessage()
+        {
+            Console.WriteLine("Welcome to the Soduko Solver! \n" +
+                "This is a program that will solve any soduko board \n" +
+                "Please choose the form of input for the soduko: \n" +
+                "\t s: input a board string that will represent a board \n" +
+                "\t f: input a file that will conntain the board \n" +
+                "\t press any other key to exit the program");
+
+            // get the char from the input
+            char input = Console.ReadLine()[0];
+            switch (input)
             {
-                // create a new soduko board object
-                // inside this object the board will be created from the user input
-                board = new SodokuBoard();
-
-                // print the board
-                //board.PrintBoard();
-                
-                // solve the board
-                //board.Solve();
-
-                // print the board
-                //board.PrintBoard();
+                case 's':
+                    // create a soduko board from the string
+                    board = new SodokuBoard();
+                    break;
+                case 'f':
+                    // implement getting the board from a file
+                    //board = new SodokuBoardF();
+                    break;
+                default:
+                    Console.WriteLine("Exiting the program");
+                    break;
             }
         }
     }

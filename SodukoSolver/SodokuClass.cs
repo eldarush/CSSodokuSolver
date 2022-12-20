@@ -16,8 +16,7 @@ namespace SodukoSolver
     class SodokuBoard
     {
         // board dimentions
-        private int rows;
-        private int cols;
+        private int size;
 
         // the string that will be used to create the board
         private string boardString;
@@ -26,14 +25,9 @@ namespace SodukoSolver
         private int[,] board;
 
         // getters for the dimensions
-        public int getRows()
+        public int getSize()
         {
-            return rows;
-        }
-
-        public int getCols()
-        {
-            return cols;
+            return size;
         }
 
         // Constructor that asks the user for board dimensions and board string
@@ -42,10 +36,8 @@ namespace SodukoSolver
         {
             // ask the user for the board dimensions
             Console.WriteLine("Please enter the number of rows and columns for the board");
-            Console.Write("Rows: ");
-            rows = Convert.ToInt32(Console.ReadLine());
-            Console.Write("Columns: ");
-            cols = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Size: ");
+            size = Convert.ToInt32(Console.ReadLine());
 
             // ask the user for the board string
             Console.WriteLine("Please enter the board string");
@@ -54,7 +46,7 @@ namespace SodukoSolver
             
             // if the given board string passed the validation,
             // create the board
-            if (Validate(rows, cols, boardString) == true)
+            if (Validate(size, boardString) == true)
             {
                 // create the board
                 //CreateBoard();
@@ -67,15 +59,15 @@ namespace SodukoSolver
         private void CreateBoard()
         {
             // create the board
-            board = new int[rows, cols];
+            board = new int[size, size];
 
             // create a counter to keep track of the index of the board string
             int counter = 0;
 
             // loop through the board and add the values from the board string
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < size; i++)
             {
-                for (int j = 0; j < cols; j++)
+                for (int j = 0; j < size; j++)
                 {
                     // add the value from the board string to the board
                     board[i, j] = Convert.ToInt32(boardString[counter].ToString());
