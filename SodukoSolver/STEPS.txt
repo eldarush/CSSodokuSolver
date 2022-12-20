@@ -1,0 +1,60 @@
+﻿This is a text file that will contain my notes to myself during the process of creating the game.
+I will be using this to keep track of what I have done and what I need to do.
+I will also be using this to keep track of any bugs that I find and how to fix them.
+
+This file is temporary and will be deleted once the project is complete.
+
+
+
+ STEPS TO SOLVE SUDOKU:
+ 1. change the 2d array of ints to a 2d array of cells, each cell has a list of candidates
+ 2. make the current bruteforce algorithm work with the new data structure
+ 3. implement 'simple elimination' algorithm before all previous algoritms are run
+ 4. implement 'hidden single' algorithm before all previous algoritms are run
+ 5. implement 'naked pair/triples/quads' algorithm before all previous algoritms are run
+ 6. implement 'pointing pairs/triples' algorithm before all previous algoritms are run  -------------> optional but optimal
+ 7, implement 'intersection' algorithm before all previous algoritms are run
+ 8. implement 'X-wing' algorithm before all previous algoritms are run
+ 9. implement 'X-cycles' algorithm before all previous algoritms are run -----------------> optional if i have time to do it
+
+
+ 
+
+ NOTES:
+ 1. keep the algoitm generic as possible, so that it can be used for any size of sudoku board, they will ask to make
+ it work with 16 by 16 so no hardcoding, just variables that work for any size of board
+ 
+ 2. make the algoritm as efficiant as possible, the time complexity of a 9 by 9 sudoku is 9^81, so it needs to be as fast as possible
+ the time complexity of a 16 by 16 sudoku is 16^256, so it needs to be as fast as possible, and the goal is to solve any size of sudoku in under 1 second
+
+ 3. make the algorithm as simple as possible, so that it can be easily understood and modified by others
+
+ 4. add comments to every step of the way so that it is easy to understand what is going on
+
+ 5. add file handling to the program so that it can read and write to files and can recieve input from the user and output the solution to the user all using files
+ this can also be done by writing some kind of interface 'IReadable' and 'IWriteable' and then have the program read and write to those interfaces,
+ so that the program can be easily modified to read and write to different types of files
+
+ 6. divide the profram into different classes, so that it is easy to understand and modify
+ 
+ 7. make the functions as small as possible, so that it is easy to understand and modify
+
+ 8. add time complexity analysis to the program, so that it is easy to understand how fast the program is and how to make it faster
+ when we see that the time complexity is too high
+ 
+ 9. make sure all code is up to the standard of c#, read the c# coding standards and make sure the code follows them
+ also try to make the code cleaner following the principile of 'never nesting' that states that you should never have more then 3 levels of nesting in your code
+ 
+ 10. add tests at the end to the program
+ 
+
+
+
+ 
+ BUGS:
+ 1. not enought checks for the input file, if the input file is not a valid sudoku board, the program will crash
+ 2. no file handling, the program can only read from the console and write to the console
+ 3. no time complexity analysis, so it is hard to know how fast the program is and how to make it faster
+ 4. no tests, so it is hard to know if the program is working correctly
+ 5. algoritm is very straightforward and not very efficiant, so it may take time to solve a difficult sudoku board
+ 6. cells not implemented, so the program is not using the new data structure
