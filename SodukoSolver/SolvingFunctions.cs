@@ -14,7 +14,7 @@ namespace SodukoSolver
         private static int size;
 
         // the board
-        private static int[,] board;
+        private static Cell[,] board;
 
         // setter for the size
         public static void setSize(int size)
@@ -23,13 +23,13 @@ namespace SodukoSolver
         }
 
         // setter for the board
-        public static void setBoard(int[,] board)
+        public static void setBoard(Cell[,] board)
         {
             SolvingFunctions.board = board;
         }
 
         // getter for the board
-        public static int[,] getBoard()
+        public static Cell[,] getBoard()
         {
             return board;
         }
@@ -52,14 +52,14 @@ namespace SodukoSolver
             {
                 if (ValidateCell(board,row,col,size,i))
                 {
-                    board[row,col] = i;
+                    board[row,col].Value = i;
 
                     if (Solve())
                     {
                         return true;
                     }
 
-                    board[row,col] = 0;
+                    board[row,col].Value = 0;
                 }
             }
 
@@ -75,7 +75,7 @@ namespace SodukoSolver
             {
                 for (int j = 0; j < size; j++)
                 {
-                    if (board[i,j] == 0)
+                    if (board[i,j].Value == 0)
                     {
                         return new int[] { i, j };
                     }

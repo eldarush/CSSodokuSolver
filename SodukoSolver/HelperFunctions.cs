@@ -9,11 +9,11 @@ namespace SodukoSolver
     public static class HelperFunctions
     {
         // function that gets rows, columns, and board string and creates the board
-        public static int[,] CreateBoard(int size, string boardString)
+        public static Cell[,] CreateBoard(int size, string boardString)
         {
             // create a new board
-            int[,] board = new int[size, size];
-            
+            Cell[,] board = new Cell[size, size];
+
             // copy the board string to the board
             CopyBoardStringToBoard(size, boardString, board);
 
@@ -22,7 +22,7 @@ namespace SodukoSolver
         }
 
         // CopyBoardStringToBoard function that copies the board string to the board
-        private static void CopyBoardStringToBoard(int size, string boardString, int[,] board)
+        private static void CopyBoardStringToBoard(int size, string boardString, Cell[,] board)
         {
             // create a counter for the board string
             int counter = 0;
@@ -34,7 +34,9 @@ namespace SodukoSolver
                 for (int j = 0; j < size; j++)
                 {
                     // copy the board string to the board
-                    board[i, j] = Convert.ToInt32(boardString[counter].ToString());
+                    board[i, j] = new Cell(size,Convert.ToInt32(boardString[counter].ToString()));
+                    // print out the value in the cell
+                    Console.WriteLine(board[i, j].Value);
 
                     // increment the counter
                     counter++;
@@ -44,7 +46,7 @@ namespace SodukoSolver
 
         //TODO: fix this function so that it prints the board correctly (currently missing the right border)
         // PrintBoard method that prints the board to the console
-        public static void PrintBoard(int [,] board, int size)
+        public static void PrintBoard(Cell[,] board, int size)
         {
             // Find the maximum length of the string representation of any element in the board
             int maxLength = 0;
@@ -52,7 +54,7 @@ namespace SodukoSolver
             {
                 for (int j = 0; j < size; j++)
                 {
-                    int length = board[i, j].ToString().Length;
+                    int length = board[i, j].Value.ToString().Length;
                     if (length > maxLength)
                     {
                         maxLength = length;
@@ -90,7 +92,7 @@ namespace SodukoSolver
                 // Print the elements in the row
                 for (int j = 0; j < size; j++)
                 {
-                    string element = board[i, j].ToString();
+                    string element = board[i, j].Value.ToString();
                     int padding = (squareWidth - element.Length) / 2;
                     for (int k = 0; k < padding; k++)
                     {

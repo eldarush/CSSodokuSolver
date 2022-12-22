@@ -23,7 +23,7 @@ namespace SodukoSolver
         private string boardString;
 
         // the board itself
-        private int[,] board;
+        private Cell[,] board;
 
         // getters for the dimensions
         public int getSize()
@@ -32,13 +32,13 @@ namespace SodukoSolver
         }
 
         // getter for the board
-        public int[,] getBoard()
+        public Cell[,] getBoard()
         {
             return board;
         }
 
         // setter for the board
-        public void setBoard(int[,] board)
+        public void setBoard(Cell[,] board)
         {
             this.board = board;
         }

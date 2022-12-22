@@ -10,7 +10,7 @@ namespace SodukoSolver
     public static class ValidatingFunctions
     {
         // the current board that is being validated
-        public static int[,] Vboard;
+        public static Cell[,] Vboard;
 
         // the allowed values for the board
         private static int[] allowedValues;
@@ -124,7 +124,7 @@ namespace SodukoSolver
         // this function will validate the board
         // it will return true if the board is valid
         // and false if the board is invalid
-        private static bool ValidateBoard(int[,] board, int size)
+        private static bool ValidateBoard(Cell[,] board, int size)
         {
             // if the board is null
             if (board == null)
@@ -140,7 +140,7 @@ namespace SodukoSolver
                 for (int j = 0; j < size; j++)
                 {
                     // if the current cell is not valid
-                    if (!ValidateCell(board, i, j, size, board[i,j]))
+                    if (!ValidateCell(board, i, j, size, board[i,j].Value))
                     {
                         Console.WriteLine($"Cell {i}.{j} is invalid");
                         // return false
@@ -156,7 +156,7 @@ namespace SodukoSolver
         // this function will validate a cell
         // it will return true if the cell is valid
         // and false if the cell is invalid
-        public static bool ValidateCell(int[,] board, int Crow,
+        public static bool ValidateCell(Cell[,] board, int Crow,
             int Ccol, int size, int value)
         {
             // if the value is 0 then don't check
@@ -166,8 +166,8 @@ namespace SodukoSolver
             // value appears in the current row or col
             for (int i = 0; i < size; i++)
             {
-                if ((i != Ccol && board[Crow, i] == value)
-                    || (i!= Crow && board[i,Ccol] == value))
+                if ((i != Ccol && board[Crow, i].Value == value)
+                    || (i!= Crow && board[i,Ccol].Value == value))
                     return false;
             }
 
@@ -189,7 +189,7 @@ namespace SodukoSolver
                 {
                     // if the current cell is not the current cell
                     // and the value is the same as the value of the cell
-                    if (i != Crow && j != Ccol && board[i,j] ==  value)
+                    if (i != Crow && j != Ccol && board[i,j].Value ==  value)
                     {
                         // return false because the cell cant be in the same cube
                         return false;

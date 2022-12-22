@@ -12,7 +12,7 @@ namespace SodukoSolver
         {
             // start the program that gets soduko board from the user 
             // and runs the algorithm
-            //UserInterface.Run();
+            UserInterface.Run();
 
 
 
