@@ -80,6 +80,14 @@ namespace SodukoSolver
                 // because it is valid
                 board = ValidatingFunctions.Vboard;
             }
+            
+            // else exit the program
+            // TODO: add exceptions
+            else
+            {
+                Console.WriteLine("The board string is not valid");
+                Environment.Exit(0);
+            }
 
         }
 

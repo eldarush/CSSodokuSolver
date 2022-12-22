@@ -35,9 +35,6 @@ namespace SodukoSolver
                 {
                     // copy the board string to the board
                     board[i, j] = new Cell(size,Convert.ToInt32(boardString[counter].ToString()));
-                    // print out the value in the cell
-                    Console.WriteLine(board[i, j].Value);
-
                     // increment the counter
                     counter++;
                 }

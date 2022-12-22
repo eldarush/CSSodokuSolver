@@ -159,13 +159,18 @@ namespace SodukoSolver
         public static bool ValidateCell(Cell[,] board, int Crow,
             int Ccol, int size, int value)
         {
-            // if the value is 0 then don't check
-            if (value == 0) return true;
+            // if the value is 0 update the possible candidates in the cell and then return true
+            if (value == 0)
+            {
+                board[Crow, Ccol].UpdatePossibleCandidates(board, size, Ccol, Crow);
+                return true;
+            }
 
             // go over the current row an col and check and check if the
             // value appears in the current row or col
             for (int i = 0; i < size; i++)
             {
+                // if the value appears in the current row or col return false
                 if ((i != Ccol && board[Crow, i].Value == value)
                     || (i!= Crow && board[i,Ccol].Value == value))
                     return false;
@@ -196,7 +201,6 @@ namespace SodukoSolver
                     }
                 }
             }
-
 
             // if the cell passed all its validations then return true
             return true;

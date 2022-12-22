@@ -7,9 +7,9 @@ This file is temporary and will be deleted once the project is complete.
 
 
  STEPS TO SOLVE SUDOKU:
- 1. change the 2d array of ints to a 2d array of cells, each cell has a list of candidates
- 2. make the current bruteforce algorithm work with the new data structure
- 3. implement 'simple elimination' algorithm before all previous algoritms are run
+ 1. change the 2d array of ints to a 2d array of cells, each cell has a list of candidates -- DONE
+ 2. make the current bruteforce algorithm work with the new data structure -- DONE
+ 3. implement 'simple elimination' algorithm before all previous algoritms are run -- DONE
  4. implement 'hidden single' algorithm before all previous algoritms are run
  5. implement 'naked pair/triples/quads' algorithm before all previous algoritms are run
  6. implement 'pointing pairs/triples' algorithm before all previous algoritms are run  -------------> optional but optimal

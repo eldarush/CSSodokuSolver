@@ -72,6 +72,7 @@ namespace SodukoSolver
                     // pass the size of the board and the board to the solver 
                     // class
                     SolvingFunctions.setSize(board.getSize());
+                    SolvingFunctions.setBlockSize((int)Math.Sqrt(board.getSize()));
                     SolvingFunctions.setBoard(board.getBoard());
 
 
@@ -79,7 +80,12 @@ namespace SodukoSolver
 
                     // Solve the board
                     start_time = DateTime.Now.Millisecond;
+                    
+                    // simple elimination tqechnique
+                    Eliminate();
+                    // backtracking
                     CanBeSolved =  Solve();
+                    
                     elapsed_time = DateTime.Now.Millisecond - start_time;
 
                     // if the board can be solved then print the solved board
