@@ -112,5 +112,7 @@ namespace SodukoSolver
                 }
             }
         }
+
+        // rewrite Equals
     }
 }

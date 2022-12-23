@@ -80,10 +80,30 @@ namespace SodukoSolver
 
                     // Solve the board
                     start_time = DateTime.Now.Millisecond;
-                    
-                    // simple elimination tqechnique
-                    Eliminate();
-                    // backtracking
+
+                    // fill in cells using the simple elimination technique
+                    while (Eliminate())
+                    {
+                        // do nothing, just keep calling Eliminate until it returns false
+                    }
+
+                    // fill in more cells using the hidden singles method
+                    while (hiddenSingles())
+                    {
+                        // do nothing, just keep calling hiddenSingles until it returns false
+                    }
+
+                    // fill in more cells using the naked pairs method
+                    while (nakedPairs())
+                    {
+                        // do nothing, just keep calling nakedpairs untill it returns false
+                    }
+
+                    // fill in more cells using the naked triples method
+                    while (nakedTriples())
+                    {
+                        // do nothing, just keep calling nakedtriples untill it returns false
+                    }
                     CanBeSolved =  Solve();
                     
                     elapsed_time = DateTime.Now.Millisecond - start_time;
