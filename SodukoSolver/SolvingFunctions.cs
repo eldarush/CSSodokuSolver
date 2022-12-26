@@ -60,8 +60,15 @@ namespace SodukoSolver
             int col = nextEmptyCell[1];
 
 
+            // TODO: work out why cells arent working properly - possible problem in board creation
+            // get the current cell 
+            Cell currentCell = board[row, col];
+            currentCell.printCandidates();
+            Console.WriteLine("row: " + row + " col: " + col);
+            Console.WriteLine("current cell value: " + currentCell.Value + "is Solved: \n" + currentCell.Solved);
+
             // for each possible candidate in the cell
-            for (int i = 1; i <= size; i++)
+            foreach (int i in currentCell.Candidates)
             {
                 // if the candidate is valid
                 if (isValidCandidate(row, col, i))

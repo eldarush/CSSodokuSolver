@@ -52,12 +52,13 @@ namespace SodukoSolver
                 return Solved;
             }
             else return false;
-        }    
+        }
 
-       // function to print all candidates
-       public void printCandidates()
-       {
-            Console.WriteLine(string.Join(", ", Candidates));
+        // function to print all candidates
+        public void printCandidates()
+        {
+            if (Candidates.Count == 0 || Candidates == null) Console.WriteLine("no candidates");
+            else Console.WriteLine(string.Join(", ", Candidates));
        }
 
 

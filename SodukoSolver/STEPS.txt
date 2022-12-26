@@ -12,8 +12,8 @@ This file is temporary and will be deleted once the project is complete.
  3. implement 'simple elimination' algorithm before all previous algoritms are run -- DONE
  4. implement 'hidden single' algorithm before all previous algoritms are run -- DONE
  5. implement 'naked pair/triples/quads' algorithm before all previous algoritms are run -- DONE
- 6. implement 'pointing pairs/triples' algorithm before all previous algoritms are run  -------------> optional but optimal
- 7, implement 'intersection' algorithm before all previous algoritms are run
+ 6. implement 'pointing pairs/triples' algorithm before all previous algoritms are run  -------------> optional but optimal -- DONE
+ 7, implement 'intersection' algorithm before all previous algoritms are run -- DONE
  8. implement 'X-wing' algorithm before all previous algoritms are run
  9. implement 'X-cycles' algorithm before all previous algoritms are run -----------------> optional if i have time to do it
 
@@ -56,8 +56,7 @@ This file is temporary and will be deleted once the project is complete.
  2. no file handling, the program can only read from the console and write to the console
  3. no time complexity analysis, so it is hard to know how fast the program is and how to make it faster
  4. no tests, so it is hard to know if the program is working correctly
- 5. algoritm is very straightforward and not very efficiant, so it may take time to solve a difficult sudoku board
- 6. cells not implemented, so the program is not using the new data structure
+
 
  DIFFICULT PUZZLES:
  
@@ -71,4 +70,4 @@ This file is temporary and will be deleted once the project is complete.
 
  900800000000000500000000000020010003010000060000400070708600000000030100400000200 (currently 144 seconds) -- wtf
  
- 000005080000601043000000000010500000000106000300000005530000061000000004000000000 (currently 240+ seconds) -- this has no solution but i stopped after 4 minutes
+ 000005080000601043000000000010500000000106000300000005530000061000000004000000000 (currently 240+ seconds) -- this has no solution but i stopped after 20 minutes

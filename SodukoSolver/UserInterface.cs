@@ -150,9 +150,9 @@ namespace SodukoSolver
                 // do nothing, just keep calling Eliminate until it returns false
             }
 
-            //Console.WriteLine("\nSimple elimination board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
-            //Console.WriteLine("");
+            Console.WriteLine("\nSimple elimination board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
 
             emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
             // if the number of empty cells is less than 66 percent of the board then run the algorithms
@@ -172,9 +172,9 @@ namespace SodukoSolver
                 // do nothing, just keep calling hiddenSingles until it returns false
             }
 
-            //Console.WriteLine("\nHidden singles board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
-            //Console.WriteLine("");
+            Console.WriteLine("\nHidden singles board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
 
             emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
             // if the number of empty cells is less than 66 percent of the board then run the algorithms
@@ -194,9 +194,9 @@ namespace SodukoSolver
                 // do nothing, just keep calling nakedpairs untill it returns false
             }
 
-            //Console.WriteLine("\nHidden pairs board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
-            //Console.WriteLine("");
+            Console.WriteLine("\nHidden pairs board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
 
             emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
             // if the number of empty cells is less than 66 percent of the board then run the algorithms
@@ -216,9 +216,9 @@ namespace SodukoSolver
                 // do nothing, just keep calling nakedtriples untill it returns false
             }
 
-            //Console.WriteLine("\nHidden triples board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
-            //Console.WriteLine("");
+            Console.WriteLine("\nHidden triples board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
 
             emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
             // if the number of empty cells is less than 66 percent of the board then run the algorithms
@@ -238,9 +238,9 @@ namespace SodukoSolver
                 // do nothing, just keep calling nakedquads untill it returns false
             }
 
-            //Console.WriteLine("\nHidden quads board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
-            //Console.WriteLine("");
+            Console.WriteLine("\nHidden quads board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
 
             emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
             // if the number of empty cells is less than 66 percent of the board then run the algorithms
@@ -260,9 +260,9 @@ namespace SodukoSolver
                 // do nothing, just keep calling pointingdoubles untill it returns false
             }
 
-            //Console.WriteLine("\nPointing doubles board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
-            //Console.WriteLine("");
+            Console.WriteLine("\nPointing doubles board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
 
             emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
             // if the number of empty cells is less than 66 percent of the board then run the algorithms
@@ -282,9 +282,9 @@ namespace SodukoSolver
                 // do nothing, just keep calling pointingtriples untill it returns false
             }
 
-            //Console.WriteLine("\nPointing triples board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
-            //Console.WriteLine("");
+            Console.WriteLine("\nPointing triples board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
 
             emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
             // if the number of empty cells is less than 66 percent of the board then run the algorithms
@@ -304,10 +304,10 @@ namespace SodukoSolver
                 // do nothing, just keep calling boxlinereduction untill it returns false
             }
 
-            //Console.WriteLine("\nBox line reduction board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
-            //Console.WriteLine("");
-            
+            Console.WriteLine("\nBox line reduction board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
+
 
             // run the backtracking algorithm
             solvable = Backtracking();
