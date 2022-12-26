@@ -956,6 +956,411 @@ namespace SodukoSolver
         }
 
 
+        // implementing intersection - pointining doubles, triples and box line reduction
+
+        // this is the implementation of the poiniting doubles algortim
+        public static bool PointingDoubles()
+        {
+            bool changed = false;
+
+            for (int i = 0; i < size; i++)
+            {
+                // check rows for pointing doubles
+                changed |= checkRowForPointingDoubles(i);
+
+                // check columns for pointing doubles
+                changed |= checkColumnForPointingDoubles(i);
+
+                // check blocks for pointing doubles
+                int rowStart = (i / blockSize) * blockSize;
+                int colStart = (i % blockSize) * blockSize;
+                changed |= checkBlockForPointingDoubles(rowStart, colStart);
+            }
+
+            return changed;
+        }
+
+        // this is a helper function that will go over the given row and check for pointing doubles
+        private static bool checkRowForPointingDoubles(int row)
+        {
+            bool changed = false;
+
+            List<int[]> doubles = new List<int[]>();
+
+            // find all doubles in the row
+            for (int i = 0; i < size; i++)
+            {
+                if (board[row, i].Candidates.Count == 2)
+                {
+                    doubles.Add(new int[] { row, i });
+                }
+            }
+
+            // check if any of the doubles belong to the same column as another double
+            for (int i = 0; i < doubles.Count; i++)
+            {
+                for (int j = i + 1; j < doubles.Count; j++)
+                {
+                    if (doubles[i][1] == doubles[j][1])
+                    {
+                        // if the doubles belong to the same column, eliminate those candidates from the other cells in the column
+                        changed |= eliminateCandidatesFromOtherCellsInCol(board[doubles[i][0], doubles[i][1]].Candidates, doubles[i], doubles[j]);
+                    }
+                }
+            }
+
+            return changed;
+        }
+
+        // this is a helper function that will go over the given col and check for pointing doubles
+        private static bool checkColumnForPointingDoubles(int col)
+        {
+            bool changed = false;
+
+            // create a dictionary to store the candidate values and the cells that contain them
+            Dictionary<int, List<int[]>> candidatesToCells = new Dictionary<int, List<int[]>>();
+
+            // iterate through the cells in the column
+            for (int i = 0; i < size; i++)
+            {
+                // get the candidates of the current cell
+                HashSet<int> candidates = board[i, col].Candidates;
+
+                // iterate through the candidates
+                foreach (int candidate in candidates)
+                {
+                    // add the current cell to the list of cells that contain the current candidate
+                    if (!candidatesToCells.ContainsKey(candidate))
+                    {
+                        candidatesToCells[candidate] = new List<int[]>();
+                    }
+                    candidatesToCells[candidate].Add(new int[] { i, col });
+                }
+            }
+
+            // iterate through the dictionary
+            foreach (KeyValuePair<int, List<int[]>> entry in candidatesToCells)
+            {
+                // check if there are exactly two cells that contain the current candidate
+                if (entry.Value.Count == 2)
+                {
+                    // eliminate the candidate from the other cells in the column
+                    changed |= eliminateCandidatesFromOtherCellsInCol(new HashSet<int> { entry.Key }, entry.Value[0], entry.Value[1]);
+                }
+            }
+
+            return changed;
+        }
+
+        // this is a helper function that will go over the given block and check for pointing doubles
+        private static bool checkBlockForPointingDoubles(int rowStart, int colStart)
+        {
+            bool changed = false;
+
+            List<int[]> pairs = new List<int[]>();
+
+            // find all pairs in the block
+            for (int i = rowStart; i < rowStart + blockSize; i++)
+            {
+                for (int j = colStart; j < colStart + blockSize; j++)
+                {
+                    if (board[i, j].Candidates.Count == 2)
+                    {
+                        pairs.Add(new int[] { i, j });
+                    }
+                }
+            }
+
+            // check if any of the pairs have the same candidates
+            for (int i = 0; i < pairs.Count; i++)
+            {
+                for (int j = i + 1; j < pairs.Count; j++)
+                {
+                    if (haveSameCandidates(pairs[i], pairs[j]))
+                    {
+                        // if the pairs have the same candidates, eliminate those candidates from the other cells in the block
+                        changed |= eliminateCandidatesFromOtherCellsInBlock(board[pairs[i][0], pairs[i][1]].Candidates, pairs[i], pairs[j], rowStart, colStart);
+                    }
+                }
+            }
+
+            return changed;
+        }
+
+        // this is the implementation of the poiniting doubles algortim
+        public static bool PointingTriples()
+        {
+            bool changed = false;
+
+            // check rows for pointing triples
+            for (int row = 0; row < size; row++)
+            {
+                changed |= checkRowForPointingTriples(row);
+            }
+
+            // check columns for pointing triples
+            for (int col = 0; col < size; col++)
+            {
+                changed |= checkColumnForPointingTriples(col);
+            }
+
+            // check blocks for pointing triples
+            for (int row = 0; row < size; row += blockSize)
+            {
+                for (int col = 0; col < size; col += blockSize)
+                {
+                    changed |= checkBlockForPointingTriples(row, col);
+                }
+            }
+
+            return changed;
+        }
+
+        // this is a helper function that will go over the given row and check for pointing triples
+        private static bool checkRowForPointingTriples(int row)
+        {
+            bool changed = false;
+
+            List<int[]> triples = new List<int[]>();
+
+            // find all triples in the row
+            for (int i = 0; i < size; i++)
+            {
+                if (board[row, i].Candidates.Count == 3)
+                {
+                    triples.Add(new int[] { row, i });
+                }
+            }
+
+            // check if any of the triples have the same candidates
+            for (int i = 0; i < triples.Count; i++)
+            {
+                for (int j = i + 1; j < triples.Count; j++)
+                {
+                    if (haveSameCandidates(triples[i], triples[j]))
+                    {
+                        // if the triples have the same candidates, eliminate those candidates from the other cells in the row
+                        HashSet<int> candidates = new HashSet<int>(board[triples[i][0], triples[i][1]].Candidates);
+                        candidates.IntersectWith(board[triples[j][0], triples[j][1]].Candidates);
+                        changed |= eliminateCandidatesFromOtherCellsInRow(candidates, triples[i], triples[j]);
+                    }
+                }
+            }
+
+            return changed;
+        }
+
+        // this is a helper function that will go over the given col and check for pointing triples
+        private static bool checkColumnForPointingTriples(int col)
+        {
+            bool changed = false;
+
+            List<int[]> triples = new List<int[]>();
+
+            // find all triples in the column
+            for (int i = 0; i < size; i++)
+            {
+                if (board[i, col].Candidates.Count == 3)
+                {
+                    triples.Add(new int[] { i, col });
+                }
+            }
+
+            // check if any of the triples have the same candidates
+            for (int i = 0; i < triples.Count; i++)
+            {
+                for (int j = i + 1; j < triples.Count; j++)
+                {
+                    if (haveSameCandidates(triples[i], triples[j]))
+                    {
+                        // if the triples have the same candidates, eliminate those candidates from the other cells in the column
+                        HashSet<int> candidates = new HashSet<int>(board[triples[i][0], triples[i][1]].Candidates);
+                        candidates.UnionWith(board[triples[j][0], triples[j][1]].Candidates);
+                        changed |= eliminateCandidatesFromOtherCellsInCol(candidates, triples[i], triples[j]);
+                    }
+                }
+            }
+
+            return changed;
+        }
+
+        // this is a helper function that will go over the given box and check for pointing triples
+        private static bool checkBlockForPointingTriples(int rowStart, int colStart)
+        {
+            bool changed = false;
+
+            List<int[]> triples = new List<int[]>();
+
+            // find all triples in the block
+            for (int i = rowStart; i < rowStart + blockSize; i++)
+            {
+                for (int j = colStart; j < colStart + blockSize; j++)
+                {
+                    if (board[i, j].Candidates.Count == 3)
+                    {
+                        triples.Add(new int[] { i, j });
+                    }
+                }
+            }
+
+            // check if any of the triples have the same candidates
+            for (int i = 0; i < triples.Count; i++)
+            {
+                for (int j = i + 1; j < triples.Count; j++)
+                {
+                    if (haveSameCandidates(triples[i], triples[j]))
+                    {
+                        // if the triples have the same candidates, check if they point to a cell in a row or column
+                        bool rowChanged = checkTripleForPointingRow(triples[i], triples[j]);
+                        bool colChanged = checkTripleForPointingCol(triples[i], triples[j]);
+                        if (rowChanged || colChanged)
+                        {
+                            // if the triples point to a cell in a row or column, eliminate those candidates from that cell
+                            changed |= eliminateCandidatesFromPointedCell(triples[i], triples[j], rowStart, colStart);
+                        }
+                    }
+                }
+            }
+
+            return changed;
+        }
+
+        // This function checks if a pair of cells in a triple share candidates with a cell in the same row as the triple.
+        // If they do, it eliminates those shared candidates from the other cells in the row.
+        private static bool checkTripleForPointingRow(int[] cell1, int[] cell2)
+        {
+            // create a hashset to store the candidates of the two cells
+            HashSet<int> candidates = new HashSet<int>();
+            candidates.UnionWith(board[cell1[0], cell1[1]].Candidates);
+            candidates.UnionWith(board[cell2[0], cell2[1]].Candidates);
+
+            // check if the hashset has three candidates
+            if (candidates.Count == 3)
+            {
+                // find the third cell in the row with the same candidates
+                for (int i = 0; i < size; i++)
+                {
+                    if (board[cell1[0], i].Candidates.SetEquals(candidates))
+                    {
+                        // if the third cell is found, eliminate the candidates from other cells in the row
+                        return eliminateCandidatesFromOtherCellsInRow(candidates, cell1, cell2);
+                    }
+                }
+            }
+
+            // if the third cell is not found or the hashset does not have three candidates, return false
+            return false;
+        }
+
+        // Check if the given triple of cells in the same column points to a candidate that can be eliminated from other cells in the column.
+        // If so, eliminate the candidate and return true. Otherwise, return false.
+        private static bool checkTripleForPointingCol(int[] cell1, int[] cell2)
+        {
+            // Get the common candidates of the two cells
+            HashSet<int> commonCandidates = new HashSet<int>(board[cell1[0], cell1[1]].Candidates);
+            commonCandidates.IntersectWith(board[cell2[0], cell2[1]].Candidates);
+
+            // If the common candidates form a triple with the candidates of the third cell in the column,
+            // eliminate the common candidates from the other cells in the column
+            int[] cell3 = new int[] { cell1[0], cell1[1] == 0 ? cell1[1] + 2 : cell1[1] - 2 };
+            if (commonCandidates.IsSubsetOf(board[cell3[0], cell3[1]].Candidates))
+            {
+                return eliminateCandidatesFromOtherCellsInCol(commonCandidates, cell1, cell2);
+            }
+            return false;
+        }
+
+        // This function removes candidates from the cells indicated by the input triples (cell1 and cell2)
+        // if they are part of a pointing triple in the block with top-left corner at (rowStart, colStart).
+        // It returns a boolean indicating whether any candidates were removed.
+        private static bool eliminateCandidatesFromPointedCell(int[] triple1, int[] triple2, int rowStart, int colStart)
+        {
+            bool changed = false;
+
+            // find the cell that the two triples point to
+            int pointedRow = -1, pointedCol = -1;
+            if (triple1[0] == triple2[0])
+            {
+                pointedRow = triple1[0];
+                pointedCol = triple1[1] == colStart ? triple2[1] : triple1[1];
+            }
+            else if (triple1[1] == triple2[1])
+            {
+                pointedRow = triple1[0] == rowStart ? triple2[0] : triple1[0];
+                pointedCol = triple1[1];
+            }
+
+            // eliminate candidates from the pointed cell
+            if (pointedRow != -1 && pointedCol != -1)
+            {
+                HashSet<int> candidates = new HashSet<int>();
+                candidates.UnionWith(board[triple1[0], triple1[1]].Candidates);
+                candidates.UnionWith(board[triple1[0], triple1[1]].Candidates);
+                candidates.UnionWith(board[triple2[0], triple2[1]].Candidates);
+                changed |= board[pointedRow, pointedCol].Candidates.RemoveWhere(x => candidates.Contains(x)) > 0;
+            }
+
+            return changed;
+        }
+
+        // this is the implemention of the box line reduction algoritm
+        public static bool boxLineReduction()
+        {
+            bool changed = false;
+
+            // check each block
+            for (int i = 0; i < size; i += blockSize)
+            {
+                for (int j = 0; j < size; j += blockSize)
+                {
+                    // check rows in the block
+                    for (int row = i; row < i + blockSize; row++)
+                    {
+                        // get the candidates in the row
+                        HashSet<int> rowCandidates = new HashSet<int>();
+                        for (int col = j; col < j + blockSize; col++)
+                        {
+                            rowCandidates.UnionWith(board[row, col].Candidates);
+                        }
+
+                        // check columns in the block
+                        for (int col = j; col < j + blockSize; col++)
+                        {
+                            // get the candidates in the column
+                            HashSet<int> colCandidates = new HashSet<int>();
+                            for (int r = i; r < i + blockSize; r++)
+                            {
+                                colCandidates.UnionWith(board[r, col].Candidates);
+                            }
+
+                            // if the intersection of the row candidates and column candidates has size 2 or 3,
+                            // eliminate those candidates from the other cells in the row or column
+                            HashSet<int> intersection = new HashSet<int>(rowCandidates);
+                            intersection.IntersectWith(colCandidates);
+                            if (intersection.Count == 2 || intersection.Count == 3)
+                            {
+                                for (int r = 0; r < size; r++)
+                                {
+                                    if (r >= i && r < i + blockSize)
+                                    {
+                                        // eliminate candidates from the other cells in the column
+                                        changed |= board[r, col].Candidates.RemoveWhere(x => intersection.Contains(x)) > 0;
+                                    }
+                                    else
+                                    {
+                                        // eliminate candidates from the other cells in the row
+                                        changed |= board[row, r].Candidates.RemoveWhere(x => intersection.Contains(x)) > 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return changed;
+        }
+
     }
 
 }

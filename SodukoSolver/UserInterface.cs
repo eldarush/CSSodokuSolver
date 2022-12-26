@@ -96,8 +96,11 @@ namespace SodukoSolver
                         // print the solved board
                         Console.WriteLine("\nSolved board is: \n");
                         PrintBoard(board.getBoard(), board.getSize());
-                        Console.WriteLine($"\nIt took the algoritm {watch.ElapsedMilliseconds} ms to solve the board.\n" +
-                            $"This is the equivilent to {(float)watch.ElapsedMilliseconds / 1000} seconds");
+
+                        // print the elapsed times in seconds, milliseconds, and nanosecods
+                        Console.WriteLine("\nElapsed time: {0} seconds", watch.Elapsed.TotalSeconds);
+                        Console.WriteLine("Elapsed time: {0} milliseconds", watch.Elapsed.TotalMilliseconds);
+                        Console.WriteLine("Elapsed time: {0} nanoseconds", watch.Elapsed.TotalMilliseconds * 1000000);
 
                     }
                     else
@@ -122,15 +125,46 @@ namespace SodukoSolver
         {
             bool solvable = false;
 
+            // count the number of empty cells
+            float emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+
+            // we make an assumption that if at least a 66 percent of the cells are empty,
+            // then the board is solvable faster using the brute force method instead of trying to run the complicated
+            // algorithms (backtracking)
+
+            emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+            // if the number of empty cells is less than 66 percent of the board then run the algorithms
+            // skip straight to the brute force method
+            if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
+            {
+                // run the backtracking algorithm
+                solvable = Backtracking();
+
+                // return if the algoritms managed to solve the board or not
+                return solvable;
+            }
+
             // fill in cells using the simple elimination technique
             while (Eliminate())
             {
                 // do nothing, just keep calling Eliminate until it returns false
             }
 
-            Console.WriteLine("\nSimple elimination board is: \n");
-            PrintBoard(board.getBoard(), board.getSize());
-            Console.WriteLine("");
+            //Console.WriteLine("\nSimple elimination board is: \n");
+            //PrintBoard(board.getBoard(), board.getSize());
+            //Console.WriteLine("");
+
+            emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+            // if the number of empty cells is less than 66 percent of the board then run the algorithms
+            // skip straight to the brute force method
+            if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
+            {
+                // run the backtracking algorithm
+                solvable = Backtracking();
+
+                // return if the algoritms managed to solve the board or not
+                return solvable;
+            }
 
             // fill in more cells using the hidden singles method
             while (hiddenSingles())
@@ -138,42 +172,145 @@ namespace SodukoSolver
                 // do nothing, just keep calling hiddenSingles until it returns false
             }
 
-            Console.WriteLine("\nHidden singles board is: \n");
-            PrintBoard(board.getBoard(), board.getSize());
-            Console.WriteLine("");
+            //Console.WriteLine("\nHidden singles board is: \n");
+            //PrintBoard(board.getBoard(), board.getSize());
+            //Console.WriteLine("");
+
+            emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+            // if the number of empty cells is less than 66 percent of the board then run the algorithms
+            // skip straight to the brute force method
+            if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
+            {
+                // run the backtracking algorithm
+                solvable = Backtracking();
+
+                // return if the algoritms managed to solve the board or not
+                return solvable;
+            }
 
             // fill in more cells using the naked pairs method
-            //while (nakedPairs())
-            //{
-            //    // do nothing, just keep calling nakedpairs untill it returns false
-            //}
+            while (nakedPairs())
+            {
+                // do nothing, just keep calling nakedpairs untill it returns false
+            }
 
             //Console.WriteLine("\nHidden pairs board is: \n");
             //PrintBoard(board.getBoard(), board.getSize());
             //Console.WriteLine("");
 
-            //// fill in more cells using the naked triples method
-            //while (nakedTriples())
-            //{
-            //    // do nothing, just keep calling nakedtriples untill it returns false
-            //}
+            emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+            // if the number of empty cells is less than 66 percent of the board then run the algorithms
+            // skip straight to the brute force method
+            if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
+            {
+                // run the backtracking algorithm
+                solvable = Backtracking();
+
+                // return if the algoritms managed to solve the board or not
+                return solvable;
+            }
+
+            // fill in more cells using the naked triples method
+            while (nakedTriples())
+            {
+                // do nothing, just keep calling nakedtriples untill it returns false
+            }
 
             //Console.WriteLine("\nHidden triples board is: \n");
             //PrintBoard(board.getBoard(), board.getSize());
             //Console.WriteLine("");
 
-            //// fill in more cells using the naked quads method
-            //while (nakedQuads())
-            //{
-            //    // do nothing, just keep calling nakedquads untill it returns false
-            //}
+            emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+            // if the number of empty cells is less than 66 percent of the board then run the algorithms
+            // skip straight to the brute force method
+            if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
+            {
+                // run the backtracking algorithm
+                solvable = Backtracking();
+
+                // return if the algoritms managed to solve the board or not
+                return solvable;
+            }
+
+            // fill in more cells using the naked quads method
+            while (nakedQuads())
+            {
+                // do nothing, just keep calling nakedquads untill it returns false
+            }
 
             //Console.WriteLine("\nHidden quads board is: \n");
             //PrintBoard(board.getBoard(), board.getSize());
             //Console.WriteLine("");
 
+            emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+            // if the number of empty cells is less than 66 percent of the board then run the algorithms
+            // skip straight to the brute force method
+            if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
+            {
+                // run the backtracking algorithm
+                solvable = Backtracking();
+
+                // return if the algoritms managed to solve the board or not
+                return solvable;
+            }
+
+            // fill in more cells using the pointing doubles method
+            while (PointingDoubles())
+            {
+                // do nothing, just keep calling pointingdoubles untill it returns false
+            }
+
+            //Console.WriteLine("\nPointing doubles board is: \n");
+            //PrintBoard(board.getBoard(), board.getSize());
+            //Console.WriteLine("");
+
+            emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+            // if the number of empty cells is less than 66 percent of the board then run the algorithms
+            // skip straight to the brute force method
+            if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
+            {
+                // run the backtracking algorithm
+                solvable = Backtracking();
+
+                // return if the algoritms managed to solve the board or not
+                return solvable;
+            }
+
+            // fill in more cells using the pointing triples method
+            while (PointingTriples())
+            {
+                // do nothing, just keep calling pointingtriples untill it returns false
+            }
+
+            //Console.WriteLine("\nPointing triples board is: \n");
+            //PrintBoard(board.getBoard(), board.getSize());
+            //Console.WriteLine("");
+
+            emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+            // if the number of empty cells is less than 66 percent of the board then run the algorithms
+            // skip straight to the brute force method
+            if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
+            {
+                // run the backtracking algorithm
+                solvable = Backtracking();
+
+                // return if the algoritms managed to solve the board or not
+                return solvable;
+            }
+
+            // fill in more cells using the box line reduction method
+            while (boxLineReduction())
+            {
+                // do nothing, just keep calling boxlinereduction untill it returns false
+            }
+
+            //Console.WriteLine("\nBox line reduction board is: \n");
+            //PrintBoard(board.getBoard(), board.getSize());
+            //Console.WriteLine("");
+            
+
             // run the backtracking algorithm
-            solvable =Backtracking();
+            solvable = Backtracking();
 
             // return if the algoritms managed to solve the board or not
             return solvable;

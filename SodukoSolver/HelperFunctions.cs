@@ -158,5 +158,32 @@ namespace SodukoSolver
             // return the board string
             return boardString.ToString();
         }
+
+        // fumction that gets a board and counts the amount of empty cells
+        // empty cells are cells with value 0
+        public static float CountEmptyCells(Cell[,] board, int size)
+        {
+            // create a counter for the empty cells
+            float counter = 0;
+
+            // loop through the rows
+            for (int i = 0; i < size; i++)
+            {
+                // loop through the columns
+                for (int j = 0; j < size; j++)
+                {
+                    // if the cell is empty
+                    if (board[i, j].Value == 0)
+                    {
+                        // increment the counter
+                        counter++;
+                    }
+                }
+            }
+
+            // return the counter
+            return counter;
+        }
+
     }
 }
