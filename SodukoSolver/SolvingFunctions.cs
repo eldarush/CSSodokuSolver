@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static SodukoSolver.ValidatingFunctions;
+using static SodukoSolver.HelperFunctions;
 
 
 namespace SodukoSolver
@@ -43,7 +44,7 @@ namespace SodukoSolver
             return board;
         }
 
-        public static bool Solve()
+        public static bool Backtracking()
         {
             // get the next empty cell
             int[] nextEmptyCell = getNextEmptyCell();
@@ -58,30 +59,6 @@ namespace SodukoSolver
             int row = nextEmptyCell[0];
             int col = nextEmptyCell[1];
 
-            // update the candidates of the current cell based on the values of the cells in the same row, column, and block
-            for (int i = 0; i < size; i++)
-            {
-                if (i != col && board[row, i].Value != 0)
-                {
-                    board[row, col].Candidates.Remove(board[row, i].Value);
-                }
-                if (i != row && board[i, col].Value != 0)
-                {
-                    board[row, col].Candidates.Remove(board[i, col].Value);
-                }
-            }
-            int blockRowStart = row - row % blockSize;
-            int blockColStart = col - col % blockSize;
-            for (int i = blockRowStart; i < blockRowStart + blockSize; i++)
-            {
-                for (int j = blockColStart; j < blockColStart + blockSize; j++)
-                {
-                    if (i != row && j != col && board[i, j].Value != 0)
-                    {
-                        board[row, col].Candidates.Remove(board[i, j].Value);
-                    }
-                }
-            }
 
             // for each possible candidate in the cell
             for (int i = 1; i <= size; i++)
@@ -92,19 +69,13 @@ namespace SodukoSolver
                     // set the value of the cell to the candidate
                     board[row, col].Value = i;
 
-                    // update the candidates of the cells that are affected by this cell's value
-                    updateAffectedCells(row, col);
 
                     // if the board is solved then return true
-                    if (Solve())
+                    if (Backtracking())
                     {
                         return true;
                     }
-
-                    // if the board is not solved then set the value of the cell to 0
-                    // and restore the candidates of the affected cells to their original state
                     board[row, col].Value = 0;
-                    restoreAffectedCells(row, col);
                 }
             }
 
@@ -112,47 +83,48 @@ namespace SodukoSolver
             return false;
         }
 
-
+        // TODO: unneeded function
         // restores the candidates of the cells that are affected by the cell at the given row and column
         // to their original state before the value of the cell at the given row and column was set
-        private static void restoreAffectedCells(int row, int col)
-        {
-            int value = board[row, col].Value;
+        //private static void restoreAffectedCells(int row, int col)
+        //{
+        //    int value = board[row, col].Value;
 
-            // restore the candidates of the cells in the same row
-            for (int i = 0; i < size; i++)
-            {
-                if (i != col)
-                {
-                    board[row, i].Candidates.Add(value);
-                }
-            }
+        //    // restore the candidates of the cells in the same row
+        //    for (int i = 0; i < size; i++)
+        //    {
+        //        if (i != col)
+        //        {
+        //            board[row, i].Candidates.Add(value);
+        //        }
+        //    }
 
-            // restore the candidates of the cells in the same column
-            for (int i = 0; i < size; i++)
-            {
-                if (i != row)
-                {
-                    board[i, col].Candidates.Add(value);
-                }
-            }
+        //    // restore the candidates of the cells in the same column
+        //    for (int i = 0; i < size; i++)
+        //    {
+        //        if (i != row)
+        //        {
+        //            board[i, col].Candidates.Add(value);
+        //        }
+        //    }
 
-            // restore the candidates of the cells in the same block
-            int blockRowStart = row - row % blockSize;
-            int blockColStart = col - col % blockSize;
-            for (int i = blockRowStart; i < blockRowStart + blockSize; i++)
-            {
-                for (int j = blockColStart; j < blockColStart + blockSize; j++)
-                {
-                    if (i != row && j != col)
-                    {
-                        board[i, j].Candidates.Add(value);
-                    }
-                }
-            }
-        }
+        //    // restore the candidates of the cells in the same block
+        //    int blockRowStart = row - row % blockSize;
+        //    int blockColStart = col - col % blockSize;
+        //    for (int i = blockRowStart; i < blockRowStart + blockSize; i++)
+        //    {
+        //        for (int j = blockColStart; j < blockColStart + blockSize; j++)
+        //        {
+        //            if (i != row && j != col)
+        //            {
+        //                board[i, j].Candidates.Add(value);
+        //            }
+        //        }
+        //    }
+        //}
 
         // updates the candidates of the cells that are affected by the cell at the given row and column
+
         private static void updateAffectedCells(int row, int col)
         {
             int value = board[row, col].Value;
@@ -569,6 +541,7 @@ namespace SodukoSolver
             return changesMade;
         }
 
+        // check for and elimiantes naked triples in th given block
         private static bool checkBlockForNakedTriples(int rowStart, int colStart)
         {
             bool changed = false;
@@ -755,6 +728,233 @@ namespace SodukoSolver
 
             return changed;
         }
+
+        // checks for and eliminates naked quads in the board
+        public static bool nakedQuads()
+        {
+            bool changesMade = false;
+
+            // check for and eliminate hidden quads in each row
+            for (int i = 0; i < size; i++)
+            {
+                changesMade |= checkRowForNakedQuads(i);
+            }
+
+            // check for and eliminate hidden quads in each column
+            for (int i = 0; i < size; i++)
+            {
+                changesMade |= checkColumnForNakedQuads(i);
+            }
+
+            // check for and eliminate hidden quads in each block
+            for (int i = 0; i < size; i += blockSize)
+            {
+                for (int j = 0; j < size; j += blockSize)
+                {
+                    changesMade |= checkBlockForNakedQuads(i, j);
+                }
+            }
+
+            return changesMade;
+        }
+
+        // Check if the given row has any naked quads
+        // A naked quad is 4 cells in a row that have 4 candidates each and those candidates are the same for all 4 cells
+        private static bool checkRowForNakedQuads(int row)
+        {
+            bool changed = false;
+
+            // Find all cells in the row that have 4 candidates
+            List<int[]> quads = new List<int[]>();
+            for (int i = 0; i < size; i++)
+            {
+                if (board[row, i].Candidates.Count == 4)
+                {
+                    quads.Add(new int[] { row, i });
+                }
+            }
+
+            // Check if any of the quads have the same candidates
+            for (int i = 0; i < quads.Count; i++)
+            {
+                for (int j = i + 1; j < quads.Count; j++)
+                {
+                    for (int k = j + 1; k < quads.Count; k++)
+                    {
+                        for (int l = k + 1; l < quads.Count; l++)
+                        {
+                            if (haveSameCandidates(quads[i], quads[j], quads[k], quads[l]))
+                            {
+                                // If the quads have the same candidates, eliminate those candidates from the other cells in the row
+                                changed |= eliminateCandidatesFromOtherCellsInRowQ(board[quads[i][0], quads[i][1]].Candidates, quads[i], quads[j], quads[k], quads[l]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return changed;
+        }
+
+        private static bool eliminateCandidatesFromOtherCellsInRowQ(HashSet<int> candidates, int[] coord1, int[] coord2, int[] coord3, int[] coord4)
+        {
+            bool changed = false;
+
+            // Get the row of the first cell
+            int row = coord1[0];
+
+            // Go through each cell in the row
+            for (int i = 0; i < size; i++)
+            {
+                // Check if the cell is not one of the cells to ignore
+                if ((coord1[0] == row && coord1[1] == i) || (coord2[0] == row && coord2[1] == i) || (coord3[0] == row && coord3[1] == i) || (coord4[0] == row && coord4[1] == i))
+                {
+                    continue;
+                }
+
+                // Eliminate the candidates from the cell
+                changed |= board[row, i].Candidates.RemoveWhere(x => candidates.Contains(x)) > 0;
+            }
+
+            return changed;
+        }
+
+        private static bool checkColumnForNakedQuads(int col)
+        {
+            bool changed = false;
+
+            // Find all cells in the column that have 4 candidates
+            List<int[]> quads = new List<int[]>();
+            for (int i = 0; i < size; i++)
+            {
+                if (board[i, col].Candidates.Count == 4)
+                {
+                    quads.Add(new int[] { i, col });
+                }
+            }
+
+            // Check if any of the quads have the same candidates
+            for (int i = 0; i < quads.Count; i++)
+            {
+                for (int j = i + 1; j < quads.Count; j++)
+                {
+                    for (int k = j + 1; k < quads.Count; k++)
+                    {
+                        for (int l = k + 1; l < quads.Count; l++)
+                        {
+                            if (haveSameCandidates(quads[i], quads[j], quads[k], quads[l]))
+                            {
+                                // If the quads have the same candidates, eliminate those candidates from the other cells in the column
+                                changed |= eliminateCandidatesFromOtherCellsInColumnQ(board[quads[i][0], quads[i][1]].Candidates, quads[i], quads[j], quads[k], quads[l]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return changed;
+        }
+
+        private static bool eliminateCandidatesFromOtherCellsInColumnQ(HashSet<int> candidates, int[] coord1, int[] coord2, int[] coord3, int[] coord4)
+        {
+            bool changed = false;
+
+            // Get the column of the first cell
+            int col = coord1[1];
+
+            // Go through each cell in the column
+            for (int i = 0; i < size; i++)
+            {
+                // Check if the cell is not one of the cells to ignore
+                if ((coord1[0] == i && coord1[1] == col) || (coord2[0] == i && coord2[1] == col) || (coord3[0] == i && coord3[1] == col) || (coord4[0] == i && coord4[1] == col))
+                {
+                    continue;
+                }
+
+                // Eliminate the candidates from the cell
+                changed |= board[i, col].Candidates.RemoveWhere(x => candidates.Contains(x)) > 0;
+            }
+
+            return changed;
+        }
+
+        private static bool checkBlockForNakedQuads(int rowStart, int colStart)
+        {
+            bool changed = false;
+
+            // Find all cells in the block that have 4 candidates
+            List<int[]> quads = new List<int[]>();
+            for (int i = rowStart; i < rowStart + blockSize; i++)
+            {
+                for (int j = colStart; j < colStart + blockSize; j++)
+                {
+                    if (board[i, j].Candidates.Count == 4)
+                    {
+                        quads.Add(new int[] { i, j });
+                    }
+                }
+            }
+
+            // Check if any of the quads have the same candidates
+            for (int i = 0; i < quads.Count; i++)
+            {
+                for (int j = i + 1; j < quads.Count; j++)
+                {
+                    for (int k = j + 1; k < quads.Count; k++)
+                    {
+                        for (int l = k + 1; l < quads.Count; l++)
+                        {
+                            if (haveSameCandidates(quads[i], quads[j], quads[k], quads[l]))
+                            {
+                                // If the quads have the same candidates, eliminate those candidates from the other cells in the block
+                                changed |= eliminateCandidatesFromOtherCellsInBlockQ(board[quads[i][0], quads[i][1]].Candidates, quads[i], quads[j], quads[k], quads[l], rowStart, colStart);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return changed;
+        }
+
+        private static bool eliminateCandidatesFromOtherCellsInBlockQ(HashSet<int> candidates, int[] coord1, int[] coord2, int[] coord3,
+            int[] coord4, int rowStart, int colStart)
+        {
+            bool changed = false;
+
+            // Go through each cell in the block
+            for (int i = rowStart; i < rowStart + blockSize; i++)
+            {
+                for (int j = colStart; j < colStart + blockSize; j++)
+                {
+                    // Check if the cell is not one of the cells to ignore
+                    if ((coord1[0] == i && coord1[1] == j) || (coord2[0] == i && coord2[1] == j) || (coord3[0] == i && coord3[1] == j) || (coord4[0] == i && coord4[1] == j))
+                    {
+                        continue;
+                    }
+
+                    // Eliminate the candidates from the cell
+                    changed |= board[i, j].Candidates.RemoveWhere(x => candidates.Contains(x)) > 0;
+                }
+            }
+
+            return changed;
+        }
+
+
+        // Check if the given cells have the same candidates
+        private static bool haveSameCandidates(int[] coord1, int[] coord2, int[] coord3, int[] coord4)
+        {
+            // Get the candidates for each cell
+            HashSet<int> candidates1 = new HashSet<int>(board[coord1[0], coord1[1]].Candidates);
+            HashSet<int> candidates2 = new HashSet<int>(board[coord2[0], coord2[1]].Candidates);
+            HashSet<int> candidates3 = new HashSet<int>(board[coord3[0], coord3[1]].Candidates);
+            HashSet<int> candidates4 = new HashSet<int>(board[coord4[0], coord4[1]].Candidates);
+
+            // Check if the candidates are the same for all cells
+            return candidates1.SetEquals(candidates2) && candidates2.SetEquals(candidates3) && candidates3.SetEquals(candidates4);
+        }
+
 
     }
 

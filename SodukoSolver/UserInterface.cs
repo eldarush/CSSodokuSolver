@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 // import both classes whose functions will be used
 using static SodukoSolver.ValidatingFunctions;
@@ -56,9 +57,8 @@ namespace SodukoSolver
             // boolean that will keep track if the board can be solved 
             bool CanBeSolved;
 
-            // time stamps that will keep track of how long it took the algorithm to solve
-            // the board
-            int start_time, elapsed_time;
+            // watch to keep trac of how long it took the algoritm to solve
+            var watch = new System.Diagnostics.Stopwatch();
 
             switch (input)
             {
@@ -78,35 +78,14 @@ namespace SodukoSolver
 
                     // start timer to see how long the solving took
 
-                    // Solve the board
-                    start_time = DateTime.Now.Millisecond;
+                    // Solve the board and start the timer
+                    watch.Start();
 
-                    // fill in cells using the simple elimination technique
-                    while (Eliminate())
-                    {
-                        // do nothing, just keep calling Eliminate until it returns false
-                    }
-
-                    // fill in more cells using the hidden singles method
-                    while (hiddenSingles())
-                    {
-                        // do nothing, just keep calling hiddenSingles until it returns false
-                    }
-
-                    // fill in more cells using the naked pairs method
-                    while (nakedPairs())
-                    {
-                        // do nothing, just keep calling nakedpairs untill it returns false
-                    }
-
-                    // fill in more cells using the naked triples method
-                    while (nakedTriples())
-                    {
-                        // do nothing, just keep calling nakedtriples untill it returns false
-                    }
+                    // run the algoritms to solve the board
                     CanBeSolved =  Solve();
-                    
-                    elapsed_time = DateTime.Now.Millisecond - start_time;
+
+                    // stop the timer
+                    watch.Stop();
 
                     // if the board can be solved then print the solved board
                     if (CanBeSolved)
@@ -117,8 +96,9 @@ namespace SodukoSolver
                         // print the solved board
                         Console.WriteLine("\nSolved board is: \n");
                         PrintBoard(board.getBoard(), board.getSize());
-                        Console.WriteLine($"\nIt took the algoritm {elapsed_time}ms to solve the board.\n" +
-                            $"This is the equivilent to {(float)elapsed_time / 1000} seconds");
+                        Console.WriteLine($"\nIt took the algoritm {watch.ElapsedMilliseconds} ms to solve the board.\n" +
+                            $"This is the equivilent to {(float)watch.ElapsedMilliseconds / 1000} seconds");
+
                     }
                     else
                     {
@@ -135,6 +115,68 @@ namespace SodukoSolver
                     Console.WriteLine("Exiting the program");
                     break;
             }
+        }
+
+        // function that solves the board using all the implemented algorithms
+        private static bool Solve()
+        {
+            bool solvable = false;
+
+            // fill in cells using the simple elimination technique
+            while (Eliminate())
+            {
+                // do nothing, just keep calling Eliminate until it returns false
+            }
+
+            Console.WriteLine("\nSimple elimination board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
+
+            // fill in more cells using the hidden singles method
+            while (hiddenSingles())
+            {
+                // do nothing, just keep calling hiddenSingles until it returns false
+            }
+
+            Console.WriteLine("\nHidden singles board is: \n");
+            PrintBoard(board.getBoard(), board.getSize());
+            Console.WriteLine("");
+
+            // fill in more cells using the naked pairs method
+            //while (nakedPairs())
+            //{
+            //    // do nothing, just keep calling nakedpairs untill it returns false
+            //}
+
+            //Console.WriteLine("\nHidden pairs board is: \n");
+            //PrintBoard(board.getBoard(), board.getSize());
+            //Console.WriteLine("");
+
+            //// fill in more cells using the naked triples method
+            //while (nakedTriples())
+            //{
+            //    // do nothing, just keep calling nakedtriples untill it returns false
+            //}
+
+            //Console.WriteLine("\nHidden triples board is: \n");
+            //PrintBoard(board.getBoard(), board.getSize());
+            //Console.WriteLine("");
+
+            //// fill in more cells using the naked quads method
+            //while (nakedQuads())
+            //{
+            //    // do nothing, just keep calling nakedquads untill it returns false
+            //}
+
+            //Console.WriteLine("\nHidden quads board is: \n");
+            //PrintBoard(board.getBoard(), board.getSize());
+            //Console.WriteLine("");
+
+            // run the backtracking algorithm
+            solvable =Backtracking();
+
+            // return if the algoritms managed to solve the board or not
+            return solvable;
         }
     }
 }
