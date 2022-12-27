@@ -185,5 +185,51 @@ namespace SodukoSolver
             return counter;
         }
 
+        // function that gets a board and returns an exact copy of it
+        public static Cell[,] CopyBoard(Cell[,] board, int size)
+        {
+            // create a new board
+            Cell[,] newBoard = new Cell[size, size];
+
+            // loop through the rows
+            for (int i = 0; i < size; i++)
+            {
+                // loop through the columns
+                for (int j = 0; j < size; j++)
+                {
+                    // copy the cell to the new board
+                    newBoard[i, j] = new Cell(size, board[i, j].Value);
+                    // copy the candidates
+                    newBoard[i, j].Candidates = new HashSet<int>(board[i, j].Candidates);
+                    // copy the solved boolean
+                    newBoard[i, j].Solved = board[i, j].Solved;
+                }
+            }
+
+            // return the new board
+            return newBoard;
+        }
+
+        // function that gets a board and checks if it is solved
+        public static bool IsSolved(Cell[,] board, int size)
+        {
+            // loop through the rows
+            for (int i = 0; i < size; i++)
+            {
+                // loop through the columns
+                for (int j = 0; j < size; j++)
+                {
+                    // if the cell is not solved
+                    if (board[i, j].Value == 0)
+                    {
+                        // return false
+                        return false;
+                    }
+                }
+            }
+
+            // return true
+            return true;
+        }
     }
 }

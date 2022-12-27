@@ -59,7 +59,7 @@ namespace SodukoSolver
         {
             if (Candidates.Count == 0 || Candidates == null) Console.WriteLine("no candidates");
             else Console.WriteLine(string.Join(", ", Candidates));
-       }
+        }
 
 
         // function that updates the possible candidates of the cell

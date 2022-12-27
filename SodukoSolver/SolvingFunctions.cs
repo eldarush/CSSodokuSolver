@@ -12,39 +12,26 @@ namespace SodukoSolver
     internal class SolvingFunctions
     {
         // size of the board
-        private static int size;
+        public int size { get; set; }
 
         // blockSize is the size of the block that the board is divided into
-        private static int blockSize;
+        public int blockSize { get; set; }
 
         // the board
-        private static Cell[,] board;
+        public Cell[,] board { get; set; }
 
-        // setter for the size
-        public static void setSize(int size)
+        // Constructor that gets the size and the board
+        public SolvingFunctions(int size, Cell[,] board)
         {
-            SolvingFunctions.size = size;
+            this.size = size;
+            this.board = board;
+            this.blockSize = (int)Math.Sqrt(size);
         }
 
-        // setter for the square size
-        public static void setBlockSize(int blockSize)
-        {
-            SolvingFunctions.blockSize = blockSize;
-        }
-
-        // setter for the board
-        public static void setBoard(Cell[,] board)
-        {
-            SolvingFunctions.board = board;
-        }
-
-        // getter for the board
-        public static Cell[,] getBoard()
-        {
-            return board;
-        }
-
-        public static bool Backtracking()
+        // this is the implementation of the backtracking algorithm
+        // that goes over the board and tries to solve it
+        // this function goes from left to right and top to bottom
+        public bool Backtracking(CancellationToken token)
         {
             // get the next empty cell
             int[] nextEmptyCell = getNextEmptyCell();
@@ -60,15 +47,16 @@ namespace SodukoSolver
             int col = nextEmptyCell[1];
 
 
-            // TODO: work out why cells arent working properly - possible problem in board creation
-            // get the current cell 
-            Cell currentCell = board[row, col];
-            currentCell.printCandidates();
-            Console.WriteLine("row: " + row + " col: " + col);
-            Console.WriteLine("current cell value: " + currentCell.Value + "is Solved: \n" + currentCell.Solved);
+            //// TODO: work out why cells arent working properly - possible problem in board creation
+            //// get the current cell 
+            //Cell currentCell = board[row, col];
+            //currentCell.printCandidates();
+            //Console.WriteLine("row: " + row + " col: " + col);
+            //Console.WriteLine("current cell value: " + currentCell.Value + "is Solved: \n" + currentCell.Solved);
 
-            // for each possible candidate in the cell
-            foreach (int i in currentCell.Candidates)
+            //// for each possible candidate in the cell
+            //foreach (int i in currentCell.Candidates)
+            for(int i=0; i<=size; i++)
             {
                 // if the candidate is valid
                 if (isValidCandidate(row, col, i))
@@ -78,7 +66,7 @@ namespace SodukoSolver
 
 
                     // if the board is solved then return true
-                    if (Backtracking())
+                    if (Backtracking(token))
                     {
                         return true;
                     }
@@ -88,6 +76,161 @@ namespace SodukoSolver
 
             // if the board is not solved then return false
             return false;
+        }
+
+   
+        // this is an implementation of backtracking to solve the board
+        // that goes in reversed order - from the last empty cell to the first
+        public bool BacktrackingR(CancellationToken token)
+        {
+            // get the next empty cell
+            int[] lastEmptyCell = getLastEmptyCell();
+
+            // if there is no empty cell then the board is solved
+            if (lastEmptyCell == null)
+            {
+                return true;
+            }
+
+            // get the row and column of the next empty cell
+            int row = lastEmptyCell[0];
+            int col = lastEmptyCell[1];
+
+            //// for each possible candidate in the cell
+            //foreach (int i in currentCell.Candidates)
+            for (int i = 0; i <= size; i++)
+            {
+                // if the candidate is valid
+                if (isValidCandidate(row, col, i))
+                {
+                    // set the value of the cell to the candidate
+                    board[row, col].Value = i;
+
+
+                    // if the board is solved then return true
+                    if (BacktrackingR(token))
+                    {
+                        return true;
+                    }
+                    board[row, col].Value = 0;
+                }
+            }
+
+            // if the board is not solved then return false
+            return false;
+        }
+
+        // Define the Direction enumeration
+        enum Direction
+        {
+            Right,
+            Down,
+            Left,
+            Up
+        }
+
+        // TODO: fix this function - is is returning true even for ussolvable boards
+        
+        // this is an implementation of backtracking to solve the board
+        // that goes in a spiral order
+        public bool BacktrackingSpiral(CancellationToken token)
+        {
+            // Initialize the variables for the spiral traversal
+            int row = size / 2;
+            int col = size / 2;
+            Direction dir = Direction.Right;
+            int visited = 0;
+
+            // Continue the spiral traversal until all cells have been visited
+            while (visited < size * size)
+            {
+                // Check if the current cell is empty
+                if (board[row, col].Value == 0)
+                {
+                    // Check if the cell has any valid candidates
+                    bool hasCandidates = false;
+                    for (int k = 1; k <= size; k++)
+                    {
+                        if (isValidCandidate(row, col, k))
+                        {
+                            hasCandidates = true;
+                            break;
+                        }
+                    }
+
+                    // If the cell has no valid candidates, return false
+                    if (!hasCandidates)
+                    {
+                        return false;
+                    }
+
+                    // Try each possible value for the cell
+                    for (int k = 1; k <= size; k++)
+                    {
+                        // Check if the value is valid for the cell
+                        if (isValidCandidate(row, col, k))
+                        {
+                            // Set the value for the cell and recursively solve the rest of the board
+                            board[row, col].Value = k;
+                            if (BacktrackingSpiral(token))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                // Backtrack and try the next value
+                                board[row, col].Value = 0;
+                            }
+                        }
+                    }
+                    // No valid value was found for the cell, so return false
+                    return false;
+                }
+                // Update the row and column based on the current direction
+                switch (dir)
+                {
+                    case Direction.Right:
+                        col++;
+                        if (col == size || board[row, col].Value != 0)
+                        {
+                            dir = Direction.Down;
+                            col--;
+                            row++;
+                        }
+                        break;
+                    case Direction.Down:
+                        row++;
+                        if (row == size || board[row, col].Value != 0)
+                        {
+                            dir = Direction.Left;
+                            row--;
+                            col--;
+                        }
+                        break;
+                    case Direction.Left:
+                        col--;
+                        if (col < 0 || board[row, col].Value != 0)
+                        {
+                            dir = Direction.Up;
+                            col++;
+                            row--;
+                        }
+                        break;
+                    case Direction.Up:
+                        row--;
+                        if (row < 0 || board[row, col].Value != 0)
+                        {
+                            dir = Direction.Right;
+                            row++;
+                            col++;
+                        }
+                        break;
+                }
+                visited++;
+            }
+
+            // If the board is solved, return true
+            return true;
         }
 
         // TODO: unneeded function
@@ -132,7 +275,7 @@ namespace SodukoSolver
 
         // updates the candidates of the cells that are affected by the cell at the given row and column
 
-        private static void updateAffectedCells(int row, int col)
+        private void updateAffectedCells(int row, int col)
         {
             int value = board[row, col].Value;
 
@@ -161,7 +304,7 @@ namespace SodukoSolver
         }
 
         // returns the next empty cell on the board, or null if there are no more empty cells
-        private static int[] getNextEmptyCell()
+        private int[] getNextEmptyCell()
         {
             for (int i = 0; i < size; i++)
             {
@@ -176,9 +319,24 @@ namespace SodukoSolver
             return null;
         }
 
+        // returns the last empty cell on the board, or null if there are no more empty cells
+        private int[] getLastEmptyCell()
+        {
+            for (int i = size - 1; i >= 0; i--)
+            {
+                for (int j = size - 1; j >= 0; j--)
+                {
+                    if (board[i, j].Value == 0)
+                    {
+                        return new int[] { i, j };
+                    }
+                }
+            }
+            return null;
+        }
 
         // checks if the given candidate is valid for the cell at the given row and column
-        private static bool isValidCandidate(int row, int col, int candidate)
+        private bool isValidCandidate(int row, int col, int candidate)
         {
             // check if the candidate is already used in the same row
             for (int i = 0; i < size; i++)
@@ -221,7 +379,7 @@ namespace SodukoSolver
         // that have only one possilbe candidate
         // this function is ran before the solving function, to make the solving process
         // faster
-        public static bool Eliminate()
+        public bool Eliminate()
         {
             bool changesMade = false;
 
@@ -296,7 +454,7 @@ namespace SodukoSolver
         // the same row, column, and block
         // this function gets the changed cell's col and row and checks if its 
         // col, row or block has a hidden single
-        public static bool hiddenSingles()
+        public bool hiddenSingles()
         {
             // flag to check if any changes have been made to the board
             bool changesMade = false;
@@ -400,7 +558,7 @@ namespace SodukoSolver
         }
 
         // checks for and eliminates naked pairs in the given row
-        public static bool checkRowForNakedPairs(int row)
+        public bool checkRowForNakedPairs(int row)
         {
             bool changesMade = false;
 
@@ -437,7 +595,7 @@ namespace SodukoSolver
         }
 
         // checks for and eliminates naked pairs in the given column
-        public static bool checkColumnForNakedPairs(int col)
+        public bool checkColumnForNakedPairs(int col)
         {
             bool changesMade = false;
 
@@ -474,7 +632,7 @@ namespace SodukoSolver
         }
 
         // checks for and eliminates naked pairs in the given block
-        public static bool checkBlockForNakedPairs(int blockRowStart, int blockColStart)
+        public bool checkBlockForNakedPairs(int blockRowStart, int blockColStart)
         {
             bool changesMade = false;
 
@@ -520,7 +678,7 @@ namespace SodukoSolver
         }
 
         // checks for and eliminates naked pairs in the board
-        public static bool nakedPairs()
+        public bool nakedPairs()
         {
             bool changesMade = false;
 
@@ -549,7 +707,7 @@ namespace SodukoSolver
         }
 
         // check for and elimiantes naked triples in th given block
-        private static bool checkBlockForNakedTriples(int rowStart, int colStart)
+        private bool checkBlockForNakedTriples(int rowStart, int colStart)
         {
             bool changed = false;
 
@@ -585,7 +743,7 @@ namespace SodukoSolver
 
         // Check if the given row has any naked triples
         // A naked triple is 3 cells in a row that have 3 candidates each and those candidates are the same for all 3 cells
-        private static bool checkRowForNakedTriples(int row)
+        private bool checkRowForNakedTriples(int row)
         {
             bool changed = false;
 
@@ -615,7 +773,7 @@ namespace SodukoSolver
             return changed;
         }
 
-        private static bool checkColumnForNakedTriples(int col)
+        private bool checkColumnForNakedTriples(int col)
         {
             // flag to track if any changes have been made
             bool changed = false;
@@ -649,7 +807,7 @@ namespace SodukoSolver
         }
 
         // helper function to check if two cells have the same candidates
-        private static bool haveSameCandidates(int[] cell1, int[] cell2)
+        private bool haveSameCandidates(int[] cell1, int[] cell2)
         {
             HashSet<int> candidates1 = board[cell1[0], cell1[1]].Candidates;
             HashSet<int> candidates2 = board[cell2[0], cell2[1]].Candidates;
@@ -658,7 +816,7 @@ namespace SodukoSolver
         }
 
         // helper function to eliminate candidates from other cells in a block
-        private static bool eliminateCandidatesFromOtherCellsInBlock(HashSet<int> candidates, int[] cell1,
+        private bool eliminateCandidatesFromOtherCellsInBlock(HashSet<int> candidates, int[] cell1,
             int[] cell2, int rowStart, int colStart)
         {
             bool changed = false;
@@ -678,7 +836,7 @@ namespace SodukoSolver
 
 
         // helper function to eliminate candidates from other cells in a row
-        private static bool eliminateCandidatesFromOtherCellsInRow(HashSet<int> candidates, int[] cell1, int[] cell2)
+        private bool eliminateCandidatesFromOtherCellsInRow(HashSet<int> candidates, int[] cell1, int[] cell2)
         {
             bool changed = false;
             for (int j = 0; j < size; j++)
@@ -693,7 +851,7 @@ namespace SodukoSolver
         }
 
         // helper function to eliminate candidates from other cells in a column
-        private static bool eliminateCandidatesFromOtherCellsInCol(HashSet<int> candidates, int[] cell1, int[] cell2)
+        private bool eliminateCandidatesFromOtherCellsInCol(HashSet<int> candidates, int[] cell1, int[] cell2)
         {
             bool changed = false;
             for (int i = 0; i < size; i++)
@@ -708,7 +866,7 @@ namespace SodukoSolver
         }
 
         // this is an implementation of naked triples algoritm 
-        public static bool nakedTriples()
+        public bool nakedTriples()
         {
             bool changed = false;
 
@@ -737,7 +895,7 @@ namespace SodukoSolver
         }
 
         // checks for and eliminates naked quads in the board
-        public static bool nakedQuads()
+        public bool nakedQuads()
         {
             bool changesMade = false;
 
@@ -767,7 +925,7 @@ namespace SodukoSolver
 
         // Check if the given row has any naked quads
         // A naked quad is 4 cells in a row that have 4 candidates each and those candidates are the same for all 4 cells
-        private static bool checkRowForNakedQuads(int row)
+        private bool checkRowForNakedQuads(int row)
         {
             bool changed = false;
 
@@ -803,7 +961,7 @@ namespace SodukoSolver
             return changed;
         }
 
-        private static bool eliminateCandidatesFromOtherCellsInRowQ(HashSet<int> candidates, int[] coord1, int[] coord2, int[] coord3, int[] coord4)
+        private bool eliminateCandidatesFromOtherCellsInRowQ(HashSet<int> candidates, int[] coord1, int[] coord2, int[] coord3, int[] coord4)
         {
             bool changed = false;
 
@@ -826,7 +984,7 @@ namespace SodukoSolver
             return changed;
         }
 
-        private static bool checkColumnForNakedQuads(int col)
+        private bool checkColumnForNakedQuads(int col)
         {
             bool changed = false;
 
@@ -862,7 +1020,7 @@ namespace SodukoSolver
             return changed;
         }
 
-        private static bool eliminateCandidatesFromOtherCellsInColumnQ(HashSet<int> candidates, int[] coord1, int[] coord2, int[] coord3, int[] coord4)
+        private bool eliminateCandidatesFromOtherCellsInColumnQ(HashSet<int> candidates, int[] coord1, int[] coord2, int[] coord3, int[] coord4)
         {
             bool changed = false;
 
@@ -885,7 +1043,7 @@ namespace SodukoSolver
             return changed;
         }
 
-        private static bool checkBlockForNakedQuads(int rowStart, int colStart)
+        private bool checkBlockForNakedQuads(int rowStart, int colStart)
         {
             bool changed = false;
 
@@ -924,7 +1082,7 @@ namespace SodukoSolver
             return changed;
         }
 
-        private static bool eliminateCandidatesFromOtherCellsInBlockQ(HashSet<int> candidates, int[] coord1, int[] coord2, int[] coord3,
+        private bool eliminateCandidatesFromOtherCellsInBlockQ(HashSet<int> candidates, int[] coord1, int[] coord2, int[] coord3,
             int[] coord4, int rowStart, int colStart)
         {
             bool changed = false;
@@ -950,7 +1108,7 @@ namespace SodukoSolver
 
 
         // Check if the given cells have the same candidates
-        private static bool haveSameCandidates(int[] coord1, int[] coord2, int[] coord3, int[] coord4)
+        private bool haveSameCandidates(int[] coord1, int[] coord2, int[] coord3, int[] coord4)
         {
             // Get the candidates for each cell
             HashSet<int> candidates1 = new HashSet<int>(board[coord1[0], coord1[1]].Candidates);
@@ -966,7 +1124,7 @@ namespace SodukoSolver
         // implementing intersection - pointining doubles, triples and box line reduction
 
         // this is the implementation of the poiniting doubles algortim
-        public static bool PointingDoubles()
+        public bool PointingDoubles()
         {
             bool changed = false;
 
@@ -988,7 +1146,7 @@ namespace SodukoSolver
         }
 
         // this is a helper function that will go over the given row and check for pointing doubles
-        private static bool checkRowForPointingDoubles(int row)
+        private bool checkRowForPointingDoubles(int row)
         {
             bool changed = false;
 
@@ -1020,7 +1178,7 @@ namespace SodukoSolver
         }
 
         // this is a helper function that will go over the given col and check for pointing doubles
-        private static bool checkColumnForPointingDoubles(int col)
+        private bool checkColumnForPointingDoubles(int col)
         {
             bool changed = false;
 
@@ -1060,7 +1218,7 @@ namespace SodukoSolver
         }
 
         // this is a helper function that will go over the given block and check for pointing doubles
-        private static bool checkBlockForPointingDoubles(int rowStart, int colStart)
+        private bool checkBlockForPointingDoubles(int rowStart, int colStart)
         {
             bool changed = false;
 
@@ -1095,7 +1253,7 @@ namespace SodukoSolver
         }
 
         // this is the implementation of the poiniting doubles algortim
-        public static bool PointingTriples()
+        public bool PointingTriples()
         {
             bool changed = false;
 
@@ -1124,7 +1282,7 @@ namespace SodukoSolver
         }
 
         // this is a helper function that will go over the given row and check for pointing triples
-        private static bool checkRowForPointingTriples(int row)
+        private bool checkRowForPointingTriples(int row)
         {
             bool changed = false;
 
@@ -1158,7 +1316,7 @@ namespace SodukoSolver
         }
 
         // this is a helper function that will go over the given col and check for pointing triples
-        private static bool checkColumnForPointingTriples(int col)
+        private bool checkColumnForPointingTriples(int col)
         {
             bool changed = false;
 
@@ -1192,7 +1350,7 @@ namespace SodukoSolver
         }
 
         // this is a helper function that will go over the given box and check for pointing triples
-        private static bool checkBlockForPointingTriples(int rowStart, int colStart)
+        private bool checkBlockForPointingTriples(int rowStart, int colStart)
         {
             bool changed = false;
 
@@ -1234,7 +1392,7 @@ namespace SodukoSolver
 
         // This function checks if a pair of cells in a triple share candidates with a cell in the same row as the triple.
         // If they do, it eliminates those shared candidates from the other cells in the row.
-        private static bool checkTripleForPointingRow(int[] cell1, int[] cell2)
+        private bool checkTripleForPointingRow(int[] cell1, int[] cell2)
         {
             // create a hashset to store the candidates of the two cells
             HashSet<int> candidates = new HashSet<int>();
@@ -1261,7 +1419,7 @@ namespace SodukoSolver
 
         // Check if the given triple of cells in the same column points to a candidate that can be eliminated from other cells in the column.
         // If so, eliminate the candidate and return true. Otherwise, return false.
-        private static bool checkTripleForPointingCol(int[] cell1, int[] cell2)
+        private bool checkTripleForPointingCol(int[] cell1, int[] cell2)
         {
             // Get the common candidates of the two cells
             HashSet<int> commonCandidates = new HashSet<int>(board[cell1[0], cell1[1]].Candidates);
@@ -1280,7 +1438,7 @@ namespace SodukoSolver
         // This function removes candidates from the cells indicated by the input triples (cell1 and cell2)
         // if they are part of a pointing triple in the block with top-left corner at (rowStart, colStart).
         // It returns a boolean indicating whether any candidates were removed.
-        private static bool eliminateCandidatesFromPointedCell(int[] triple1, int[] triple2, int rowStart, int colStart)
+        private bool eliminateCandidatesFromPointedCell(int[] triple1, int[] triple2, int rowStart, int colStart)
         {
             bool changed = false;
 
@@ -1311,7 +1469,7 @@ namespace SodukoSolver
         }
 
         // this is the implemention of the box line reduction algoritm
-        public static bool boxLineReduction()
+        public bool boxLineReduction()
         {
             bool changed = false;
 
