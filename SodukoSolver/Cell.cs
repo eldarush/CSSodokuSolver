@@ -33,10 +33,9 @@ namespace SodukoSolver
             } else
             {
                 // if the value is not 0 then the cell is solved
-                // and we can leave the candidates as just the cell value
+                // and we can leave the candidates empty
                 Solved = true;
                 Candidates = new HashSet<int>();
-                Candidates.Add(value);
             }
             // set the value of the cell to the given value
             Value = value;
