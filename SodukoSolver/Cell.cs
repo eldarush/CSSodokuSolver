@@ -33,10 +33,9 @@ namespace SodukoSolver
             } else
             {
                 // if the value is not 0 then the cell is solved
-                // and we can leave the candidates as just the cell value
+                // and we can leave the candidates empty
                 Solved = true;
                 Candidates = new HashSet<int>();
-                Candidates.Add(value);
             }
             // set the value of the cell to the given value
             Value = value;
@@ -59,7 +58,7 @@ namespace SodukoSolver
         {
             if (Candidates.Count == 0 || Candidates == null) Console.WriteLine("no candidates");
             else Console.WriteLine(string.Join(", ", Candidates));
-       }
+        }
 
 
         // function that updates the possible candidates of the cell
