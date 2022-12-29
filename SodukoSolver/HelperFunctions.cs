@@ -35,7 +35,7 @@ namespace SodukoSolver
                 for (int j = 0; j < size; j++)
                 {
                     // copy the board string to the board
-                    board[i, j] = new Cell(size, Convert.ToInt32(boardString[counter].ToString()));
+                    board[i, j] = new Cell(size, Convert.ToInt32(boardString[counter]) - '0');
                     // increment the counter
                     counter++;
                 }
@@ -43,6 +43,7 @@ namespace SodukoSolver
         }
 
         //TODO: fix this function so that it prints the board correctly (currently missing the right border)
+        // PrintBoard method that prints the board to the console
         // PrintBoard method that prints the board to the console
         public static void PrintBoard(Cell[,] board, int size)
         {
@@ -90,7 +91,16 @@ namespace SodukoSolver
                 // Print the elements in the row
                 for (int j = 0; j < size; j++)
                 {
-                    string element = board[i, j].Value.ToString();
+                    // if the size more then 9, print the value with a 0 in front
+                    string element;
+                    if (size >= 10)
+                    {
+                         element = board[i, j].Value.ToString().PadLeft(2, '0');  // add leading zero for single digit values
+                    }
+                    else
+                    {
+                        element = board[i, j].Value.ToString();
+                    }
                     int padding = (squareWidth - element.Length) / 2;
                     for (int k = 0; k < padding; k++)
                     {
@@ -137,6 +147,7 @@ namespace SodukoSolver
                 {
                     Console.Write("-");
                 }
+
                 if ((i + 1) % subSquareSize == 0 && i != size - 1)
                 {
                     Console.Write("+");
@@ -571,6 +582,28 @@ namespace SodukoSolver
                 }
             }
             return cellBoard;
+        }
+
+        // function that gets a board of cells and a value and wil return how many cells have its value as one of their candidates
+        public static int GetNumOfCellsThatHaveCandidate(Cell[,] board, int size, int value)
+        {
+            // check if the board is not null
+            if (board == null)
+            {
+                throw new ArgumentNullException("board");
+            }
+            int count = 0;
+            for (int row = 0; row < size; row++)
+            {
+                for (int col = 0; col < size; col++)
+                {
+                    if (board[row, col].Candidates.Contains(value))
+                    {
+                        count++;
+                    }
+                }
+            }
+            return count;
         }
     }
 }

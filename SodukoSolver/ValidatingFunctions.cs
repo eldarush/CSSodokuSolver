@@ -13,7 +13,7 @@ namespace SodukoSolver
         public static Cell[,] Vboard;
 
         // the allowed values for the board
-        private static int[] allowedValues;
+        private static char[] allowedValues;
 
         // TODO add the validation functions here
 
@@ -21,21 +21,14 @@ namespace SodukoSolver
         public static bool Validate(int size, string boardString)
         {
             // get allwoed values for the board with given length
-            allowedValues = GetAllowedNumbers(size);
+            allowedValues = GetAllowedChars(size);
 
             // check if the board string is the correct length
-            if (!checkLength(boardString,size))
+            if (!checkLength(boardString))
             {
-                Console.WriteLine("The board string is not the correct length. \n" +
-                    $"The board size is {size*size} and the string size is {boardString.Length}");
-                return false;
-            }
+                Console.WriteLine("The board string cannot be used to create a board with the given dimensions." +
+                    $"the current board string's size is {boardString.Length} and that's not a square number.");
 
-            // check that the length is a square number 
-            if (!isSquare(size))
-            {
-                Console.WriteLine("The board size is not a square number \n" +
-                    $"The board size is {size}, which is not a square number");
                 return false;
             }
 
@@ -61,33 +54,26 @@ namespace SodukoSolver
 
         // function that checks that the board string is the same size as the
         // board size squard
-        private static bool checkLength(string boardString, int size)
+        private static bool checkLength(string boardString)
         {
             // if the size is negrive return false
-            if (size < 1) return false;
-            
-            // check if the length of the stirng is the same as the amount of
-            // total values in the board
-            return boardString.Length == size * size;
-        }
+            if (boardString.Length <1) return false;
 
-        // function that checks that the size of the boars is a square number
-        private static bool isSquare (int size)
-        {
-            return Math.Sqrt(size) % 1 == 0;
+            // check the the square root of the board string length is an integer
+            return Math.Sqrt(boardString.Length) % 1 == 0;
         }
 
         // function that gets all the allowed numbers for the board
         // with given size
-        private static int[] GetAllowedNumbers(int size)
+        public static char[] GetAllowedChars(int size)
         {
             // create an array of allowed chars
-            int[] allowed = new int[size+1];
+            char[] allowed = new char[size+1];
 
             // add the allowed chars to the array
             for (int i = 0; i <= size; i++)
             {
-                allowed[i] = i;
+                allowed[i] = (char)(i + '0');
             }
             // return the array of allowed chars
             return allowed;
@@ -109,7 +95,7 @@ namespace SodukoSolver
             // check for every char in the string that it is a number
             for (int i = 0; i < boardString.Length; i++)
             {
-                if (!allowedValues.Contains(Convert.ToInt32(boardString[i].ToString()))){
+                if (!allowedValues.Contains(boardString[i])) { 
                     Console.WriteLine($"boardString[i] is {boardString[i]} and index is {i}");
                     return false;
                 }

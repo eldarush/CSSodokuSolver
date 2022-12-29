@@ -55,8 +55,8 @@ namespace SodukoSolver
             //Console.WriteLine("current cell value: " + currentCell.Value + "is Solved: \n" + currentCell.Solved);
 
             //// for each possible candidate in the cell
-            //foreach (int i in currentCell.Candidates)
-            for(int i=0; i<=size; i++)
+            foreach (int i in board[row, col].Candidates)
+            //for(int i=0; i<=size; i++)
             {
                 // if the candidate is valid
                 if (isValidCandidate(row, col, i))
@@ -97,8 +97,8 @@ namespace SodukoSolver
             int col = lastEmptyCell[1];
 
             //// for each possible candidate in the cell
-            //foreach (int i in currentCell.Candidates)
-            for (int i = 0; i <= size; i++)
+            foreach (int i in board[row, col].Candidates)
+            //for (int i = 0; i <= size; i++)
             {
                 // if the candidate is valid
                 if (isValidCandidate(row, col, i))
@@ -338,6 +338,64 @@ namespace SodukoSolver
                 }
             }
             return null;
+        }
+
+        // returnes the cell on the board that has the fewest candidates, starting from top left and going right
+        // and down, only changing the cell if it has less candidates than the current cell
+        private int[] getLeastCandidatesEmptyCell()
+        {
+            // initialize the current cell to the top left cell
+            int[] currentCell = new int[] { 0, 0 };
+
+            // initialize the minimum number of candidates to the number of candidates in the current cell
+            int minCandidates = size;
+
+            // iterate through the cells in the board
+            for (int row = 0; row < size; row++)
+            {
+                for (int col = 0; col < size; col++)
+                {
+                    // if the cell is empty and has fewer candidates than the current cell
+                    if (board[row,col].Value == 0 && board[row,col].Candidates.Count < minCandidates)
+                    {
+                        // update the current cell and the minimum number of candidates
+                        currentCell[0] = row;
+                        currentCell[1] = col;
+                        minCandidates = board[row, col].Candidates.Count;
+                    }
+                }
+            }
+            // if the value at the current cell is 0, return the current cell, otherwise return null
+            return board[currentCell[0], currentCell[1]].Value == 0 ? currentCell : null;
+        }
+
+        // returns the cell on the board that has the fewest candidates, starting from bottom right and going left
+        // and up, only changing the cell if it has less candidates than the current cell
+        private int[] getLeastCandidatesEmptyCellReverse()
+        {
+            // initialize the current cell to the bottom right cell
+            int[] currentCell = new int[] { size - 1, size - 1 };
+
+            // initialize the minimum number of candidates to the number of candidates in the current cell
+            int minCandidates = size;
+
+            // iterate through the cells in the board
+            for (int row = size - 1; row >= 0; row--)
+            {
+                for (int col = size - 1; col >= 0; col--)
+                {
+                    // if the cell is empty and has fewer candidates than the current cell
+                    if (board[row, col].Value == 0 && board[row, col].Candidates.Count < minCandidates)
+                    {
+                        // update the current cell and the minimum number of candidates
+                        currentCell[0] = row;
+                        currentCell[1] = col;
+                        minCandidates = board[row, col].Candidates.Count;
+                    }
+                }
+            }
+            // if the value at the current cell is 0, return the current cell, otherwise return null
+            return board[currentCell[0], currentCell[1]].Value == 0 ? currentCell : null;
         }
 
         // checks if the given candidate is valid for the cell at the given row and column

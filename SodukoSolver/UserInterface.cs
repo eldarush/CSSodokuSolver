@@ -70,6 +70,7 @@ namespace SodukoSolver
                 case 's':
                     // create a soduko board from the string
                     board = new SodokuBoard();
+
                     // print the input board
                     Console.WriteLine("\nInput board is: \n");
                     PrintBoard(board.getBoard(), board.getSize());
@@ -81,7 +82,7 @@ namespace SodukoSolver
                     watch.Start();
 
                     // run the algoritms to solve the board
-                    CanBeSolved = Solve2(solver);
+                    CanBeSolved = Solve(solver);
 
                     // stop the timer
                     watch.Stop();
@@ -93,6 +94,10 @@ namespace SodukoSolver
                         // print the solved board
                         Console.WriteLine("\nSolved board is: \n");
                         PrintBoard(board.getBoard(), board.getSize());
+
+                        // print the solved board string
+                        Console.WriteLine("\nSolved board string is: \n");
+                        Console.WriteLine(GetBoardString(board.getBoard(), board.getSize()));
 
                         // print the elapsed times in seconds, milliseconds
                         Console.WriteLine("\nElapsed time: {0} seconds", watch.Elapsed.TotalSeconds);
@@ -229,44 +234,43 @@ namespace SodukoSolver
                 return solvable;
             }
 
+
+            // TODO: intersection, naked triples and naked quads are not working properly, evertyhing else above this line is working
+ // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
+
             // fill in more cells using the naked triples method
-            while (solver.nakedTriples())
-            {
-                // do nothing, just keep calling nakedtriples untill it returns false
-            }
+            //while (solver.nakedTriples())
+            //{
+            //    // do nothing, just keep calling nakedtriples untill it returns false
+            //}
 
-            //Console.WriteLine("\nHidden triples board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
-            //Console.WriteLine("");
+            ////Console.WriteLine("\nHidden triples board is: \n");
+            ////PrintBoard(board.getBoard(), board.getSize());
+            ////Console.WriteLine("");
 
-            emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
-            // if the number of empty cells is less than 66 percent of the board then run the algorithms
-            // skip straight to the brute force method
-            if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
-            {
-                // run the backtracking algorithm
-                solvable = RunBacktracking(solver);
+            //emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
+            //// if the number of empty cells is less than 66 percent of the board then run the algorithms
+            //// skip straight to the brute force method
+            //if (emptyCells <= (board.getSize() * board.getSize()) * 0.66)
+            //{
+            //    // run the backtracking algorithm
+            //    solvable = RunBacktracking(solver);
 
-                // return if the algoritms managed to solve the board or not
-                return solvable;
-            }
+            //    // return if the algoritms managed to solve the board or not
+            //    return solvable;
+            //}
 
             // fill in more cells using the naked quads method
-            while (solver.nakedQuads())
-            {
-                // do nothing, just keep calling nakedquads untill it returns false
-            }
+            //while (solver.nakedQuads())
+            //{
+            //    // do nothing, just keep calling nakedquads untill it returns false
+            //}
 
             //Console.WriteLine("\nHidden quads board is: \n");
             //PrintBoard(board.getBoard(), board.getSize());
             //Console.WriteLine("");
 
 
-            
-            // TODO: intersection functions are broken, up to this point the board is solved and all candidates are fine
-
-            
-            
             ////emptyCells = CountEmptyCells(board.getBoard(), board.getSize());
             ////// if the number of empty cells is less than 66 percent of the board then run the algorithms
             ////// skip straight to the brute force method
@@ -372,7 +376,14 @@ namespace SodukoSolver
             bool finished = Task.WhenAny(t1, t2).Result.Result;
             bool solved = false;
             //bool finished = Task.WhenAny(t3).Result.Result;
+            
+            //Console.WriteLine("backtracking: \n");
+            //PrintBoard(solver.board, solver.size);
+            //Console.WriteLine("");
+            //Console.WriteLine("backtrackingR: \n");
+            //PrintBoard(solver2.board, solver.size);
 
+            
             //if the first task finished first, copy its board into our board
             solved = IsSolved(solver.board, solver.size);
             if (solved)
