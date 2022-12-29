@@ -40,6 +40,7 @@ namespace SodukoSolver
         // setter for the board
         public void setBoard(Cell[,] board)
         {
+            
             this.board = board;
         }
 
@@ -48,28 +49,12 @@ namespace SodukoSolver
         // and then creates the board
         public SodokuBoard()
         {
-            // ask the user for the board dimensions
-            Console.WriteLine("Please enter the number of rows and columns for the board");
-            Console.Write("Size: ");
-            String tempSize = Console.ReadLine();
-            bool isNumber = false;
-            // check if the input is a number
-            while (!isNumber)
-            {
-                isNumber = int.TryParse(tempSize, out size);
-                if (!isNumber)
-                {
-                    Console.WriteLine("Please enter a valid number");
-                    Console.Write("Size: ");
-                    tempSize = Console.ReadLine();
-                }
-            }
-            // when a number was entered, convert it to an int
-            size = int.Parse(tempSize);
-
             // ask the user for the board string
             Console.WriteLine("Please enter the board string:");
             boardString = Console.ReadLine();
+
+            // size is the square root of the length of the board string
+            size = (int)Math.Sqrt(boardString.Length);
 
 
             // if the given board string passed the validation,
