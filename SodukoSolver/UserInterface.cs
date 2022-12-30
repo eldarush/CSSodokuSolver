@@ -433,6 +433,7 @@ namespace SodukoSolver
         // tasks and once one of the thread returns a result, it will stop the other threads and return the result
         public static bool RunBacktracking(SolvingFunctions solver)
         {
+
             // create a new solving functions class
             SolvingFunctions solver2 = new SolvingFunctions(solver.size, null);
             //SolvingFunctions solver3 = new SolvingFunctions(solver.size, null);

@@ -12,12 +12,12 @@ namespace SodukoSolver
 {
     public class Handler
     {
-        static void Main(string[] args)
-        {
-            // start the program that gets soduko board from the user 
-            // and runs the algorithm
-            UserInterface.Run();
+        //static void Main(string[] args)
+        //{
+        //    // start the program that gets soduko board from the user 
+        //    // and runs the algorithm
+        //    UserInterface.Run();
 
-        }
+        //}
     }
 }
