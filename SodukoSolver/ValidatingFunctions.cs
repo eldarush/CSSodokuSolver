@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SodukoSolver.CustomExceptions;
 using static SodukoSolver.HelperFunctions;
 
 namespace SodukoSolver
@@ -20,36 +21,28 @@ namespace SodukoSolver
         // main validation function that will call all the other validation functions
         public static bool Validate(int size, string boardString)
         {
-            // get allwoed values for the board with given length
-            allowedValues = GetAllowedChars(size);
 
             // check if the board string is the correct length
             if (!checkLength(boardString))
             {
-                Console.WriteLine("The board string cannot be used to create a board with the given dimensions." +
-                    $"the current board string's size is {boardString.Length} and that's not a square number.");
-
-                return false;
+                // throw new size exception
+                throw new SizeException(boardString.Length);
             }
+
+            // get allwoed values for the board with given length
+            allowedValues = GetAllowedChars(size);
 
             // check if the board string contains only numbers
             if (!ValidateBoardString(boardString))
             {
-                Console.WriteLine("The board string contains invalid characters");
-                return false;
+                throw new InvalidCharacterException();
             }
 
             // copy the board string to the board
             Vboard = CreateBoard(size, boardString);
 
-            // check if the board is valid
-            if (!ValidateBoard(Vboard, size))
-            {
-                return false;
-            }
-
-            // if all the validations passed, return true
-            return true;
+            // check if the board is valid, if not throw an exception
+            return ValidateBoard(Vboard,size);
         }
 
         // function that checks that the board string is the same size as the
@@ -95,8 +88,7 @@ namespace SodukoSolver
             // check for every char in the string that it is a number
             for (int i = 0; i < boardString.Length; i++)
             {
-                if (!allowedValues.Contains(boardString[i])) { 
-                    Console.WriteLine($"boardString[i] is {boardString[i]} and index is {i}");
+                if (!allowedValues.Contains(boardString[i])) {
                     return false;
                 }
             }
@@ -115,9 +107,7 @@ namespace SodukoSolver
             // if the board is null
             if (board == null)
             {
-                Console.WriteLine("board is null");
-                // return false
-                return false;
+                throw new NullBoardException();
             }
 
             // go over the valid board and check if it is valid
@@ -128,9 +118,7 @@ namespace SodukoSolver
                     // if the current cell is not valid
                     if (!ValidateCell(board, i, j, size, board[i,j].Value))
                     {
-                        Console.WriteLine($"Cell {i}.{j} is invalid");
-                        // return false
-                        return false;
+                        throw new BoardCellsNotValidException(i, j);
                     }
                 }
             }

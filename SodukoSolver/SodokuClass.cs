@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using static SodukoSolver.ValidatingFunctions;
 using static SodukoSolver.SolvingFunctions;
 using static SodukoSolver.HelperFunctions;
+using static SodukoSolver.CustomExceptions;
 
 namespace SodukoSolver
 {
@@ -54,31 +55,25 @@ namespace SodukoSolver
 
             // ask the user for the board string
             Console.WriteLine("Please enter the board string:");
-            boardString = reader.Read();
+            boardString = Console.ReadLine();
+            // while the board string is null or white space, ask the user to enter board again
+            while (String.IsNullOrWhiteSpace(boardString))
+            {
+                Console.WriteLine("The entered board string is empty, please enter a valid string:");
+                boardString = Console.ReadLine();
+            }
 
             // size is the square root of the length of the board string
             size = (int)Math.Sqrt(boardString.Length);
 
-
-            // if the given board string passed the validation,
-            // create the board
-            if (Validate(size, boardString))
+            if (isTheBoardValid(size, boardString))
             {
                 // copy the board that the testing was done on
                 // because it is valid
                 board = ValidatingFunctions.Vboard;
             }
-
-            // else exit the program
-            // TODO: add exceptions
-            else
-            {
-                Console.WriteLine("The board string is not valid");
-                Environment.Exit(0);
-            }
-
+            // if the board is not valid, an exception will be thrown 
         }
-
 
         // Constructor that will take the board string from a given file path
         // and will create the board
@@ -95,19 +90,13 @@ namespace SodukoSolver
 
             // if the given board string passed the validation,
             // create the board
-            if (Validate(size, boardString))
+            if (isTheBoardValid(size,boardString))
             {
                 // copy the board that the testing was done on
                 // because it is valid
                 board = ValidatingFunctions.Vboard;
             }
-
-            // else exit the program
-            else
-            {
-                Console.WriteLine("The board string is not valid");
-                Environment.Exit(0);
-            }
+            // if the board is not valid, an exception will be thrown 
         }
     }
 }

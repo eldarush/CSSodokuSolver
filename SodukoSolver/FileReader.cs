@@ -26,7 +26,8 @@ namespace SodukoSolver
                 // first check if the file exists
                 if (!File.Exists(filepath))
                 {
-                    throw new FileNotFoundException("file path does not exist, cannot read file");
+                    throw new FileNotFoundException("file path does not exist, cannot read file \n "+
+                        $"entered file path is: {filepath}");
                 }
                 // read the file and return the board string
                 string text = File.ReadAllText(filepath);

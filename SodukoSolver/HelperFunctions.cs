@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static SodukoSolver.CustomExceptions;
+using static SodukoSolver.ValidatingFunctions;
 
 namespace SodukoSolver
 {
@@ -40,6 +42,59 @@ namespace SodukoSolver
                     counter++;
                 }
             }
+        }
+
+        // function that tries to validate the board
+        public static bool isTheBoardValid(int size, string boardString)
+        {
+            bool valid = false;
+            try
+            {
+                valid = Validate(size, boardString);
+            }
+            // catch the custom exceptions, print their error messages and exit
+            catch (SizeException se)
+            {
+                Console.WriteLine(se.Message);
+                Environment.Exit(0);
+            }
+            catch (InvalidCharacterException ice)
+            {
+                Console.WriteLine(ice.Message);
+                Environment.Exit(0);
+            }
+            catch (BoardCellsNotValidException bcne)
+            {
+                Console.WriteLine(bcne.Message);
+                Environment.Exit(0);
+            }
+            catch (NullBoardException nbe)
+            {
+                Console.WriteLine(nbe.Message);
+                Environment.Exit(0);
+            }
+            return valid;
+        }
+
+        // print ascii art 
+        public static void PrintAsciiArt()
+        {
+            var arr = new[] {
+            @"┌────────────────────────────────────────────────────────────────────────────────────────────────────┐",
+            @"│ ╔═══╗────╔╗──╔╗───────╔═══╗──╔╗──────────╔══╗───────╔═══╦╗──╔╗───────╔═══╗──╔╗──────╔╗─────╔╗───── │",
+            @"│ ║╔═╗║────║║──║║───────║╔═╗║──║║──────────║╔╗║───────║╔══╣║──║║───────║╔═╗║──║║──────║║─────║║───── │",
+            @"│ ║╚══╦══╦═╝╠╗╔╣║╔╦╗╔╗──║╚══╦══╣╠╗╔╦══╦═╗──║╚╝╚╦╗─╔╗──║╚══╣║╔═╝╠══╦═╗──║║─║╠══╣║╔══╦═╗║╚═╦══╦╣║╔╗─╔╗ │",
+            @"│ ╚══╗║╔╗║╔╗║║║║╚╝╣║║║──╚══╗║╔╗║║╚╝║║═╣╔╝──║╔═╗║║─║║──║╔══╣║║╔╗║╔╗║╔╝──║╚═╝║══╣║║╔╗║╔╗╣╔╗║║═╬╣║║║─║║ │",
+            @"│ ║╚═╝║╚╝║╚╝║╚╝║╔╗╣╚╝║──║╚═╝║╚╝║╚╗╔╣║═╣║───║╚═╝║╚═╝║──║╚══╣╚╣╚╝║╔╗║║───║╔═╗╠══║╚╣╔╗║║║║╚╝║║═╣║╚╣╚═╝║ │",
+            @"│ ╚═══╩══╩══╩══╩╝╚╩══╝──╚═══╩══╩═╩╝╚══╩╝───╚═══╩═╗╔╝──╚═══╩═╩══╩╝╚╩╝───╚╝─╚╩══╩═╩╝╚╩╝╚╩══╩══╩╩═╩═╗╔╝ │",
+            @"│ ─────────────────────────────────────────────╔═╝║────────────────────────────────────────────╔═╝║─ │",
+            @"│ ─────────────────────────────────────────────╚══╝────────────────────────────────────────────╚══╝─ │",
+            @"└────────────────────────────────────────────────────────────────────────────────────────────────────┘"
+            };
+            Console.WriteLine("\n");
+            foreach (string line in arr)
+                Console.WriteLine(line);
+            Console.WriteLine("\n");
         }
 
         //TODO: fix this function so that it prints the board correctly (currently missing the right border)
@@ -95,7 +150,7 @@ namespace SodukoSolver
                     string element;
                     if (size >= 10)
                     {
-                         element = board[i, j].Value.ToString().PadLeft(2, '0');  // add leading zero for single digit values
+                        element = board[i, j].Value.ToString().PadLeft(2, '0');  // add leading zero for single digit values
                     }
                     else
                     {

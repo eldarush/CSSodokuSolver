@@ -24,6 +24,9 @@ namespace SodukoSolver
         // function that will run the program
         public static void Run()
         {
+            // draw the ascii art
+            PrintAsciiArt();
+
             // print welcome message
             PrintWelcomeMessage();
         }
@@ -32,14 +35,19 @@ namespace SodukoSolver
         private static void PrintWelcomeMessage()
         {
             Console.WriteLine("Welcome to the Soduko Solver! \n" +
+                "This is a program written in c# by @Eldar Aslanbeily \n" +
+                "For more information about the program, please visit: \n" +
+                "https://github.com/eldarush/CSSodokuSolver.git \n" +
                 "This is a program that will solve any soduko board \n" +
-                "Please choose the form of input for the soduko: \n" +
+                "\nPlease choose the form of input for the soduko: \n" +
                 "\t s: input a board string that will represent a board \n" +
                 "\t f: input a file that will conntain the board \n" +
                 "\t press any other key to exit the program");
 
             // get the user input
-            String tempInput = Console.ReadLine();
+            Console.Write("\nPlease enter your choice: ");
+            string tempInput = Console.ReadKey().KeyChar.ToString();
+            Console.WriteLine("");
             bool validInput = false;
             char input;
 
@@ -50,7 +58,7 @@ namespace SodukoSolver
                 if (!validInput)
                 {
                     Console.WriteLine("Please Enter a valid character");
-                    tempInput = Console.ReadLine();
+                    tempInput = Console.ReadKey().KeyChar.ToString(); ;
                 }
             }
 
@@ -63,7 +71,7 @@ namespace SodukoSolver
             SolvingFunctions solver;
 
             // watch to keep trac of how long it took the algoritm to solve
-            var watch = new System.Diagnostics.Stopwatch();
+            var watch = new Stopwatch();
 
 
             switch (input)
@@ -74,8 +82,9 @@ namespace SodukoSolver
                     board = new SodokuBoard();
 
                     // print the input board
-                    Console.WriteLine("\nInput board is: \n");
-                    PrintBoard(board.getBoard(), board.getSize());
+                    //Console.WriteLine("\nInput board is: \n");
+                    //PrintBoard(board.getBoard(), board.getSize());
+                    Console.WriteLine("\nBoard successfully read from console, Finding solution...");
 
                     // create new solving functions object
                     solver = new SolvingFunctions(board.getSize(), board.getBoard());
@@ -122,13 +131,21 @@ namespace SodukoSolver
                     // ask the user for the file path
                     Console.WriteLine("Please enter the file path:");
                     string filepath = Console.ReadLine();
+                    // while the board string is null or white space, ask the user to enter board again
+                    while (String.IsNullOrWhiteSpace(filepath))
+                    {
+                        Console.WriteLine("The entered file path is empty, please enter a valid path:");
+                        filepath = Console.ReadLine();
+                    }
+
 
                     // create a soduko board from the file path
                     board = new SodokuBoard(filepath);
-                    
-                    // print the input board
-                    Console.WriteLine("\nInput board is: \n");
-                    PrintBoard(board.getBoard(), board.getSize());
+
+                    //// print the input board
+                    //Console.WriteLine("\nInput board is: \n");
+                    //PrintBoard(board.getBoard(), board.getSize());
+                    Console.WriteLine("\nBoard successfully read from file, Finding solution...");
 
                     // create new solving functions object
                     solver = new SolvingFunctions(board.getSize(), board.getBoard());
@@ -166,7 +183,7 @@ namespace SodukoSolver
                         string solvedfilename = filename.Replace(".txt", "SOLVED.txt");
                         string solvedfilepath = Path.Combine(filedirectory, solvedfilename);
 
-                        Console.WriteLine($"\nSolved board string was written to a new file with the path:\n{solvedfilepath}");
+                        Console.WriteLine($"\nSolved board string was written to a file with the path:\n{solvedfilepath}");
                         writer.Write(solvedboardstring);
 
                         // print the elapsed times in seconds, milliseconds
@@ -188,6 +205,7 @@ namespace SodukoSolver
                     
                 default:
                     Console.WriteLine("Exiting the program");
+                    Environment.Exit(0);
                     break;
             }
         }
