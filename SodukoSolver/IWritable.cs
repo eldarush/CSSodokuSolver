@@ -8,7 +8,7 @@ namespace SodukoSolver
 {
     public interface IWritable
     {
-        // write function that will write a board of cells
-        bool Write(Cell[,] board);
+        // write function that will write a board string
+        bool Write(string boardstring);
     }
 }

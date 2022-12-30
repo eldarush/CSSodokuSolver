@@ -8,7 +8,7 @@ namespace SodukoSolver
 {
     public interface IReadable
     {
-        // read Function that will return a board of cells
-        Cell[,] Read();
+        // read Function that will return a board string
+        string Read();
     }
 }

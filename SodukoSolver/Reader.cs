@@ -17,8 +17,8 @@ namespace SodukoSolver
             this.reader = reader;
         }
 
-        // read function that will return a board of cells
-        public Cell[,] Read()
+        // read function that will return a board string
+        public string Read()
         {
             return reader.Read();
         }

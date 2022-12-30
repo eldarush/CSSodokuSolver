@@ -17,10 +17,10 @@ namespace SodukoSolver
             this.writer = writer;
         }
 
-        // write function that will write a board of cells
-        public bool Write(Cell[,] board)
+        // write function that will write a board string
+        public bool Write(string boardstring)
         {
-            return writer.Write(board);
+            return writer.Write(boardstring);
         }
 
     }

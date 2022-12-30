@@ -40,18 +40,21 @@ namespace SodukoSolver
         // setter for the board
         public void setBoard(Cell[,] board)
         {
-            
+
             this.board = board;
         }
 
 
-        // Constructor that asks the user for board dimensions and board string
+        // Constructor that will the board string from the console
         // and then creates the board
         public SodokuBoard()
         {
+            // create new console reader
+            IReadable reader = new ConsoleReader();
+
             // ask the user for the board string
             Console.WriteLine("Please enter the board string:");
-            boardString = Console.ReadLine();
+            boardString = reader.Read();
 
             // size is the square root of the length of the board string
             size = (int)Math.Sqrt(boardString.Length);
@@ -65,7 +68,7 @@ namespace SodukoSolver
                 // because it is valid
                 board = ValidatingFunctions.Vboard;
             }
-            
+
             // else exit the program
             // TODO: add exceptions
             else
@@ -76,5 +79,35 @@ namespace SodukoSolver
 
         }
 
+
+        // Constructor that will take the board string from a given file path
+        // and will create the board
+        public SodokuBoard(string path)
+        {
+            // create new file reader
+            IReadable reader = new FileReader(path);
+
+            // read the board string from the file
+            boardString = reader.Read();
+
+            // size is the square root of the length of the board string
+            size = (int)Math.Sqrt(boardString.Length);
+
+            // if the given board string passed the validation,
+            // create the board
+            if (Validate(size, boardString))
+            {
+                // copy the board that the testing was done on
+                // because it is valid
+                board = ValidatingFunctions.Vboard;
+            }
+
+            // else exit the program
+            else
+            {
+                Console.WriteLine("The board string is not valid");
+                Environment.Exit(0);
+            }
+        }
     }
 }

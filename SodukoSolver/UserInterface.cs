@@ -65,8 +65,10 @@ namespace SodukoSolver
             // watch to keep trac of how long it took the algoritm to solve
             var watch = new System.Diagnostics.Stopwatch();
 
+
             switch (input)
             {
+                // if the user chose to input a manual console string
                 case 's':
                     // create a soduko board from the string
                     board = new SodokuBoard();
@@ -113,12 +115,77 @@ namespace SodukoSolver
                         Console.WriteLine("\nElapsed time: {0} seconds", watch.Elapsed.TotalSeconds);
                         Console.WriteLine("Elapsed time: {0} milliseconds", watch.Elapsed.TotalMilliseconds);
                     }
+                    break;
+
+                // in the case that the user wants to input a file path
+                case 'f':
+                    // ask the user for the file path
+                    Console.WriteLine("Please enter the file path:");
+                    string filepath = Console.ReadLine();
+
+                    // create a soduko board from the file path
+                    board = new SodokuBoard(filepath);
+                    
+                    // print the input board
+                    Console.WriteLine("\nInput board is: \n");
+                    PrintBoard(board.getBoard(), board.getSize());
+
+                    // create new solving functions object
+                    solver = new SolvingFunctions(board.getSize(), board.getBoard());
+
+                    // Solve the board and start the timer
+                    watch.Start();
+
+                    // run the algoritms to solve the board
+                    CanBeSolved = Solve(solver);
+
+                    // stop the timer
+                    watch.Stop();
+
+                    // if the board can be solved then print the solved board
+                    if (CanBeSolved)
+                    {
+
+                        // print the solved board
+                        Console.WriteLine("\nSolved board is: \n");
+                        PrintBoard(board.getBoard(), board.getSize());
+
+                        // print the solved board string
+                        Console.WriteLine("\nSolved board string is: \n");
+                        string solvedboardstring = GetBoardString(board.getBoard(), board.getSize());
+                        // create new console reader object and write the string to the console
+                        IWritable writer = new ConsoleReader();
+                        writer.Write(solvedboardstring);
+
+                        // create a new file reader object and write the string to a new file 'nameSOLVED'
+                        writer = new FileReader(filepath);
+                        
+                        // get the solved file directory
+                        string filedirectory = Path.GetDirectoryName(filepath);
+                        string filename = Path.GetFileName(filepath);
+                        string solvedfilename = filename.Replace(".txt", "SOLVED.txt");
+                        string solvedfilepath = Path.Combine(filedirectory, solvedfilename);
+
+                        Console.WriteLine($"\nSolved board string was written to a new file with the path:\n{solvedfilepath}");
+                        writer.Write(solvedboardstring);
+
+                        // print the elapsed times in seconds, milliseconds
+                        Console.WriteLine("\nElapsed time: {0} seconds", watch.Elapsed.TotalSeconds);
+                        Console.WriteLine("Elapsed time: {0} milliseconds", watch.Elapsed.TotalMilliseconds);
+
+                    }
+                    else
+                    {
+                        // if the board can not be solved then display message 
+                        Console.WriteLine("Board Cannot Be Solved :(");
+
+                        // print the elapsed times in seconds, milliseconds
+                        Console.WriteLine("\nElapsed time: {0} seconds", watch.Elapsed.TotalSeconds);
+                        Console.WriteLine("Elapsed time: {0} milliseconds", watch.Elapsed.TotalMilliseconds);
+                    }
 
                     break;
-                case 'f':
-                    // implement getting the board from a file
-                    //board = new SodokuBoardF();
-                    break;
+                    
                 default:
                     Console.WriteLine("Exiting the program");
                     break;

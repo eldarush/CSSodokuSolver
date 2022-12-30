@@ -458,7 +458,8 @@ namespace SodukoSolver
             {
                 for (int col = 0; col < size; col++)
                 {
-                    boardString += board[row, col].Value;
+                    // convert each cell value to its ascii representation
+                    boardString += (char)(board[row, col].Value + '0');
                 }
             }
             return boardString;
