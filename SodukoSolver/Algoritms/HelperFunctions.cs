@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using static SodukoSolver.CustomExceptions;
-using static SodukoSolver.ValidatingFunctions;
+using static SodukoSolver.Exceptions.CustomExceptions;
+using static SodukoSolver.Algoritms.ValidatingFunctions;
 
-namespace SodukoSolver
+namespace SodukoSolver.Algoritms
 {
     public static class HelperFunctions
     {
-        // function that gets rows, columns, and board string and creates the board
+        /// <summary>
+        /// Function that gets a board string and returns a board of cells
+        /// </summary>
+        /// <param name="size"> the size of the board</param>
+        /// <param name="boardString">the string that represents the board</param>
+        /// <returns>the board of cells</returns>
         public static Cell[,] CreateBoard(int size, string boardString)
         {
             // create a new board
@@ -24,7 +30,12 @@ namespace SodukoSolver
             return board;
         }
 
-        // CopyBoardStringToBoard function that copies the board string to the board
+        /// <summary>
+        /// Function that copies the board string to the board
+        /// </summary>
+        /// <param name="size"> the size of the board</param>
+        /// <param name="boardString">the string that represents the board</param>
+        /// <param name="board">the board to copy the string to</param>
         private static void CopyBoardStringToBoard(int size, string boardString, Cell[,] board)
         {
             // create a counter for the board string
@@ -44,8 +55,13 @@ namespace SodukoSolver
             }
         }
 
-        // function that tries to validate the board
-        public static bool isTheBoardValid(int size, string boardString)
+        /// <summary>
+        /// Function that chekcs if the board is valid
+        /// </summary>
+        /// <param name="size">the size of the board</param>
+        /// <param name="boardString">the string that represents the board</param>
+        /// <returns>if the board is valid or not</returns>
+        public static bool IsTheBoardValid(int size, string boardString)
         {
             bool valid = false;
             try
@@ -76,9 +92,12 @@ namespace SodukoSolver
             return valid;
         }
 
-        // print ascii art 
+        /// <summary>
+        /// function that prints the ascci art in the console
+        /// </summary>
         public static void PrintAsciiArt()
         {
+            // the most beautiful art known to mankind
             var arr = new[] {
             @"┌────────────────────────────────────────────────────────────────────────────────────────────────────┐",
             @"│ ╔═══╗────╔╗──╔╗───────╔═══╗──╔╗──────────╔══╗───────╔═══╦╗──╔╗───────╔═══╗──╔╗──────╔╗─────╔╗───── │",
@@ -95,11 +114,15 @@ namespace SodukoSolver
             foreach (string line in arr)
                 Console.WriteLine(line);
             Console.WriteLine("\n");
+            // set the console title
+            Console.Title = "Sudoku Solver by @Eldar Aslanbeily";
         }
 
-        //TODO: fix this function so that it prints the board correctly (currently missing the right border)
-        // PrintBoard method that prints the board to the console
-        // PrintBoard method that prints the board to the console
+        /// <summary>
+        /// function that prints the board
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size of the board</param>
         public static void PrintBoard(Cell[,] board, int size)
         {
             // Find the maximum length of the string representation of any element in the board
@@ -211,23 +234,95 @@ namespace SodukoSolver
             Console.WriteLine();
         }
 
-        //TODO: add validation here 
-        // GetBoardString method that gets the board string from the user
+        /// <summary>
+        /// function that converts board of cells to board of ints
+        /// </summary>
+        /// <param name="board">the board of cells</param>
+        /// <returns>the board of cells</returns>
+        public static Cell[,] IntsToCells(int[,] board)
+        {
+            int size = board.GetLength(0);
+            Cell[,] newBoard = new Cell[size, size];
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    newBoard[i, j] = new Cell(size, board[i, j]);
+                }
+            }
+            return newBoard;
+        }
+
+        /// <summary>
+        /// function that converts a boardstring to a board of ints
+        /// </summary>
+        /// <param name="boardstring">the string that represents the board</param>
+        /// <param name="array">the 2d array where the board will be stored</param>
+        /// <param name="size">the size of the board</param>
+        /// <returns>the 2d array of ints</returns>
+        public static int[,] ConvertTo2DArray(string boardstring, int[,] array, int size)
+        {
+            if (array is null)
+            {
+                throw new ArgumentNullException(nameof(array));
+            }
+
+            int[,] newBoard = new int[size, size];
+            int counter = 0;
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    newBoard[i, j] = boardstring[counter] - '0';
+                    counter++;
+                }
+            }
+            return newBoard;
+        }
+
+        /// <summary>
+        /// function that converts board of ints to string
+        /// </summary>
+        /// <param name="array">the 2d array where the board will be stored</param>
+        /// <param name="size">the size of the board</param>
+        /// <returns>the string that represents the board</returns>
+        public static string ConvertToString(int[,] array, int size)
+        {
+            string boardstring = "";
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    boardstring += array[i, j];
+                }
+            }
+            return boardstring;
+        }
+
+        /// <summary>
+        /// GetBoardString method that gets the board string from the user
+        /// </summary>
+        /// <returns>the string that represents the board form the console</returns>
         public static string GetBoardString()
         {
             // create a new string builder
-            StringBuilder boardString = new StringBuilder();
+            StringBuilder boardString = new();
 
             // get the board string from the user
-            Console.WriteLine("Please enter the board string (81 digits):");
+            Console.WriteLine("Please enter the board string:");
             boardString.Append(Console.ReadLine());
 
             // return the board string
             return boardString.ToString();
         }
 
-        // fumction that gets a board and counts the amount of empty cells
-        // empty cells are cells with value 0
+        /// <summary>
+        ///  fumction that gets a board and counts the amount of empty cells
+        ///   empty cells are cells with value 0
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
+        /// <returns>how many empty cells are there</returns>
         public static float CountEmptyCells(Cell[,] board, int size)
         {
             // create a counter for the empty cells
@@ -252,7 +347,12 @@ namespace SodukoSolver
             return counter;
         }
 
-        // function that gets a board and returns an exact copy of it
+        /// <summary>
+        /// function that gets a board and returns an exact copy of it
+        /// </summary>
+        /// <param name="board">origin board</param>
+        /// <param name="size">size of the board</param>
+        /// <returns>exact copy of the board</returns>
         public static Cell[,] CopyBoard(Cell[,] board, int size)
         {
             // create a new board
@@ -265,11 +365,13 @@ namespace SodukoSolver
                 for (int j = 0; j < size; j++)
                 {
                     // copy the cell to the new board
-                    newBoard[i, j] = new Cell(size, board[i, j].Value);
-                    // copy the candidates
-                    newBoard[i, j].Candidates = new HashSet<int>(board[i, j].Candidates);
-                    // copy the solved boolean
-                    newBoard[i, j].Solved = board[i, j].Solved;
+                    newBoard[i, j] = new Cell(size, board[i, j].Value)
+                    {
+                        // copy the candidates
+                        Candidates = new HashSet<int>(board[i, j].Candidates),
+                        // copy the solved boolean
+                        Solved = board[i, j].Solved
+                    };
                 }
             }
 
@@ -277,7 +379,12 @@ namespace SodukoSolver
             return newBoard;
         }
 
-        // function that gets a board and checks if it is solved
+        /// <summary>
+        /// function that gets a board and checks if it is solved
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
+        /// <returns>if the board is solved</returns>
         public static bool IsSolved(Cell[,] board, int size)
         {
             // loop through the rows
@@ -299,7 +406,38 @@ namespace SodukoSolver
             return true;
         }
 
-        // function that gets a board and print the candidates of each cell
+        /// <summary>
+        /// function that gets a board and checks if it is solved
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
+        /// <returns>if the board is solved</returns>
+        public static bool IsSolvedInts(int[,] board, int size)
+        {
+            // loop through the rows
+            for (int i = 0; i < size; i++)
+            {
+                // loop through the columns
+                for (int j = 0; j < size; j++)
+                {
+                    // if the cell is not solved
+                    if (board[i, j] == 0)
+                    {
+                        // return false
+                        return false;
+                    }
+                }
+            }
+
+            // return true
+            return true;
+        }
+
+        /// <summary>
+        /// function that gets a board and print the candidates of each cell
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
         public static void PrintCandidatesInBoard(Cell[,] board, int size)
         {
             // loop through the rows
@@ -321,7 +459,12 @@ namespace SodukoSolver
             }
         }
 
-
+        /// <summary>
+        /// function taht converts the board of cells to board of nodes for the dancing links 
+        /// </summary>
+        /// <param name="board">board of cells</param>
+        /// <param name="size">size</param>
+        /// <returns>board of nodes</returns>
         public static Node[][] ConvertBoard(Cell[,] board, int size)
         {
             // create a matrix of nodes with the same dimensions as the board
@@ -332,7 +475,7 @@ namespace SodukoSolver
             }
 
             // create a dictionary to map cell values to column indices
-            Dictionary<int, int> valueToCol = new Dictionary<int, int>();
+            Dictionary<int, int> valueToCol = new();
             int nextCol = 0;
 
             // iterate through the cells in the board
@@ -341,10 +484,12 @@ namespace SodukoSolver
                 for (int col = 0; col < size; col++)
                 {
                     // create a new node for the cell
-                    Node node = new Node();
-                    node.Row = row;
-                    node.Col = col;
-                    node.Value = board[row, col].Value;
+                    Node node = new()
+                    {
+                        Row = row,
+                        Col = col,
+                        Value = board[row, col].Value
+                    };
 
                     // if the cell has a value, add it to the dictionary if it's not already there
                     if (node.Value > 0)
@@ -362,7 +507,7 @@ namespace SodukoSolver
             }
 
             // create a root node to represent the entire matrix
-            Node root = new Node();
+            Node root = new();
             root.Left = root;
             root.Right = root;
             root.Up = root;
@@ -435,6 +580,11 @@ namespace SodukoSolver
             return matrix;
         }
 
+        /// <summary>
+        /// function that chooses the columm with the fewest "on" cells
+        /// </summary>
+        /// <param name="root">the root of the matrix</param>
+        /// <returns>the columm with the fewest "on" cells</returns>
         public static Node ChooseColumn(Node root)
         {
             // start with the root node's right pointer
@@ -474,7 +624,10 @@ namespace SodukoSolver
             return chosenCol;
         }
 
-
+        /// <summary>
+        /// function that updates the cover columm
+        /// </summary>
+        /// <param name="col">the columm</param>
         public static void CoverColumn(Node col)
         {
             // update the left and right pointers of the nodes to the left and right of the column
@@ -490,7 +643,11 @@ namespace SodukoSolver
             }
         }
 
-        // very simple printBoard function for board of nodes
+        /// <summary>
+        /// very simple printBoard function for board of nodes
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
         public static void PrintBoardNode(Node[][] board, int size)
         {
             for (int row = 0; row < size; row++)
@@ -505,7 +662,12 @@ namespace SodukoSolver
         }
 
 
-        // function that gets a boarf of cells and its size and returns the string representation of the board
+        /// <summary>
+        /// function that gets a boarf of cells and its size and returns the string representation of the board
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
+        /// <returns>the board string from the board</returns>
         public static string GetBoardString(Cell[,] board, int size)
         {
             string boardString = "";
@@ -520,7 +682,12 @@ namespace SodukoSolver
             return boardString;
         }
 
-        // function that gets a string representation of a board and its size and returns the board of nodes
+        /// <summary>
+        /// function that gets a string representation of a board and its size and returns the board of nodes
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
+        /// <returns>the board that was made out of the string</returns>
         public static Node[][] ConvertStringBoard(string board, int size)
         {
             // create a matrix of nodes with the same dimensions as the board
@@ -531,7 +698,7 @@ namespace SodukoSolver
             }
 
             // create a dictionary to map cell values to column indices
-            Dictionary<int, int> valueToCol = new Dictionary<int, int>();
+            Dictionary<int, int> valueToCol = new();
             int nextCol = 0;
 
             // iterate through the cells in the board
@@ -540,10 +707,12 @@ namespace SodukoSolver
                 for (int col = 0; col < size; col++)
                 {
                     // create a new node for the cell
-                    Node node = new Node();
-                    node.Row = row;
-                    node.Col = col;
-                    node.Value = int.Parse(board[row * size + col].ToString());
+                    Node node = new()
+                    {
+                        Row = row,
+                        Col = col,
+                        Value = int.Parse(board[row * size + col].ToString())
+                    };
 
                     // if the cell has a value, add it to the dictionary if it's not already there
                     if (node.Value > 0)
@@ -561,7 +730,7 @@ namespace SodukoSolver
             }
 
             // create a root node to represent the entire matrix
-            Node root = new Node();
+            Node root = new();
             root.Left = root;
             root.Right = root;
             root.Up = root;
@@ -611,8 +780,8 @@ namespace SodukoSolver
                     }
                 }
             }
-            
-        // link the root node to the first and last nodes in the first and last rows
+
+            // link the root node to the first and last nodes in the first and last rows
             root.Right = matrix[0][0];
             root.Left = matrix[0][size - 1];
             matrix[0][0].Left = root;
@@ -626,7 +795,12 @@ namespace SodukoSolver
             return matrix;
         }
 
-        // function that gets a board of nodes and its size and returns the board of cells
+        /// <summary>
+        /// function that gets a board of nodes and its size and returns the board of cells
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
+        /// <returns>the created board of cells</returns>
         public static Cell[,] ConvertNodeBoardToCellBoard(Node[][] board, int size)
         {
             Cell[,] cellBoard = new Cell[size, size];
@@ -640,13 +814,19 @@ namespace SodukoSolver
             return cellBoard;
         }
 
-        // function that gets a board of cells and a value and wil return how many cells have its value as one of their candidates
+        /// <summary>
+        /// function that gets a board of cells and a value and wil return how many cells have its value as one of their candidates
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
+        /// <param name="value">the value to be checked</param>
+        /// <returns>how many cells have its value as one of their candidates</returns>
         public static int GetNumOfCellsThatHaveCandidate(Cell[,] board, int size, int value)
         {
             // check if the board is not null
             if (board == null)
             {
-                throw new ArgumentNullException("board");
+                return -1;
             }
             int count = 0;
             for (int row = 0; row < size; row++)

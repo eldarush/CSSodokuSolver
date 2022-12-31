@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SodukoSolver
+namespace SodukoSolver.Exceptions
 {
     public class CustomExceptions
     {
@@ -14,6 +14,11 @@ namespace SodukoSolver
             public SizeException(int size)
                 : base("The board string cannot be used to create a board with the given dimensions, " +
                     $"the current board string's size is {size} and that's not a square number.")
+            {
+            }
+            public SizeException()
+                : base("The board string cannot be used to create a board with the given dimensions, " +
+                    $"the current board string's length is 4, but a 2 by 2 board is not a thing.")
             {
             }
         }
@@ -33,7 +38,7 @@ namespace SodukoSolver
         {
             public BoardCellsNotValidException(int row, int col)
                 : base($"Cell ({row},{col}) is invalid")
-            {   
+            {
             }
         }
 

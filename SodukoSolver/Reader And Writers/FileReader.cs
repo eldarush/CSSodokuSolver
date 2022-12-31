@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-
+using SodukoSolver.Interfaces;
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8604 // Possible null reference argument.
 namespace SodukoSolver
 {
     public class FileReader : IReadable, IWritable
     {
         // the name of the file that will contain the soduko puzzle
-        private string filepath;
+        private readonly string filepath;
 
         // constructor that will set the filename
         public FileReader(string filepath)
@@ -18,7 +20,10 @@ namespace SodukoSolver
             this.filepath = filepath;
         }
 
-        // read function that will read the file and return the board string
+        /// <summary>
+        /// read Function that will return a board string
+        /// </summary>
+        /// <returns></returns>
         public string Read()
         {
             try

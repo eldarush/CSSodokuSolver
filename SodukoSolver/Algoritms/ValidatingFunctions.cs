@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static SodukoSolver.CustomExceptions;
-using static SodukoSolver.HelperFunctions;
+using static SodukoSolver.Exceptions.CustomExceptions;
+using static SodukoSolver.Algoritms.HelperFunctions;
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CA2211 // Non-constant fields should not be visible
 
-namespace SodukoSolver
+namespace SodukoSolver.Algoritms
 {
     public static class ValidatingFunctions
     {
         // the current board that is being validated
-        public static Cell[,] Vboard;
+        public static Cell[,]? Vboard;
 
         // the allowed values for the board
-        private static char[] allowedValues;
+        private static char[]? allowedValues;
 
         // TODO add the validation functions here
 
@@ -23,7 +25,7 @@ namespace SodukoSolver
         {
 
             // check if the board string is the correct length
-            if (!checkLength(boardString))
+            if (!CheckLength(boardString))
             {
                 // throw new size exception
                 throw new SizeException(boardString.Length);
@@ -42,15 +44,18 @@ namespace SodukoSolver
             Vboard = CreateBoard(size, boardString);
 
             // check if the board is valid, if not throw an exception
-            return ValidateBoard(Vboard,size);
+            return ValidateBoard(Vboard, size);
         }
 
         // function that checks that the board string is the same size as the
         // board size squard
-        private static bool checkLength(string boardString)
+        private static bool CheckLength(string boardString)
         {
             // if the size is negrive return false
-            if (boardString.Length <1) return false;
+            if (boardString.Length < 1) return false;
+
+            // if the boardstring length is 4, then retues false because a 2 by 2 board is not valid
+            if (boardString.Length == 4) throw new SizeException();
 
             // check the the square root of the board string length is an integer
             return Math.Sqrt(boardString.Length) % 1 == 0;
@@ -61,7 +66,7 @@ namespace SodukoSolver
         public static char[] GetAllowedChars(int size)
         {
             // create an array of allowed chars
-            char[] allowed = new char[size+1];
+            char[] allowed = new char[size + 1];
 
             // add the allowed chars to the array
             for (int i = 0; i <= size; i++)
@@ -70,7 +75,7 @@ namespace SodukoSolver
             }
             // return the array of allowed chars
             return allowed;
-            
+
         }
 
         // this function will validate the board string
@@ -88,7 +93,9 @@ namespace SodukoSolver
             // check for every char in the string that it is a number
             for (int i = 0; i < boardString.Length; i++)
             {
-                if (!allowedValues.Contains(boardString[i])) {
+
+                if (!allowedValues.Contains(boardString[i]))
+                {
                     return false;
                 }
             }
@@ -116,15 +123,15 @@ namespace SodukoSolver
                 for (int j = 0; j < size; j++)
                 {
                     // if the current cell is not valid
-                    if (!ValidateCell(board, i, j, size, board[i,j].Value))
+                    if (!ValidateCell(board, i, j, size, board[i, j].Value))
                     {
                         throw new BoardCellsNotValidException(i, j);
                     }
                 }
             }
-        // if the board is valid
-        // return true
-        return true;
+            // if the board is valid
+            // return true
+            return true;
         }
 
         // this function will validate a cell
@@ -145,8 +152,8 @@ namespace SodukoSolver
             for (int i = 0; i < size; i++)
             {
                 // if the value appears in the current row or col return false
-                if ((i != Ccol && board[Crow, i].Value == value)
-                    || (i!= Crow && board[i,Ccol].Value == value))
+                if (i != Ccol && board[Crow, i].Value == value
+                    || i != Crow && board[i, Ccol].Value == value)
                     return false;
             }
 
@@ -158,8 +165,8 @@ namespace SodukoSolver
 
             // find the starting col and row of the sub square in which the cell
             // is located
-            int srowStart = (Crow / srow) * srow;
-            int scolStart = (Ccol / scol) * scol;
+            int srowStart = Crow / srow * srow;
+            int scolStart = Ccol / scol * scol;
 
             // go over the sub square and check if the cell value is not repeated
             for (int i = srowStart; i < srowStart + srow; i++)
@@ -168,7 +175,7 @@ namespace SodukoSolver
                 {
                     // if the current cell is not the current cell
                     // and the value is the same as the value of the cell
-                    if (i != Crow && j != Ccol && board[i,j].Value ==  value)
+                    if (i != Crow && j != Ccol && board[i, j].Value == value)
                     {
                         // return false because the cell cant be in the same cube
                         return false;

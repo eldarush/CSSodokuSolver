@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 // import both classes whose functions will be used
-using static SodukoSolver.ValidatingFunctions;
-using static SodukoSolver.SolvingFunctions;
-using static SodukoSolver.HelperFunctions;
-using static SodukoSolver.CustomExceptions;
-
+using static SodukoSolver.Algoritms.ValidatingFunctions;
+using static SodukoSolver.Algoritms.SolvingFunctions;
+using static SodukoSolver.Algoritms.HelperFunctions;
+using static SodukoSolver.Exceptions.CustomExceptions;
+using SodukoSolver.Interfaces;
+using SodukoSolver.Algoritms;
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 namespace SodukoSolver
 {
     // this is a class for the soduko board
@@ -18,28 +21,28 @@ namespace SodukoSolver
     class SodokuBoard
     {
         // board dimentions
-        private int size;
+        private readonly int size;
 
         // the string that will be used to create the board
-        private string boardString;
+        private readonly string boardString;
 
         // the board itself
         private Cell[,] board;
 
         // getters for the dimensions
-        public int getSize()
+        public int GetSize()
         {
             return size;
         }
 
         // getter for the board
-        public Cell[,] getBoard()
+        public Cell[,] GetBoard()
         {
             return board;
         }
 
         // setter for the board
-        public void setBoard(Cell[,] board)
+        public void SetBoard(Cell[,] board)
         {
 
             this.board = board;
@@ -51,7 +54,7 @@ namespace SodukoSolver
         public SodokuBoard()
         {
             // create new console reader
-            IReadable reader = new ConsoleReader();
+            _ = new ConsoleReader();
 
             // ask the user for the board string
             Console.WriteLine("Please enter the board string:");
@@ -66,11 +69,11 @@ namespace SodukoSolver
             // size is the square root of the length of the board string
             size = (int)Math.Sqrt(boardString.Length);
 
-            if (isTheBoardValid(size, boardString))
+            if (IsTheBoardValid(size, boardString))
             {
                 // copy the board that the testing was done on
                 // because it is valid
-                board = ValidatingFunctions.Vboard;
+                board = Vboard;
             }
             // if the board is not valid, an exception will be thrown 
         }
@@ -90,7 +93,7 @@ namespace SodukoSolver
 
             // if the given board string passed the validation,
             // create the board
-            if (isTheBoardValid(size,boardString))
+            if (IsTheBoardValid(size,boardString))
             {
                 // copy the board that the testing was done on
                 // because it is valid
