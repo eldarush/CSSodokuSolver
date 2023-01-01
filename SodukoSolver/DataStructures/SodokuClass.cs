@@ -13,6 +13,7 @@ using SodukoSolver.Interfaces;
 using SodukoSolver.Algoritms;
 #pragma warning disable CS8601 // Possible null reference assignment.
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
 namespace SodukoSolver
 {
     // this is a class for the soduko board
@@ -24,7 +25,7 @@ namespace SodukoSolver
         private readonly int size;
 
         // the string that will be used to create the board
-        private readonly string boardString;
+        public readonly string boardString;
 
         // the board itself
         private Cell[,] board;

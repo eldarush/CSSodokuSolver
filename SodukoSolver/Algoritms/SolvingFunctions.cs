@@ -43,6 +43,8 @@ namespace SodukoSolver.Algoritms
             BlockSize = (int)Math.Sqrt(size);
         }
 
+        #region backtracking algorithm
+
         /// <summary>
         ///this is the implementation of the backtracking algorithm
         /// that goes over the board and tries to solve it
@@ -1813,122 +1815,124 @@ namespace SodukoSolver.Algoritms
             return changed;
         }
 
+        #endregion backtracking algorithm
+
         // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //                                                                                                       DANCING LINKS
         // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         // dancing linsk algorithm
-        public bool DancingLinks(Cell[,] board)
-        {
-            // convert the board of cells to a matrix of nodes
-            Node[][] matrix = ConvertBoard(board, Size);
+        //public bool DancingLinks(Cell[,] board)
+        //{
+        //    // convert the board of cells to a matrix of nodes
+        //    Node[][] matrix = ConvertBoard(board, Size);
 
-            // print the right value and left value and the up and down value of each node
-            //for (int i = 0; i < size; i++)
-            //{
-            //    for (int j = 0; j < size; j++)
-            //    {
-            //        Console.WriteLine("Node " + i + " " + j + " right: " + matrix[i][j].Right.Value +
-            //            " left: " + matrix[i][j].Left.Value + " up: " + matrix[i][j].Up.Value + " down: " + matrix[i][j].Down.Value);
-            //    }
-            //}
+        //    // print the right value and left value and the up and down value of each node
+        //    //for (int i = 0; i < size; i++)
+        //    //{
+        //    //    for (int j = 0; j < size; j++)
+        //    //    {
+        //    //        Console.WriteLine("Node " + i + " " + j + " right: " + matrix[i][j].Right.Value +
+        //    //            " left: " + matrix[i][j].Left.Value + " up: " + matrix[i][j].Up.Value + " down: " + matrix[i][j].Down.Value);
+        //    //    }
+        //    //}
 
-            //Console.ReadLine();
+        //    //Console.ReadLine();
 
-            // find a solution to the board
-            if (DLX(matrix[0][0]))
-            {
-                // a solution was found, update the board with the solution
-                for (int row = 0; row < matrix.Length; row++)
-                {
-                    for (int col = 0; col < matrix[row].Length; col++)
-                    {
-                        Node node = matrix[row][col];
-                        if (node.Right == node)
-                        {
-                            // the node is "on", set its value in the board
-                            board[row, col].Value = node.Value;
-                            board[row, col].Solved = true;
-                        }
-                    }
-                }
+        //    // find a solution to the board
+        //    if (DLX(matrix[0][0]))
+        //    {
+        //        // a solution was found, update the board with the solution
+        //        for (int row = 0; row < matrix.Length; row++)
+        //        {
+        //            for (int col = 0; col < matrix[row].Length; col++)
+        //            {
+        //                Node node = matrix[row][col];
+        //                if (node.Right == node)
+        //                {
+        //                    // the node is "on", set its value in the board
+        //                    board[row, col].Value = node.Value;
+        //                    board[row, col].Solved = true;
+        //                }
+        //            }
+        //        }
 
-                return true;
-            }
+        //        return true;
+        //    }
 
-            // no solution was found
-            return false;
-        }
+        //    // no solution was found
+        //    return false;
+        //}
 
-        public bool DLX(Node root)
-        {
+        //public bool DLX(Node root)
+        //{
 
-            // check if the root node has no right or down pointers
-            if (root.Right == root || root.Down == root)
-            {
-                // a solution has been found
-                return true;
-            }
+        //    // check if the root node has no right or down pointers
+        //    if (root.Right == root || root.Down == root)
+        //    {
+        //        // a solution has been found
+        //        return true;
+        //    }
 
-            // choose a column with the fewest "on" cells
-            Node col = ChooseColumn(root);
+        //    // choose a column with the fewest "on" cells
+        //    Node col = ChooseColumn(root);
 
-            // if there are no columns with "on" cells, return false
-            if (col == null)
-            {
-                return false;
-            }
+        //    // if there are no columns with "on" cells, return false
+        //    if (col == null)
+        //    {
+        //        return false;
+        //    }
 
-            // cover the column
-            CoverColumn(col);
+        //    // cover the column
+        //    CoverColumn(col);
 
-            // iterate through the "on" cells in the column
-            for (Node row = col.Down; row != col; row = row.Down)
-            {
-                // save the original left and right pointers of the row
-                Node originalLeft = row.Left;
-                Node originalRight = row.Right;
+        //    // iterate through the "on" cells in the column
+        //    for (Node row = col.Down; row != col; row = row.Down)
+        //    {
+        //        // save the original left and right pointers of the row
+        //        Node originalLeft = row.Left;
+        //        Node originalRight = row.Right;
 
-                // remove the row from the matrix
-                row.Left.Right = row.Right;
-                row.Right.Left = row.Left;
+        //        // remove the row from the matrix
+        //        row.Left.Right = row.Right;
+        //        row.Right.Left = row.Left;
 
-                // iterate through the "on" cells in the row
-                for (Node cell = row.Right; cell != row; cell = cell.Right)
-                {
-                    // cover the column
-                    cell.Up.Down = cell.Down;
-                    cell.Down.Up = cell.Up;
-                }
+        //        // iterate through the "on" cells in the row
+        //        for (Node cell = row.Right; cell != row; cell = cell.Right)
+        //        {
+        //            // cover the column
+        //            cell.Up.Down = cell.Down;
+        //            cell.Down.Up = cell.Up;
+        //        }
 
-                // recursively solve the board with the new constraints
-                if (DLX(root))
-                {
-                    return true;
-                }
+        //        // recursively solve the board with the new constraints
+        //        if (DLX(root))
+        //        {
+        //            return true;
+        //        }
 
-                // add the row and columns back to the matrix
-                row.Left = originalLeft;
-                row.Right = originalRight;
-                for (Node cell = row.Right; cell != row; cell = cell.Right)
-                {
-                    cell.Up.Down = cell;
-                    cell.Down.Up = cell;
-                }
-            }
+        //        // add the row and columns back to the matrix
+        //        row.Left = originalLeft;
+        //        row.Right = originalRight;
+        //        for (Node cell = row.Right; cell != row; cell = cell.Right)
+        //        {
+        //            cell.Up.Down = cell;
+        //            cell.Down.Up = cell;
+        //        }
+        //    }
 
-            // uncover the column
-            col.Left.Right = col;
-            col.Right.Left = col;
-            for (Node row = col.Up; row != col; row = row.Up)
-            {
-                row.Left.Right = row;
-                row.Right.Left = row;
-            }
+        //    // uncover the column
+        //    col.Left.Right = col;
+        //    col.Right.Left = col;
+        //    for (Node row = col.Up; row != col; row = row.Up)
+        //    {
+        //        row.Left.Right = row;
+        //        row.Right.Left = row;
+        //    }
 
-            // no solution was found
-            return false;
-        }
+        //    // no solution was found
+        //    return false;
+        //}
 
 
     }

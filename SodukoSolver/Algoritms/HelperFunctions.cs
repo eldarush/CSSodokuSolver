@@ -489,6 +489,10 @@ namespace SodukoSolver.Algoritms
             }
         }
 
+        // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //                                                                                                 DANCING LINKS
+        // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
         /// <summary>
         /// function taht converts the board of cells to board of nodes for the dancing links 
         /// </summary>
@@ -610,68 +614,276 @@ namespace SodukoSolver.Algoritms
             return matrix;
         }
 
-        /// <summary>
-        /// function that chooses the columm with the fewest "on" cells
-        /// </summary>
-        /// <param name="root">the root of the matrix</param>
-        /// <returns>the columm with the fewest "on" cells</returns>
-        public static Node ChooseColumn(Node root)
+        ///// <summary>
+        ///// function that chooses the columm with the fewest "on" cells
+        ///// </summary>
+        ///// <param name="root">the root of the matrix</param>
+        ///// <returns>the columm with the fewest "on" cells</returns>
+        //public static Node ChooseColumn(Node root)
+        //{
+        //    // start with the root node's right pointer
+        //    Node col = root.Right;
+
+        //    // keep track of the column with the fewest "on" cells
+        //    Node chosenCol = col;
+        //    int minOnCells = int.MaxValue;
+
+        //    // iterate through the columns
+        //    while (col != root)
+        //    {
+        //        // count the number of "on" cells in the column
+        //        int onCells = 0;
+        //        for (Node cell = col.Down; cell != col; cell = cell.Down)
+        //        {
+        //            onCells++;
+        //        }
+
+        //        // if the number of "on" cells is smaller than the current minimum, update the chosen column
+        //        if (onCells < minOnCells)
+        //        {
+        //            chosenCol = col;
+        //            minOnCells = onCells;
+        //        }
+
+        //        // move to the next column
+        //        col = col.Right;
+        //    }
+
+        //    // if no columns have "on" cells, return the root node
+        //    if (minOnCells == 0)
+        //    {
+        //        return root;
+        //    }
+
+        //    return chosenCol;
+        //}
+
+        ///// <summary>
+        ///// function that updates the cover columm
+        ///// </summary>
+        ///// <param name="col">the columm</param>
+        //public static void CoverColumn(Node col)
+        //{
+        //    // update the left and right pointers of the nodes to the left and right of the column
+        //    col.Left.Right = col.Right;
+        //    col.Right.Left = col.Left;
+
+        //    // iterate through the "on" cells in the column
+        //    for (Node row = col.Down; row != col; row = row.Down)
+        //    {
+        //        // update the up and down pointers of the nodes in the column
+        //        row.Up.Down = row.Down;
+        //        row.Down.Up = row.Up;
+        //    }
+        //}
+
+        
+
+        public static bool SolveUsingDancingLinks(Node[][] board, int size)
         {
-            // start with the root node's right pointer
-            Node col = root.Right;
 
-            // keep track of the column with the fewest "on" cells
-            Node chosenCol = col;
-            int minOnCells = int.MaxValue;
+            // initialize the column header nodes
+            var headers = InitializeHeaders(size);
 
-            // iterate through the columns
-            while (col != root)
-            {
-                // count the number of "on" cells in the column
-                int onCells = 0;
-                for (Node cell = col.Down; cell != col; cell = cell.Down)
-                {
-                    onCells++;
-                }
+            // add the rows to the linked lists
+            var rows = AddRows(board, headers, size);
 
-                // if the number of "on" cells is smaller than the current minimum, update the chosen column
-                if (onCells < minOnCells)
-                {
-                    chosenCol = col;
-                    minOnCells = onCells;
-                }
-
-                // move to the next column
-                col = col.Right;
-            }
-
-            // if no columns have "on" cells, return the root node
-            if (minOnCells == 0)
-            {
-                return root;
-            }
-
-            return chosenCol;
+            // search for a solution
+            return Search(rows, headers, 0);
         }
 
-        /// <summary>
-        /// function that updates the cover columm
-        /// </summary>
-        /// <param name="col">the columm</param>
-        public static void CoverColumn(Node col)
+        private static void CoverColumn(Node column)
         {
-            // update the left and right pointers of the nodes to the left and right of the column
-            col.Left.Right = col.Right;
-            col.Right.Left = col.Left;
+            // remove the column from the linked list
+            column.Right.Left = column.Left;
+            column.Left.Right = column.Right;
 
-            // iterate through the "on" cells in the column
-            for (Node row = col.Down; row != col; row = row.Down)
+            // iterate through the rows in the covered column
+            for (var row = column.Down; row != column; row = row.Down)
             {
-                // update the up and down pointers of the nodes in the column
-                row.Up.Down = row.Down;
-                row.Down.Up = row.Up;
+                // remove the row's right and left nodes from their respective linked lists
+                var rightNode = row.Right;
+                while (rightNode != row)
+                {
+                    rightNode.Down.Up = rightNode.Up;
+                    rightNode.Up.Down = rightNode.Down;
+                    rightNode = rightNode.Right;
+                }
             }
         }
+
+        private static void UncoverColumn(Node columnHeader)
+        {
+            // set the column header's right and left pointers to point to itself
+            columnHeader.Right.Left = columnHeader;
+            columnHeader.Left.Right = columnHeader;
+
+            // set the up and down pointers of the nodes in the column to point to themselves
+            for (Node row = columnHeader.Down; row != columnHeader; row = row.Down)
+            {
+                for (Node node = row.Right; node != row; node = node.Right)
+                {
+                    node.Up.Down = node;
+                    node.Down.Up = node;
+                    node.ColumnHeader = columnHeader;
+                }
+            }
+        }
+
+
+        private static List<Node> InitializeHeaders(int size)
+        {
+            var headers = new List<Node>();
+            
+            // create a column header node for each column
+            for (int col = 0; col < size; col++)
+            {
+                var header = new Node
+                {
+                    Col = col,
+                    Value = 0
+                };
+                headers.Add(header);
+            }
+
+            // link the column headers together
+            for (int i = 0; i < headers.Count; i++)
+            {
+                headers[i].Right = headers[(i + 1) % headers.Count];
+                headers[i].Left = headers[(i + headers.Count - 1) % headers.Count];
+            }
+
+            return headers;
+        }
+
+        private static List<Node> AddRows(Node[][] board, List<Node> headers, int size)
+        {
+            var rows = new List<Node>();
+
+            // create a node for each cell in the board
+            for (int row = 0; row < size; row++)
+            {
+                for (int col = 0; col < size; col++)
+                {
+                    var node = new Node
+                    {
+                        Row = row,
+                        Col = col,
+                        Value = board[row][col].Value
+                    };
+                    rows.Add(node);
+                }
+            }
+
+            // link the nodes in each row together
+            for (int i = 0; i < rows.Count; i++)
+            {
+                rows[i].Right = rows[(i + 1) % rows.Count];
+                rows[i].Left = rows[(i + rows.Count - 1) % rows.Count];
+            }
+
+            // link the nodes in each column together
+            for (int col = 0; col < headers.Count; col++)
+            {
+                var header = headers[col];
+                var current = header;
+                for (int row = 0; row < rows.Count; row++)
+                {
+                    if (rows[row].Col == col)
+                    {
+                        current.Down = rows[row];
+                        rows[row].Up = current;
+                        current = rows[row];
+                    }
+                }
+                current.Down = header;
+                header.Up = current;
+            }
+
+            return rows;
+        }
+
+        private static Node ChooseColumn(List<Node> headers)
+        {
+            int minCount = int.MaxValue;
+            Node minColumn = null;
+
+            // find the column with the fewest possible values
+            foreach (var header in headers)
+            {
+                if (header.Right == header)
+                    continue;
+
+                int count = 0;
+                for (var row = header.Down; row != header; row = row.Down)
+                    count++;
+
+                if (count < minCount)
+                {
+                    minCount = count;
+                    minColumn = header;
+                }
+            }
+
+            return minColumn;
+        }
+
+        private static bool Search(List<Node> rows, List<Node> headers, int depth)
+        {
+            // if the board is complete, return true
+            if (headers[0].Right == headers[0])
+                return true;
+
+            // choose the next column with the fewest possible values
+            var column = ChooseColumn(headers);
+
+            // cover the column to remove it from the consideration
+            CoverColumn(column);
+
+            // iterate through the rows in the covered column
+            for (var row = column.Down; row != column; row = row.Down)
+            {
+                // add the row to the solution
+                rows[depth] = row;
+
+                // cover the row's right and left nodes to remove them from the consideration
+                var rightNode = row.Right;
+                while (rightNode != row)
+                {
+                    // TODOL right node is null??
+                    CoverColumn(rightNode.ColumnHeader);
+                    rightNode = rightNode.Right;
+                }
+
+                // search for a solution with the current row added
+                if (Search(rows, headers, depth + 1))
+                    return true;
+
+                // backtrack: uncover the row's right and left nodes to restore them to the consideration
+                var leftNode = row.Left;
+                while (leftNode != row)
+                {
+                    UncoverColumn(leftNode.ColumnHeader);
+                    leftNode = leftNode.Left;
+                }
+            }
+
+            // uncover the column to restore it to the consideration
+            UncoverColumn(column);
+
+            return false;
+        }
+
+        public static void PrintBoardNodes(Node[][] board)
+        {
+            for (int row = 0; row < board.Length; row++)
+            {
+                for (int col = 0; col < board[row].Length; col++)
+                    Console.Write(board[row][col].Value + " ");
+                Console.WriteLine();
+            }
+        }
+
 
         /// <summary>
         /// very simple printBoard function for board of nodes
@@ -825,13 +1037,145 @@ namespace SodukoSolver.Algoritms
             return matrix;
         }
 
-        /// <summary>
-        /// function that gets a board of nodes and its size and returns the board of cells
-        /// </summary>
-        /// <param name="board">the board</param>
-        /// <param name="size">the size</param>
-        /// <returns>the created board of cells</returns>
-        public static Cell[,] ConvertNodeBoardToCellBoard(Node[][] board, int size)
+        public static Node[][] ConvertStringBoardFixed(string board, int size)
+        {
+            // create a matrix of nodes with the same dimensions as the board
+            Node[][] matrix = new Node[size * size][];
+            for (int i = 0; i < size * size; i++)
+            {
+                matrix[i] = new Node[size];
+            }
+
+            // create a dictionary to map cell values to column indices
+            Dictionary<int, int> valueToCol = new Dictionary<int, int>();
+            int nextCol = 0;
+
+            // create a list of column header nodes
+            List<Node> headers = new List<Node>();
+
+            // iterate through the cells in the board
+            for (int row = 0; row < size; row++)
+            {
+                for (int col = 0; col < size; col++)
+                {
+                    // create a new node for the cell
+                    Node node = new Node
+                    {
+                        Row = row,
+                        Col = col,
+                        Value = int.Parse(board[row * size + col].ToString())
+                    };
+
+                    // if the cell has a value, add it to the dictionary if it's not already there
+                    if (node.Value > 0)
+                    {
+                        if (!valueToCol.ContainsKey(node.Value))
+                        {
+                            valueToCol[node.Value] = nextCol++;
+                            headers.Add(new Node
+                            {
+                                Col = valueToCol[node.Value]
+                            });
+                        }
+                        node.Col = valueToCol[node.Value];
+                    }
+                    // add the node to the matrix
+                    matrix[row][col] = node;
+                }
+            }
+
+            // create a root node to represent the entire matrix
+            Node root = new Node();
+            root.Left = root;
+            root.Right = root;
+            root.Up = root;
+            root.Down = root;
+
+            // create linked lists for each row and column in the matrix
+            for (int row = 0; row < size; row++)
+            {
+                for (int col = 0; col < size; col++)
+                {
+                    Node node = matrix[row][col];
+
+                    // insert the node into the row linked list
+                    if (col == 0)
+                    {
+                        node.Left = root;
+                        node.Right = matrix[row][col + 1];
+                        matrix[row][col + 1].Left = node;
+                    }
+                    else if (col == size - 1)
+                    {
+                        node.Left = matrix[row][col - 1];
+                        node.Right = root;
+                        matrix[row][col - 1].Right = node;
+                    }
+                    else
+                    {
+                        node.Left = matrix[row][col - 1];
+                        node.Right = matrix[row][col + 1];
+                        matrix[row][col - 1].Right = node;
+                        matrix[row][col + 1].Left = node;
+                    }
+                    // insert the node into the column linked list
+                    if (row == 0)
+                    {
+                        node.Up = headers[node.Col];
+                        node.Down = matrix[row + 1][col];
+                        matrix[row + 1][col].Up = node;
+
+                        // set the column header's down pointer to point to this node
+                        headers[node.Col].Down = node;
+                    }
+                    // if the cell is in the last row
+                    else if (row == size - 1)
+                    {
+                        node.Up = matrix[row - 1][col];
+                        node.Down = headers[node.Col];
+                        matrix[row - 1][col].Down = node;
+
+                        // set the column header's up pointer to point to this node
+                        headers[node.Col].Up = node;
+                    }
+                    else
+                    {
+                        node.Up = matrix[row - 1][col];
+                        node.Down = matrix[row + 1][col];
+                        matrix[row - 1][col].Down = node;
+                        matrix[row + 1][col].Up = node;
+                    }
+                }
+            }
+
+            // link the root node to the first and last nodes in the first and last rows
+            root.Right = matrix[0][0];
+            root.Left = matrix[0][size - 1];
+            matrix[0][0].Left = root;
+            matrix[0][size - 1].Right = root;
+
+            // link the root node to the first and last column headers
+            root.Down = headers[0];
+            root.Up = headers[headers.Count - 1];
+            headers[0].Up = root;
+            headers[headers.Count - 1].Down = root;
+
+            // set the ColumnHeader property for each column header node
+            for (int i = 0; i < headers.Count; i++)
+            {
+                headers[i].ColumnHeader = headers[i];
+            }
+
+            return matrix;
+        }
+
+            /// <summary>
+            /// function that gets a board of nodes and its size and returns the board of cells
+            /// </summary>
+            /// <param name="board">the board</param>
+            /// <param name="size">the size</param>
+            /// <returns>the created board of cells</returns>
+            public static Cell[,] ConvertNodeBoardToCellBoard(Node[][] board, int size)
         {
             Cell[,] cellBoard = new Cell[size, size];
             for (int row = 0; row < size; row++)
@@ -871,5 +1215,9 @@ namespace SodukoSolver.Algoritms
             }
             return count;
         }
+
+        // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        //                                                                                                 DANCING LINKS
+        // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     }
 }

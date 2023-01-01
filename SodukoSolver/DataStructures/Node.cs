@@ -19,6 +19,9 @@ namespace SodukoSolver
         public Node Up { get; set; }
         public Node Down { get; set; }
 
+        // reference to the column header node
+        public Node ColumnHeader { get; set; }
+
         // constructor
         public Node()
         {
@@ -29,4 +32,5 @@ namespace SodukoSolver
             Right = this;
         }
     }
+
 }

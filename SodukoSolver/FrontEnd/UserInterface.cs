@@ -102,7 +102,7 @@ namespace SodukoSolver
                     watch.Start();
 
                     // run the algoritms to solve the board
-                    CanBeSolved = Solve(solver);
+                    CanBeSolved = Solve2(solver, board.boardString, board.GetSize());
 
                     // stop the timer
                     watch.Stop();
@@ -220,24 +220,35 @@ namespace SodukoSolver
             }
         }
 
-        // function that solves using dlx
-        //private static bool Solve2(SolvingFunctions solver)
-        //{
-        //    bool solvable = false;
+        //function that solves using dlx
+        private static bool Solve2(SolvingFunctions solver, string boardString, int size)
+        {
+            //Console.WriteLine("board string is: " + boardString);
+            Node[][] board = new Node[size][];
+            board = ConvertStringBoardFixed(boardString, size);
+            //for (int i = 0; i < size; i++)
+            //{
+            //    for (int j = 0; j < size; j++)
+            //    {
+            //        Console.WriteLine("board[" + i + "][" + j + "] is: " + board[i][j].Value);
+            //        Console.WriteLine("board[" + i + "][" + j + "] pointers are: " + board[i][j].Left.Value + " " + board[i][j].Right.Value + " " + board[i][j].Up.Value + " " + board[i][j].Down.Value);
+            //    }
+            //}
+            //Console.ReadLine();
+            //if the board can be solved then return true
+            if (SolveUsingDancingLinks(board,size))
+            {
+                PrintBoardNodes(board);
+                Console.ReadLine();
+                return true;
+            }
+            Console.WriteLine("Board cannot be solved");
+            Console.ReadLine();
+            return true;
+        }
 
-        //    solvable = solver.DancingLinks(solver.Board);
-
-        //    PrintBoard(solver.Board, solver.Size);
-
-        //    Console.ReadLine();
-
-        //    board.SetBoard(solver.Board);
-
-        //    return solvable;
-        //}
-
-        // function that solves the board using all the implemented algorithms
-        private static bool Solve(SolvingFunctions solver)
+    // function that solves the board using all the implemented algorithms
+    private static bool Solve(SolvingFunctions solver)
         {
 
             // we make an assumption that if less then 10 percent of the cells are empty,
@@ -287,8 +298,9 @@ namespace SodukoSolver
             }
 
             //Console.WriteLine("\nHidden singles board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
+            //PrintBoard(board.GetBoard(), board.GetSize());
             //Console.WriteLine("");
+            //Console.ReadLine();
 
 
             emptyCells = CountEmptyCells(board.GetBoard(), board.GetSize());
