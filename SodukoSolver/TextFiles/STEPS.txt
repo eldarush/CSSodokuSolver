@@ -1,4 +1,4 @@
-﻿This is a text file that will contain my notes to myself during the process of creating the game.
+This is a text file that will contain my notes to myself during the process of creating the game.
 I will be using this to keep track of what I have done and what I need to do.
 I will also be using this to keep track of any bugs that I find and how to fix them.
 
@@ -7,18 +7,11 @@ This file is temporary and will be deleted once the project is complete.
 
 
  STEPS TO SOLVE SUDOKU:
- 1. change the 2d array of ints to a 2d array of cells, each cell has a list of candidates -- DONE
- 2. make the current bruteforce algorithm work with the new data structure -- DONE
- 3. implement 'simple elimination' algorithm before all previous algoritms are run -- DONE
- 4. implement 'hidden single' algorithm before all previous algoritms are run -- DONE
- 5. implement 'naked pair/triples/quads' algorithm before all previous algoritms are run -- DONE
- 6. implement 'pointing pairs/triples' algorithm before all previous algoritms are run  -------------> optional but optimal -- DONE
- 7, implement 'intersection' algorithm before all previous algoritms are run -- DONE
- 8. implement 'X-wing' algorithm before all previous algoritms are run
- 9. implement 'X-cycles' algorithm before all previous algoritms are run -----------------> optional if i have time to do it
+ 1. fix improving algorithm that's not working
+ 2. implement spiral backtracking
+ 3. implement dancing links
+ 4. implement backtracking with bits
 
-
- 
 
  NOTES:
  1. keep the algoitm generic as possible, so that it can be used for any size of sudoku board, they will ask to make
@@ -52,10 +45,11 @@ This file is temporary and will be deleted once the project is complete.
 
  
  BUGS:
- 1. not enought checks for the input file, if the input file is not a valid sudoku board, the program will crash
- 2. no file handling, the program can only read from the console and write to the console
+ 1. print function not working for boards that are filled with 0's
+ 2. for some reason 4 by 4 and 2 by 2 boards are not working - 2 by 2 not working with bitwise algorithm ???
  3. no time complexity analysis, so it is hard to know how fast the program is and how to make it faster
  4. no tests, so it is hard to know if the program is working correctly
+ 5. solving takes very long time for some 9 by 9 boards, and barely handles 16 by 16 boards or 25 by 25 boards
 
 
  DIFFICULT PUZZLES:
@@ -70,10 +64,22 @@ This file is temporary and will be deleted once the project is complete.
 
  900800000000000500000000000020010003010000060000400070708600000000030100400000200 
  
- 000005080000601043000000000010500000000106000300000005530000061000000004000000000 -- very problematic
+ 000005080000601043000000000010500000000106000300000005530000061000000004000000000 -- still problematic
 
  16 by 16:
  
 10023400<06000700080007003009:6;0<00:0010=0;00>0300?200>000900<0=000800:0<201?000;76000@000?005=000:05?0040800;0@0059<00100000800200000=00<580030=00?0300>80@000580010002000=9?000<406@0=00700050300<0006004;00@0700@050>0010020;1?900=002000>000>000;0200=3500<
 
-0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+file path for test file:
+
+C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\testboard.txt
+
+C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\empty16by16board.txt
+
+25 by 25:
+
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+100002000003000004@00005000000600007000000000000080000090000000@0000000000000000000000000000000000000000000<00000000005000000000000000000000000000000000000000>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000:00000000000000000000000000000;00000000000000008900000000000000000000000000000000000000000=00000000000000000000000000000000000000000000000000000000000000@000000000000000000000300000000000000008000000000000000000007000000000000000000000000000000400000000000000000000000000000100000000200000?000000000000000000000

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SodukoSolver
+namespace SodukoSolver.Interfaces
 {
     public interface IWritable
     {
-        // write function that will write a board of cells
-        bool Write(Cell[,] board);
+        // write function that will write a board string
+        bool Write(string boardstring);
     }
 }

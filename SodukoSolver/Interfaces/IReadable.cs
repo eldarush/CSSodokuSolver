@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SodukoSolver
+namespace SodukoSolver.Interfaces
 {
     public interface IReadable
     {
-        // read Function that will return a board of cells
-        Cell[,] Read();
+        // read Function that will return a board string
+        string Read();
     }
 }

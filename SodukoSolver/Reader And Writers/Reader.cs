@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SodukoSolver
+namespace SodukoSolver.Interfaces
 {
     abstract class Reader
     {
@@ -17,8 +17,8 @@ namespace SodukoSolver
             this.reader = reader;
         }
 
-        // read function that will return a board of cells
-        public Cell[,] Read()
+        // read function that will return a board string
+        public string Read()
         {
             return reader.Read();
         }

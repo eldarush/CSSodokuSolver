@@ -43,7 +43,7 @@ namespace SodukoSolver
 
         // function that checks if the list of candidates only contains one 
         // candidate, if it is returns true and updates the Solved boolean
-        public bool isSolved()
+        public bool IsSolved()
         {
             if (Candidates.Count == 1)
             {
@@ -54,7 +54,7 @@ namespace SodukoSolver
         }
 
         // function to print all candidates
-        public void printCandidates()
+        public void PrintCandidates()
         {
             if (Candidates.Count == 0 || Candidates == null) Console.WriteLine("no candidates");
             else Console.WriteLine(string.Join(", ", Candidates));
