@@ -56,6 +56,36 @@ namespace SodukoSolver.Algoritms
         }
 
         /// <summary>
+        /// function taht updates the board string
+        /// </summary>
+        /// <param name="EmptyCells">the array of empty cells</param>
+        /// <param name="board">the board of cells</param>
+        /// <param name="size">the size</param>
+        public static int[] UpdateEmptyCells(int[] EmptyCellsArray, Cell[,] board, int size, float emptyCellsCount)
+        {
+            EmptyCellsArray = new int[(int)emptyCellsCount];
+
+            // create a counter for the empty cells
+            int counter = 0;
+            // loop through the rows
+            for (int i = 0; i < size; i++)
+            {
+                // loop through the columns
+                for (int j = 0; j < size; j++)
+                {
+                    // if the cell is empty
+                    // then add its index to the empty cells array
+                    if (board[i, j].Value == 0)
+                    {
+                        EmptyCellsArray[counter] = i * size + j;
+                        counter++;
+                    }
+                }
+            }
+            return EmptyCellsArray;
+        }
+
+        /// <summary>
         /// Function that chekcs if the board is valid
         /// </summary>
         /// <param name="size">the size of the board</param>

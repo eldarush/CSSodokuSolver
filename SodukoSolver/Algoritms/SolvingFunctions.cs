@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using static SodukoSolver.Algoritms.HelperFunctions;
-using static System.Net.Mime.MediaTypeNames;
-
+# pragma warning disable CS8602 // Dereference of a possibly null reference.
 
 namespace SodukoSolver.Algoritms
 {
-    internal class SolvingFunctions
+    public class SolvingFunctions
     {
         // size of the board
         public int Size { get; set; }
@@ -20,6 +19,17 @@ namespace SodukoSolver.Algoritms
 
         // the board
         public Cell[,] Board { get; set; }
+
+        // the location in the empty cell array
+        public static int Location = 0;
+        public static int LocationBits = 0;
+
+        // the backward location in the empty cell array
+        public static int BackwardsLocation = 0;
+        public static int BackwardsLocationBits = 0;
+
+        // empty cells array
+        public static int[]? EmptyCellsArray;
 
         /// <summary>
         /// Constructor that gets the size and the board
@@ -42,30 +52,22 @@ namespace SodukoSolver.Algoritms
         /// <returns>if the board is solved</returns>
         public bool Backtracking(CancellationToken token)
         {
-            // get the next empty cell
-            int[]? nextEmptyCell = GetNextEmptyCell();
-
-            // if there is no empty cell then the board is solved
-            if (nextEmptyCell == null)
+            // if the location is out of bounds then the board is solved
+            if (Location < 0 || Location >= EmptyCellsArray.Length)
             {
                 return true;
             }
 
-            // get the row and column of the next empty cell
-            int row = nextEmptyCell[0];
-            int col = nextEmptyCell[1];
 
+            // get the row and column of the current empty cell
+            int row = EmptyCellsArray[Location] / Size;
+            int col = EmptyCellsArray[Location] % Size;
 
-            //// TODO: work out why cells arent working properly - possible problem in board creation
-            //// get the current cell 
-            //Cell currentCell = board[row, col];
-            //currentCell.printCandidates();
-            //Console.WriteLine("row: " + row + " col: " + col);
-            //Console.WriteLine("current cell value: " + currentCell.Value + "is Solved: \n" + currentCell.Solved);
+            // Current Cells is:
+            //Console.WriteLine("Current Cell is: " + row + " " + col);
 
-            //// for each possible candidate in the cell
+            // for each possible candidate in the cell
             foreach (int i in Board[row, col].Candidates)
-            //for(int i=0; i<=size; i++)
             {
                 // if the candidate is valid
                 if (IsValidCandidate(row, col, i))
@@ -73,19 +75,25 @@ namespace SodukoSolver.Algoritms
                     // set the value of the cell to the candidate
                     Board[row, col].Value = i;
 
+                    // increment the location to move to the next empty cell
+                    Location++;
 
                     // if the board is solved then return true
                     if (Backtracking(token))
                     {
                         return true;
                     }
+
+                    // if the board is not solved then reset the value of the cell and backtrack
                     Board[row, col].Value = 0;
+                    Location--;
                 }
             }
 
             // if the board is not solved then return false
             return false;
         }
+
 
         /// <summary>
         /// this is an implementation of backtracking to solve the board
@@ -95,22 +103,21 @@ namespace SodukoSolver.Algoritms
         /// <returns>if the board is solved</returns>
         public bool BacktrackingR(CancellationToken token)
         {
-            // get the next empty cell
-            int[]? lastEmptyCell = GetLastEmptyCell();
-
-            // if there is no empty cell then the board is solved
-            if (lastEmptyCell == null)
+            // if the backwards location is out of bounds then the board is solved
+            if (BackwardsLocation < 0 || BackwardsLocation >= EmptyCellsArray.Length)
             {
                 return true;
             }
 
-            // get the row and column of the next empty cell
-            int row = lastEmptyCell[0];
-            int col = lastEmptyCell[1];
+            // get the row and column of the current empty cell
+            int row = EmptyCellsArray[BackwardsLocation] / Size;
+            int col = EmptyCellsArray[BackwardsLocation] % Size;
 
-            //// for each possible candidate in the cell
+            // Current Cells is:
+            //Console.WriteLine("Current Cell is: " + row + " " + col);
+
+            // for each possible candidate in the cell
             foreach (int i in Board[row, col].Candidates)
-            //for (int i = 0; i <= size; i++)
             {
                 // if the candidate is valid
                 if (IsValidCandidate(row, col, i))
@@ -118,19 +125,25 @@ namespace SodukoSolver.Algoritms
                     // set the value of the cell to the candidate
                     Board[row, col].Value = i;
 
+                    // decrement the backwards location to move to the previous empty cell
+                    BackwardsLocation--;
 
                     // if the board is solved then return true
                     if (BacktrackingR(token))
                     {
                         return true;
                     }
+
+                    // if the board is not solved then reset the value of the cell and backtrack
                     Board[row, col].Value = 0;
+                    BackwardsLocation++;
                 }
             }
 
             // if the board is not solved then return false
             return false;
         }
+
 
         // Define the Direction enumeration
         public enum Direction
@@ -261,52 +274,47 @@ namespace SodukoSolver.Algoritms
         /// <param name="columnDigits">figits in colum</param>
         /// <param name="cts"></param>
         /// <returns></returns>
-        public bool BackTrackingBits(int row, int col, int[,] board,
+        public bool BackTrackingBits(int[,] board,
             int[,] submatrixDigits,
             int[] rowDigits,
             int[] columnDigits,
             CancellationToken cts)
         {
-            if (row == Size)
+            if (LocationBits >= EmptyCellsArray.Length || LocationBits < 0)
             {
                 return true;
             }
-            if (col == Size)
-            {
-                return BackTrackingBits(row + 1, 0, board, submatrixDigits,
-                            rowDigits, columnDigits, cts);
-            }
+            int row = EmptyCellsArray[LocationBits] / Size;
+            int col = EmptyCellsArray[LocationBits] % Size;
 
-            if (board[row, col] == 0)
+            for (int i = 1; i <= Size; i++)
             {
-                for (int i = 1; i <= Size; i++)
+                int digit = 1 << i - 1;
+
+                if (!IsDigitUsed(submatrixDigits, rowDigits, columnDigits, row, col, digit))
                 {
-                    int digit = 1 << i - 1;
+                    // set digit
+                    SetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
+                    board[row, col] = i;
+                    LocationBits++;
 
-                    if (!IsDigitUsed(submatrixDigits, rowDigits, columnDigits, row, col, digit))
+                    if (BackTrackingBits(board, submatrixDigits,
+                                rowDigits, columnDigits, cts))
                     {
-                        // set digit
-                        SetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
-                        board[row, col] = i;
-
-                        if (BackTrackingBits(row, col + 1, board, submatrixDigits,
-                                    rowDigits, columnDigits, cts))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            // unset digit
-                            UnsetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
-                            board[row, col] = 0;
-                        }
+                        return true;
+                    }
+                    else
+                    {
+                        // unset digit
+                        UnsetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
+                        LocationBits--;
+                        board[row, col] = 0;
                     }
                 }
-                return false;
             }
-            return BackTrackingBits(row, col + 1, board, submatrixDigits,
-                        rowDigits, columnDigits, cts);
+            return false;
         }
+
 
         // Function checks if the given digit is used in
         // the given submatrix, row, and column
@@ -364,7 +372,82 @@ namespace SodukoSolver.Algoritms
                         columnDigits[j] |= value;
                     }
             // backtrack
-            return BackTrackingBits(0, 0, board, submatrixDigits, rowDigits, columnDigits,cts);
+            return BackTrackingBits(board, submatrixDigits, rowDigits, columnDigits,cts);
+        }
+
+        public bool BackTrackingBitsR(int[,] board,
+        int[,] submatrixDigits,
+        int[] rowDigits,
+        int[] columnDigits,
+        CancellationToken cts)
+        {
+            // if the backwards location is out of bounds then the board is solved
+            if (BackwardsLocation < 0 || BackwardsLocation >= EmptyCellsArray.Length)
+            {
+                return true;
+            }
+            
+            int row = EmptyCellsArray[BackwardsLocationBits] / Size;
+            int col = EmptyCellsArray[BackwardsLocationBits] % Size;
+
+            for (int i = 1; i <= Size; i++)
+            {
+                int digit = 1 << i - 1;
+
+                if (!IsDigitUsed(submatrixDigits, rowDigits, columnDigits, row, col, digit))
+                {
+                    // set digit
+                    SetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
+                    board[row, col] = i;
+                    BackwardsLocationBits--;
+
+                    if (BackTrackingBits(board, submatrixDigits,
+                                rowDigits, columnDigits, cts))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        // unset digit
+                        UnsetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
+                        BackwardsLocationBits++;
+                        board[row, col] = 0;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Function checks if Sudoku can be
+        // solved or not
+        public bool SolveSudokuUsingBitwiseBacktrackingReversed(int[,] board, CancellationToken cts)
+        {
+            int[,] submatrixDigits = new int[BlockSize, BlockSize];
+            int[] columnDigits = new int[Size];
+            int[] rowDigits = new int[Size];
+
+            for (int i = 0; i < BlockSize; i++)
+                for (int j = 0; j < BlockSize; j++)
+                    submatrixDigits[i, j] = 0;
+
+            for (int i = 0; i < Size; i++)
+            {
+                rowDigits[i] = 0;
+                columnDigits[i] = 0;
+            }
+
+            // get submatrix, row and column digits
+            for (int i = 0; i < Size; i++)
+                for (int j = 0; j < Size; j++)
+                    if (board[i, j] > 0)
+                    {
+                        int value = 1 << board[i, j] - 1;
+                        submatrixDigits[i / BlockSize, j / BlockSize] |= value;
+                        rowDigits[i] |= value;
+                        columnDigits[j] |= value;
+                    }
+            // backtrack
+            return BackTrackingBitsR(board, submatrixDigits, rowDigits, columnDigits, cts);
         }
 
 

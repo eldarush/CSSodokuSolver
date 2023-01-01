@@ -19,7 +19,7 @@ using SodukoSolver.Algoritms;
 namespace SodukoSolver
 {
     // main class that will run the program
-    class UserInterface
+    public class UserInterface
     {
         // create a soduko board object
         static SodokuBoard? board;
@@ -27,6 +27,7 @@ namespace SodukoSolver
         // a 2d board of integers that will be used to solve the soduko
         // using bit wise backtracking
         static int[,]? bitWiseBoard;
+        //static int[,]? bitWiseBoard2;
 
         // function that will run the program
         public static void Run()
@@ -64,11 +65,11 @@ namespace SodukoSolver
                 validInput = (!string.IsNullOrWhiteSpace(tempInput));
                 if (!validInput)
                 {
-                    Console.WriteLine("Please Enter a valid character");
+                    Console.WriteLine("\nPlease Enter a valid character: ");
                     tempInput = Console.ReadKey().KeyChar.ToString(); ;
                 }
             }
-
+            Console.WriteLine("");
             // when a valid char was given get the first char into 'input'
             input = tempInput[0];
 
@@ -84,6 +85,7 @@ namespace SodukoSolver
             switch (input)
             {
                 // if the user chose to input a manual console string
+                case 'S':
                 case 's':
                     // create a soduko board from the string
                     board = new SodokuBoard();
@@ -134,6 +136,7 @@ namespace SodukoSolver
                     break;
 
                 // in the case that the user wants to input a file path
+                case 'F':
                 case 'f':
                     // ask the user for the file path
                     Console.WriteLine("Please enter the file path:");
@@ -237,9 +240,6 @@ namespace SodukoSolver
         private static bool Solve(SolvingFunctions solver)
         {
 
-            // count the number of empty cells
-            _ = CountEmptyCells(board.GetBoard(), board.GetSize());
-
             // we make an assumption that if less then 10 percent of the cells are empty,
             // then the board is solvable faster using the backtracking and dancing links
 
@@ -250,7 +250,7 @@ namespace SodukoSolver
             if (emptyCells <= (board.GetSize() * board.GetSize()) * 0.1)
             {
                 // run the backtracking algorithm
-                solvable = RunBacktracking(solver);
+                solvable = RunBacktracking(solver, emptyCells);
 
                 // return if the algoritms managed to solve the board or not
                 return solvable;
@@ -274,7 +274,7 @@ namespace SodukoSolver
             if (emptyCells <= (board.GetSize() * board.GetSize()) * 0.1)
             {
                 // run the backtracking algorithm
-                solvable = RunBacktracking(solver);
+                solvable = RunBacktracking(solver, emptyCells);
 
                 // return if the algoritms managed to solve the board or not
                 return solvable;
@@ -297,7 +297,7 @@ namespace SodukoSolver
             if (emptyCells <= (board.GetSize() * board.GetSize()) * 0.1)
             {
                 // run the backtracking algorithm
-                solvable = RunBacktracking(solver);
+                solvable = RunBacktracking(solver, emptyCells);
 
                 // return if the algoritms managed to solve the board or not
                 return solvable;
@@ -320,7 +320,7 @@ namespace SodukoSolver
             if (emptyCells <= (board.GetSize() * board.GetSize()) * 0.1)
             {
                 // run the backtracking algorithm
-                solvable = RunBacktracking(solver);
+                solvable = RunBacktracking(solver, emptyCells);
 
                 // return if the algoritms managed to solve the board or not
                 return solvable;
@@ -430,7 +430,8 @@ namespace SodukoSolver
             ////Console.WriteLine("");
 
             // run the backtracking algorithm
-            solvable = RunBacktracking(solver);
+            emptyCells = CountEmptyCells(board.GetBoard(), board.GetSize());
+            solvable = RunBacktracking(solver, emptyCells);
 
             // return if the algoritms managed to solve the board or not
             return solvable;
@@ -438,7 +439,7 @@ namespace SodukoSolver
 
         // the function that will run the diffrent version of the backtracking algorithms using diffrent
         // tasks and once one of the thread returns a result, it will stop the other threads and return the result
-        public static bool RunBacktracking(SolvingFunctions solver)
+        public static bool RunBacktracking(SolvingFunctions solver, float emptyCellsCount)
         {
             // fill in the obvoius cells left using hidden singles
             while (solver.HiddenSingles())
@@ -446,14 +447,37 @@ namespace SodukoSolver
                 // do nothing, just keep calling hiddensingles untill it returns false
             }
 
-            // convert the board to string and from it to 2d array of ints for bitwisw solving
+            // update the emptyCellsArray
+            EmptyCellsArray = UpdateEmptyCells(EmptyCellsArray, solver.Board, solver.Size, emptyCellsCount);
+            // update the backwards location
+            BackwardsLocation = EmptyCellsArray.Length - 1;
+            //BackwardsLocationBits = EmptyCellsArray.Length - 1;
+            // print backwards locatiom
+            //Console.WriteLine("backwards location: " + BackwardsLocation);
+            //// print amount of empty cells
+            //Console.WriteLine($"there are {emptyCellsCount} empty cells");
+
+            //PrintBoard(solver.Board, solver.Size);
+
+            //// print the empty cells array
+            //Console.WriteLine("\nEmpty cells array is: \n");
+            //for (int i = 0; i < EmptyCellsArray.Length; i++)
+            //{
+            //    Console.Write(EmptyCellsArray[i] + " ");
+            //}
+            //Console.WriteLine(" ");
+
+            //convert the board to string and from it to 2d array of ints for bitwisw solving
             string boardstring = GetBoardString(board.GetBoard(), board.GetSize());
             bitWiseBoard = new int[board.GetSize(), board.GetSize()];
             bitWiseBoard = ConvertTo2DArray(boardstring, bitWiseBoard, board.GetSize());
+            //bitWiseBoard2 = new int[board.GetSize(), board.GetSize()];
+            //bitWiseBoard2 = ConvertTo2DArray(boardstring, bitWiseBoard2, board.GetSize());
 
             // create a new solving functions class
             SolvingFunctions solver2 = new(solver.Size, null);
             SolvingFunctions solver3 = new(solver.Size, null);
+            //SolvingFunctions solver4 = new(solver.Size, null);
 
             // get a copy of the board to solver2
             solver2.Board = CopyBoard(solver.Board, solver.Size);           
@@ -465,19 +489,30 @@ namespace SodukoSolver
             Task<bool> t1 = Task.Run(() => solver.Backtracking(cts.Token));
             Task<bool> t2 = Task.Run(() => solver2.BacktrackingR(cts.Token));
             Task<bool> t3 = Task.Run(() => solver3.SolveSudokuUsingBitwiseBacktracking(bitWiseBoard,cts.Token));
+            //Task<bool> t4 = Task.Run(() => solver3.SolveSudokuUsingBitwiseBacktrackingReversed(bitWiseBoard2,cts.Token));
 
             // Wait for the first task to complete
             int completedTaskIndex = Task.WaitAny(t1, t2, t3);
+            //int completedTaskIndex = Task.WaitAny(t1, t2, t3, t4);
+            //int completedTaskIndex = Task.WaitAny(t1, t2);
+            //int completedTaskIndex = Task.WaitAny(t2);
 
             // Cancel the other tasks
 
             cts.Cancel();
 
             // Return the result of the completed task
-            bool finished = Task.WhenAny(t1, t2, t3).Result.Result;
+            //bool finished = Task.WhenAny(t1, t2, t3).Result.Result;
+            //bool finished = Task.WhenAny(t1, t2, t3, t4).Result.Result;
+            bool finished = Task.WhenAny(t1, t2).Result.Result;
+            //bool finished = Task.WhenAny(t2).Result.Result;
             bool solved = false;
 
-            
+            //Console.WriteLine("\nBacktracking board:\n");
+            //PrintBoard(solver.Board, solver.Size);
+            //Console.WriteLine("\nBacktracking reversed board:\n");
+            //PrintBoard(solver2.Board, solver2.Size);
+
             //if the first task finished first, copy its board into our board
             solved = IsSolved(solver.Board, solver.Size);
             if (solved)
@@ -496,7 +531,7 @@ namespace SodukoSolver
                 return solved;
             }
 
-            // if solved with backtracking bitwise
+            //if solved with backtracking bitwise
             solved = IsSolvedInts(bitWiseBoard, solver3.Size);
             if (solved)
             {
@@ -505,6 +540,15 @@ namespace SodukoSolver
                 board.SetBoard(IntsToCells(bitWiseBoard));
                 return solved;
             }
+
+            //solved = IsSolvedInts(bitWiseBoard2, solver4.Size);
+            //if (solved)
+            //{
+
+            //    // set the board to the solved board and return
+            //    board.SetBoard(IntsToCells(bitWiseBoard));
+            //    return solved;
+            //}
             // if we reached here then none of the algorithms managed to solve the board
             return false;
         }
