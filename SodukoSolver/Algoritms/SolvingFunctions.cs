@@ -262,42 +262,30 @@ namespace SodukoSolver.Algoritms
         }
 
 
-        
-        public bool HiddenSinglesBits(int[,] board,
+
+        public void HiddenSinglesBits(int[,] board,
             int[,] submatrixDigits,
             int[] rowDigits,
-            int[] columnDigits,
-            CancellationToken cts)
+            int[] columnDigits)
         {
-            // Implement the hidden singles algorithm
             for (int i = 0; i < Size; i++)
             {
                 for (int j = 0; j < Size; j++)
                 {
                     if (board[i, j] == 0)
                     {
-                        // Check if there is only one possible digit for this cell
                         int possibleDigits = GetPossibleDigits(submatrixDigits, rowDigits, columnDigits, i, j);
-                        if (possibleDigits != 0 && (possibleDigits & (possibleDigits - 1)) == 0)
+                        int digit = GetFirstSetBit(possibleDigits);
+                        if (digit >= 0)
                         {
-                            // There is only one possible digit, so fill the cell with that digit
-                            int digit = GetFirstSetBit(possibleDigits);
-                            board[i, j] = digit;
-                            SetDigit(submatrixDigits, rowDigits, columnDigits, i, j, digit);
+                            SetDigit(submatrixDigits, rowDigits, columnDigits, i, j, 1 << digit);
+                            board[i, j] = digit + 1;
                         }
                     }
                 }
             }
-
-            // Check if the board is solved
-            if (IsSolved(board))
-            {
-                return true;
-            }
-
-            // If the board is not solved, use backtracking to try to find a solution
-            return BackTrackingBits(board, submatrixDigits, rowDigits, columnDigits, cts);
         }
+
 
         private int GetPossibleDigits(int[,] submatrixDigits, int[] rowDigits, int[] columnDigits, int row, int col)
         {
@@ -366,56 +354,68 @@ namespace SodukoSolver.Algoritms
         public bool BackTrackingBits(int[,] board,
             int[,] submatrixDigits,
             int[] rowDigits,
-            int[] columnDigits,
-            CancellationToken cts)
+            int[] columnDigits)
         {
-            // Initialize a stack to store the empty cell indices
-            Stack<int> stack = new Stack<int>();
+            // Make a copy of the submatrixDigits, rowDigits, and columnDigits arrays
+            int[,] submatrixDigitsCopy = (int[,])submatrixDigits.Clone();
+            int[] rowDigitsCopy = (int[])rowDigits.Clone();
+            int[] columnDigitsCopy = (int[])columnDigits.Clone();
 
-            // Push the first empty cell onto the stack
-            stack.Push(0);
+            // Try to fill the current cell using the hidden singles algorithm
+            HiddenSinglesBits(board, submatrixDigitsCopy, rowDigitsCopy, columnDigitsCopy);
 
-            while (stack.Count > 0)
+            // Find the next empty cell
+            int row = -1;
+            int col = -1;
+            for (int i = 0; i < Size; i++)
             {
-                // Get the index of the current empty cell
-                int index = stack.Peek();
-
-                // Try to solve the board using the hidden singles algorithm
-                if (HiddenSinglesBits(board, submatrixDigits, rowDigits, columnDigits, cts))
+                for (int j = 0; j < Size; j++)
                 {
-                    return true;
-                }
-
-                int row = EmptyCellsArray[index] / Size;
-                int col = EmptyCellsArray[index] % Size;
-
-                for (int i = 1; i <= Size; i++)
-                {
-                    int digit = 1 << i - 1;
-
-                    if (!IsDigitUsed(submatrixDigits, rowDigits, columnDigits, row, col, digit))
+                    if (board[i, j] == 0)
                     {
-                        // set digit
-                        SetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
-                        board[row, col] = i;
-
-                        // Push the next empty cell onto the stack
-                        stack.Push(index + 1);
+                        row = i;
+                        col = j;
                         break;
                     }
                 }
-
-                if (stack.Peek() == index)
+                if (row >= 0 && col >= 0)
                 {
-                    // No possible value was found for this cell, so backtrack
-                    stack.Pop();
-                    UnsetDigit(submatrixDigits, rowDigits, columnDigits, row, col, board[row, col]);
-                    board[row, col] = 0;
+                    break;
                 }
             }
 
+            // If there are no more empty cells, return true
+            if (row < 0 || col < 0)
+            {
+                return true;
+            }
+
+            for (int i = 1; i <= Size; i++)
+            {
+                int digit = 1 << i - 1;
+
+                if (!IsDigitUsed(submatrixDigits, rowDigits, columnDigits, row, col, digit))
+                {
+                    // set digit
+                    SetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
+                    board[row, col] = i;
+
+                    if (BackTrackingBits(board, submatrixDigits,
+                                rowDigits, columnDigits))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        // unset digit
+                        UnsetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
+                        board[row, col] = 0;
+                    }
+                }
+            }
             return false;
         }
+
 
 
 
@@ -449,7 +449,7 @@ namespace SodukoSolver.Algoritms
 
         // Function checks if Sudoku can be
         // solved or not
-        public bool SolveSudokuUsingBitwiseBacktracking(int[,] board, CancellationToken cts)
+        public bool SolveSudokuUsingBitwiseBacktracking(int[,] board)
         {
             int[,] submatrixDigits = new int[BlockSize, BlockSize];
             int[] columnDigits = new int[Size];
@@ -476,7 +476,7 @@ namespace SodukoSolver.Algoritms
                         columnDigits[j] |= value;
                     }
             // backtrack
-            return BackTrackingBits(board, submatrixDigits, rowDigits, columnDigits,cts);
+            return BackTrackingBits(board, submatrixDigits, rowDigits, columnDigits);
         }
 
         public bool BackTrackingBitsR(int[,] board,
@@ -506,7 +506,7 @@ namespace SodukoSolver.Algoritms
                     BackwardsLocationBits--;
 
                     if (BackTrackingBits(board, submatrixDigits,
-                                rowDigits, columnDigits, cts))
+                                rowDigits, columnDigits))
                     {
                         return true;
                     }

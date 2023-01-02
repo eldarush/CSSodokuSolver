@@ -103,7 +103,7 @@ namespace SodukoSolver
                     watch.Start();
 
                     // run the algoritms to solve the board
-                    CanBeSolved = Solve(solver);
+                    CanBeSolved = Solve3(solver);
 
                     // stop the timer
                     watch.Stop();
@@ -491,13 +491,13 @@ namespace SodukoSolver
             // Create three tasks, one for each algorithm
             Task<bool> t1 = Task.Run(() => solver.Backtracking(cts.Token));
             Task<bool> t2 = Task.Run(() => solver2.BacktrackingR(cts.Token));
-            Task<bool> t3 = Task.Run(() => solver3.SolveSudokuUsingBitwiseBacktracking(bitWiseBoard,cts.Token));
+            //Task<bool> t3 = Task.Run(() => solver3.SolveSudokuUsingBitwiseBacktracking(bitWiseBoard,cts.Token));
             //Task<bool> t4 = Task.Run(() => solver3.SolveSudokuUsingBitwiseBacktrackingReversed(bitWiseBoard2,cts.Token));
 
             // Wait for the first task to complete
-            int completedTaskIndex = Task.WaitAny(t1, t2, t3);
+            //int completedTaskIndex = Task.WaitAny(t1, t2, t3);
             //int completedTaskIndex = Task.WaitAny(t1, t2, t3, t4);
-            //int completedTaskIndex = Task.WaitAny(t1, t2);
+            int completedTaskIndex = Task.WaitAny(t1, t2);
             //int completedTaskIndex = Task.WaitAny(t2);
 
             // Cancel the other tasks
@@ -554,6 +554,16 @@ namespace SodukoSolver
             //}
             // if we reached here then none of the algorithms managed to solve the board
             return false;
+        }
+
+        private static bool Solve3(SolvingFunctions solver)
+        {
+            string boardstring = GetBoardString(board.GetBoard(), board.GetSize());
+            bitWiseBoard = new int[board.GetSize(), board.GetSize()];
+            bitWiseBoard = ConvertTo2DArray(boardstring, bitWiseBoard, board.GetSize());
+            solver.SolveSudokuUsingBitwiseBacktracking(bitWiseBoard);
+            board.SetBoard(IntsToCells(bitWiseBoard));
+            return IsSolvedInts(bitWiseBoard, solver.Size);
         }
 
     }
