@@ -103,7 +103,7 @@ namespace SodukoSolver
                     watch.Start();
 
                     // run the algoritms to solve the board
-                    CanBeSolved = Solve2(solver, board.boardString, board.GetSize());
+                    CanBeSolved = Solve(solver);
 
                     // stop the timer
                     watch.Stop();
@@ -449,11 +449,6 @@ namespace SodukoSolver
         // tasks and once one of the thread returns a result, it will stop the other threads and return the result
         public static bool RunBacktracking(SolvingFunctions solver, float emptyCellsCount)
         {
-            // fill in the obvoius cells left using hidden singles
-            while (solver.HiddenSingles())
-            {
-                // do nothing, just keep calling hiddensingles untill it returns false
-            }
 
             // update the emptyCellsArray
             EmptyCellsArray = UpdateEmptyCells(EmptyCellsArray, solver.Board, solver.Size, emptyCellsCount);

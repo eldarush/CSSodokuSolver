@@ -261,6 +261,93 @@ namespace SodukoSolver.Algoritms
             return true;
         }
 
+
+        
+        public bool HiddenSinglesBits(int[,] board,
+            int[,] submatrixDigits,
+            int[] rowDigits,
+            int[] columnDigits,
+            CancellationToken cts)
+        {
+            // Implement the hidden singles algorithm
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    if (board[i, j] == 0)
+                    {
+                        // Check if there is only one possible digit for this cell
+                        int possibleDigits = GetPossibleDigits(submatrixDigits, rowDigits, columnDigits, i, j);
+                        if (possibleDigits != 0 && (possibleDigits & (possibleDigits - 1)) == 0)
+                        {
+                            // There is only one possible digit, so fill the cell with that digit
+                            int digit = GetFirstSetBit(possibleDigits);
+                            board[i, j] = digit;
+                            SetDigit(submatrixDigits, rowDigits, columnDigits, i, j, digit);
+                        }
+                    }
+                }
+            }
+
+            // Check if the board is solved
+            if (IsSolved(board))
+            {
+                return true;
+            }
+
+            // If the board is not solved, use backtracking to try to find a solution
+            return BackTrackingBits(board, submatrixDigits, rowDigits, columnDigits, cts);
+        }
+
+        private int GetPossibleDigits(int[,] submatrixDigits, int[] rowDigits, int[] columnDigits, int row, int col)
+        {
+            int possibleDigits = (1 << Size) - 1; // Set all bits to 1
+
+            for (int i = 1; i <= Size; i++)
+            {
+                int digit = 1 << i - 1;
+
+                if (IsDigitUsed(submatrixDigits, rowDigits, columnDigits, row, col, digit))
+                {
+                    // Unset the bit for this digit
+                    possibleDigits &= ~digit;
+                }
+            }
+
+            return possibleDigits;
+        }
+
+        private int GetFirstSetBit(int x)
+        {
+            int bit = 0;
+            while (x > 0)
+            {
+                if ((x & 1) == 1)
+                {
+                    return bit;
+                }
+                x >>= 1;
+                bit++;
+            }
+            return -1;
+        }
+
+        private bool IsSolved(int[,] board)
+        {
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    if (board[i, j] == 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+
         /// <summary>
         /// Takes a partially filled-in grid and attempts
         /// to assign values to all unassigned locations in
@@ -282,40 +369,55 @@ namespace SodukoSolver.Algoritms
             int[] columnDigits,
             CancellationToken cts)
         {
-            if (LocationBits >= EmptyCellsArray.Length || LocationBits < 0)
-            {
-                return true;
-            }
-            int row = EmptyCellsArray[LocationBits] / Size;
-            int col = EmptyCellsArray[LocationBits] % Size;
+            // Initialize a stack to store the empty cell indices
+            Stack<int> stack = new Stack<int>();
 
-            for (int i = 1; i <= Size; i++)
-            {
-                int digit = 1 << i - 1;
+            // Push the first empty cell onto the stack
+            stack.Push(0);
 
-                if (!IsDigitUsed(submatrixDigits, rowDigits, columnDigits, row, col, digit))
+            while (stack.Count > 0)
+            {
+                // Get the index of the current empty cell
+                int index = stack.Peek();
+
+                // Try to solve the board using the hidden singles algorithm
+                if (HiddenSinglesBits(board, submatrixDigits, rowDigits, columnDigits, cts))
                 {
-                    // set digit
-                    SetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
-                    board[row, col] = i;
-                    LocationBits++;
+                    return true;
+                }
 
-                    if (BackTrackingBits(board, submatrixDigits,
-                                rowDigits, columnDigits, cts))
+                int row = EmptyCellsArray[index] / Size;
+                int col = EmptyCellsArray[index] % Size;
+
+                for (int i = 1; i <= Size; i++)
+                {
+                    int digit = 1 << i - 1;
+
+                    if (!IsDigitUsed(submatrixDigits, rowDigits, columnDigits, row, col, digit))
                     {
-                        return true;
-                    }
-                    else
-                    {
-                        // unset digit
-                        UnsetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
-                        LocationBits--;
-                        board[row, col] = 0;
+                        // set digit
+                        SetDigit(submatrixDigits, rowDigits, columnDigits, row, col, digit);
+                        board[row, col] = i;
+
+                        // Push the next empty cell onto the stack
+                        stack.Push(index + 1);
+                        break;
                     }
                 }
+
+                if (stack.Peek() == index)
+                {
+                    // No possible value was found for this cell, so backtrack
+                    stack.Pop();
+                    UnsetDigit(submatrixDigits, rowDigits, columnDigits, row, col, board[row, col]);
+                    board[row, col] = 0;
+                }
             }
+
             return false;
         }
+
+
 
 
         // Function checks if the given digit is used in
