@@ -45,11 +45,7 @@ This file is temporary and will be deleted once the project is complete.
 
  
  BUGS:
- 1. print function not working for boards that are filled with 0's
- 2. for some reason 4 by 4 and 2 by 2 boards are not working - 2 by 2 not working with bitwise algorithm ???
- 3. no time complexity analysis, so it is hard to know how fast the program is and how to make it faster
- 4. no tests, so it is hard to know if the program is working correctly
- 5. solving takes very long time for some 9 by 9 boards, and barely handles 16 by 16 boards or 25 by 25 boards
+ 1. fix elimination with bitwise backtrackingm, problem with ubmatrixDigits, rowDigits and columnDigits that are not being updated correctly
 
 
  DIFFICULT PUZZLES:
