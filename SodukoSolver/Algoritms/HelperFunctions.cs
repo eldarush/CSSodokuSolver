@@ -679,12 +679,8 @@ namespace SodukoSolver.Algoritms
 
         
 
-        public static bool SolveUsingDancingLinks(Node[][] board, int size)
+        public static bool SolveUsingDancingLinks(Node[][] board, int size, List<Node> headers)
         {
-
-            // initialize the column header nodes
-            var headers = InitializeHeaders(size);
-
             // add the rows to the linked lists
             var rows = AddRows(board, headers, size);
 
@@ -730,31 +726,30 @@ namespace SodukoSolver.Algoritms
             }
         }
 
+        //private static List<Node> InitializeHeaders(int size)
+        //{
+        //    var headers = new List<Node>();
 
-        private static List<Node> InitializeHeaders(int size)
-        {
-            var headers = new List<Node>();
-            
-            // create a column header node for each column
-            for (int col = 0; col < size; col++)
-            {
-                var header = new Node
-                {
-                    Col = col,
-                    Value = 0
-                };
-                headers.Add(header);
-            }
+        //    // create a column header node for each column
+        //    for (int col = 0; col < size; col++)
+        //    {
+        //        var header = new Node
+        //        {
+        //            Col = col,
+        //            Value = 0
+        //        };
+        //        headers.Add(header);
+        //    }
 
-            // link the column headers together
-            for (int i = 0; i < headers.Count; i++)
-            {
-                headers[i].Right = headers[(i + 1) % headers.Count];
-                headers[i].Left = headers[(i + headers.Count - 1) % headers.Count];
-            }
+        //    // link the column headers together
+        //    for (int i = 0; i < headers.Count; i++)
+        //    {
+        //        headers[i].Right = headers[(i + 1) % headers.Count];
+        //        headers[i].Left = headers[(i + headers.Count - 1) % headers.Count];
+        //    }
 
-            return headers;
-        }
+        //    return headers;
+        //}
 
         private static List<Node> AddRows(Node[][] board, List<Node> headers, int size)
         {
@@ -769,7 +764,8 @@ namespace SodukoSolver.Algoritms
                     {
                         Row = row,
                         Col = col,
-                        Value = board[row][col].Value
+                        Value = board[row][col].Value,
+                        ColumnHeader = headers[col]  // set the column header for this node
                     };
                     rows.Add(node);
                 }
@@ -802,6 +798,7 @@ namespace SodukoSolver.Algoritms
 
             return rows;
         }
+
 
         private static Node ChooseColumn(List<Node> headers)
         {
@@ -850,7 +847,6 @@ namespace SodukoSolver.Algoritms
                 var rightNode = row.Right;
                 while (rightNode != row)
                 {
-                    // TODOL right node is null??
                     CoverColumn(rightNode.ColumnHeader);
                     rightNode = rightNode.Right;
                 }
@@ -872,16 +868,6 @@ namespace SodukoSolver.Algoritms
             UncoverColumn(column);
 
             return false;
-        }
-
-        public static void PrintBoardNodes(Node[][] board)
-        {
-            for (int row = 0; row < board.Length; row++)
-            {
-                for (int col = 0; col < board[row].Length; col++)
-                    Console.Write(board[row][col].Value + " ");
-                Console.WriteLine();
-            }
         }
 
 
@@ -977,6 +963,8 @@ namespace SodukoSolver.Algoritms
             root.Right = root;
             root.Up = root;
             root.Down = root;
+            // TODO: initialize columm headers here
+            // the problem is that columm headers are not initailized and there is a nullpointerexception
 
             // create linked lists for each row and column in the matrix
             for (int row = 0; row < size; row++)
@@ -1037,7 +1025,7 @@ namespace SodukoSolver.Algoritms
             return matrix;
         }
 
-        public static Node[][] ConvertStringBoardFixed(string board, int size)
+        public static (Node[][] matrix, List<Node> headers) ConvertStringBoardFixed(string board, int size)
         {
             // create a matrix of nodes with the same dimensions as the board
             Node[][] matrix = new Node[size * size][];
@@ -1045,13 +1033,12 @@ namespace SodukoSolver.Algoritms
             {
                 matrix[i] = new Node[size];
             }
+            // create a list of column header nodes
+            List<Node> headers = new List<Node>();
 
             // create a dictionary to map cell values to column indices
             Dictionary<int, int> valueToCol = new Dictionary<int, int>();
             int nextCol = 0;
-
-            // create a list of column header nodes
-            List<Node> headers = new List<Node>();
 
             // iterate through the cells in the board
             for (int row = 0; row < size; row++)
@@ -1074,10 +1061,10 @@ namespace SodukoSolver.Algoritms
                             valueToCol[node.Value] = nextCol++;
                             headers.Add(new Node
                             {
-                                Col = valueToCol[node.Value]
+                                Col = nextCol - 1
                             });
                         }
-                        node.Col = valueToCol[node.Value];
+                        //node.Col = valueToCol[node.Value];
                     }
                     // add the node to the matrix
                     matrix[row][col] = node;
@@ -1091,7 +1078,19 @@ namespace SodukoSolver.Algoritms
             root.Up = root;
             root.Down = root;
 
-            // create linked lists for each row and column in the matrix
+            // link the column headers together in a circular linked list
+            for (int i = 0; i < headers.Count; i++)
+            {
+                headers[i].Right = headers[(i + 1) % headers.Count];
+                headers[i].Left = headers[(i + headers.Count - 1) % headers.Count];
+            }
+            root.Left = headers[headers.Count - 1];
+            root.Right = headers[0];
+            headers[headers.Count - 1].Right = root;
+            headers[0].Left = root;
+
+
+             // create linked lists for each row and column in the matrix
             for (int row = 0; row < size; row++)
             {
                 for (int col = 0; col < size; col++)
@@ -1119,6 +1118,7 @@ namespace SodukoSolver.Algoritms
                         matrix[row][col + 1].Left = node;
                     }
                     // insert the node into the column linked list
+                    // insert the node into the column linked list
                     if (row == 0)
                     {
                         node.Up = headers[node.Col];
@@ -1127,6 +1127,7 @@ namespace SodukoSolver.Algoritms
 
                         // set the column header's down pointer to point to this node
                         headers[node.Col].Down = node;
+
                     }
                     // if the cell is in the last row
                     else if (row == size - 1)
@@ -1137,6 +1138,7 @@ namespace SodukoSolver.Algoritms
 
                         // set the column header's up pointer to point to this node
                         headers[node.Col].Up = node;
+
                     }
                     else
                     {
@@ -1144,7 +1146,11 @@ namespace SodukoSolver.Algoritms
                         node.Down = matrix[row + 1][col];
                         matrix[row - 1][col].Down = node;
                         matrix[row + 1][col].Up = node;
+
                     }
+
+                    // set the column header for this node
+                    node.ColumnHeader = headers[node.Col];
                 }
             }
 
@@ -1154,28 +1160,18 @@ namespace SodukoSolver.Algoritms
             matrix[0][0].Left = root;
             matrix[0][size - 1].Right = root;
 
-            // link the root node to the first and last column headers
-            root.Down = headers[0];
-            root.Up = headers[headers.Count - 1];
-            headers[0].Up = root;
-            headers[headers.Count - 1].Down = root;
-
-            // set the ColumnHeader property for each column header node
-            for (int i = 0; i < headers.Count; i++)
-            {
-                headers[i].ColumnHeader = headers[i];
-            }
-
-            return matrix;
+            return (matrix, headers);
         }
 
-            /// <summary>
-            /// function that gets a board of nodes and its size and returns the board of cells
-            /// </summary>
-            /// <param name="board">the board</param>
-            /// <param name="size">the size</param>
-            /// <returns>the created board of cells</returns>
-            public static Cell[,] ConvertNodeBoardToCellBoard(Node[][] board, int size)
+
+
+        /// <summary>
+        /// function that gets a board of nodes and its size and returns the board of cells
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
+        /// <returns>the created board of cells</returns>
+        public static Cell[,] ConvertNodeBoardToCellBoard(Node[][] board, int size)
         {
             Cell[,] cellBoard = new Cell[size, size];
             for (int row = 0; row < size; row++)

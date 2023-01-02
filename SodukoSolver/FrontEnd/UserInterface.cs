@@ -11,6 +11,7 @@ using static SodukoSolver.Algoritms.SolvingFunctions;
 using static SodukoSolver.Algoritms.HelperFunctions;
 using SodukoSolver.Interfaces;
 using SodukoSolver.Algoritms;
+using System.Xml.Linq;
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -225,20 +226,14 @@ namespace SodukoSolver
         {
             //Console.WriteLine("board string is: " + boardString);
             Node[][] board = new Node[size][];
-            board = ConvertStringBoardFixed(boardString, size);
-            //for (int i = 0; i < size; i++)
-            //{
-            //    for (int j = 0; j < size; j++)
-            //    {
-            //        Console.WriteLine("board[" + i + "][" + j + "] is: " + board[i][j].Value);
-            //        Console.WriteLine("board[" + i + "][" + j + "] pointers are: " + board[i][j].Left.Value + " " + board[i][j].Right.Value + " " + board[i][j].Up.Value + " " + board[i][j].Down.Value);
-            //    }
-            //}
-            //Console.ReadLine();
+            List<Node> headers = new List<Node>();
+            (board, headers) = ConvertStringBoardFixed(boardString, size);
+
             //if the board can be solved then return true
-            if (SolveUsingDancingLinks(board,size))
+            if (SolveUsingDancingLinks(board, size, headers))
             {
-                PrintBoardNodes(board);
+                Console.WriteLine("sucsessfully solved board: ");
+                PrintBoardNode(board, size);
                 Console.ReadLine();
                 return true;
             }
@@ -246,6 +241,7 @@ namespace SodukoSolver
             Console.ReadLine();
             return true;
         }
+
 
     // function that solves the board using all the implemented algorithms
     private static bool Solve(SolvingFunctions solver)
