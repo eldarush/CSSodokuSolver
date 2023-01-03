@@ -562,34 +562,25 @@ namespace SodukoSolver
             string boardstring = GetBoardString(board.GetBoard(), board.GetSize());
             bitWiseBoard = new int[board.GetSize(), board.GetSize()];
             bitWiseBoard = ConvertTo2DArray(boardstring, bitWiseBoard, board.GetSize());
-            while (solver.HiddenSinglesBits(bitWiseBoard))
+            if (solver.SolveUsingBacktracking(bitWiseBoard))
             {
-                Console.WriteLine("hidden singles");
+                Console.WriteLine("Solved!");
             }
-            string updatedBoardString = "";
-            // convert board to string
+            else
+            {
+                Console.WriteLine("Not solved!");
+            }
+            // print out the solved board
             for (int i = 0; i < board.GetSize(); i++)
             {
                 for (int j = 0; j < board.GetSize(); j++)
                 {
-                    updatedBoardString += (char)(bitWiseBoard[i, j] + '0');
+                    Console.Write(solver.BoardInts[i, j] + " ");
                 }
-            }
-            // print out the updated board string
-            Console.WriteLine(updatedBoardString);
-            //print out the updated board
-            Console.WriteLine("\nBitWise hidden singles board is:\n");
-            for (int i = 0; i < solver.Size; i++)
-            {
-                for (int j = 0; j < solver.Size; j++)
-                {
-                    Console.Write(bitWiseBoard[i, j] + " ");
-                }
-                Console.WriteLine(" ");
+                Console.WriteLine("");
             }
             Console.ReadLine();
-            solver.SolveSudokuUsingBitwiseBacktracking(bitWiseBoard);
-            board.SetBoard(IntsToCells(bitWiseBoard));
+            
             Console.WriteLine("\nBitWise backtracking board is:\n");
             PrintBoard(board.GetBoard(), board.GetSize());
             Console.ReadLine();
