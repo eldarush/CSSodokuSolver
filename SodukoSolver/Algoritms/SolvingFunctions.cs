@@ -263,11 +263,32 @@ namespace SodukoSolver.Algoritms
 
 
 
-        public void HiddenSinglesBits(int[,] board,
-            int[,] submatrixDigits,
-            int[] rowDigits,
-            int[] columnDigits)
+        public bool HiddenSinglesBits(int[,] board)
         {
+            int[,] submatrixDigits = new int[BlockSize, BlockSize];
+            int[] columnDigits = new int[Size];
+            int[] rowDigits = new int[Size];
+
+            for (int i = 0; i < BlockSize; i++)
+                for (int j = 0; j < BlockSize; j++)
+                    submatrixDigits[i, j] = (1 << Size) - 1;
+
+            for (int i = 0; i < Size; i++)
+            {
+                rowDigits[i] = (1 << Size) - 1;
+                columnDigits[i] = (1 << Size) - 1;
+            }
+            // get submatrix, row and column digits
+            for (int i = 0; i < Size; i++)
+                for (int j = 0; j < Size; j++)
+                    if (board[i, j] > 0)
+                    {
+                        int value = 1 << board[i, j] - 1;
+                        submatrixDigits[i / BlockSize, j / BlockSize] &= ~value;
+                        rowDigits[i] &= ~value;
+                        columnDigits[j] &= ~value;
+                    }
+            bool changed = false;
             for (int i = 0; i < Size; i++)
             {
                 for (int j = 0; j < Size; j++)
@@ -280,11 +301,14 @@ namespace SodukoSolver.Algoritms
                         {
                             SetDigit(submatrixDigits, rowDigits, columnDigits, i, j, 1 << digit);
                             board[i, j] = digit + 1;
+                            changed = true;
                         }
                     }
                 }
             }
+            return changed;
         }
+
 
 
         private int GetPossibleDigits(int[,] submatrixDigits, int[] rowDigits, int[] columnDigits, int row, int col)
@@ -357,12 +381,12 @@ namespace SodukoSolver.Algoritms
             int[] columnDigits)
         {
             // Make a copy of the submatrixDigits, rowDigits, and columnDigits arrays
-            int[,] submatrixDigitsCopy = (int[,])submatrixDigits.Clone();
-            int[] rowDigitsCopy = (int[])rowDigits.Clone();
-            int[] columnDigitsCopy = (int[])columnDigits.Clone();
+            //int[,] submatrixDigitsCopy = (int[,])submatrixDigits.Clone();
+            //int[] rowDigitsCopy = (int[])rowDigits.Clone();
+            //int[] columnDigitsCopy = (int[])columnDigits.Clone();
 
             // Try to fill the current cell using the hidden singles algorithm
-            HiddenSinglesBits(board, submatrixDigitsCopy, rowDigitsCopy, columnDigitsCopy);
+            //HiddenSinglesBits(board, submatrixDigitsCopy, rowDigitsCopy, columnDigitsCopy);
 
             // Find the next empty cell
             int row = -1;

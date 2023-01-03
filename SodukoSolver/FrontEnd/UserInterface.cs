@@ -12,6 +12,7 @@ using static SodukoSolver.Algoritms.HelperFunctions;
 using SodukoSolver.Interfaces;
 using SodukoSolver.Algoritms;
 using System.Xml.Linq;
+using System.Drawing;
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -561,8 +562,37 @@ namespace SodukoSolver
             string boardstring = GetBoardString(board.GetBoard(), board.GetSize());
             bitWiseBoard = new int[board.GetSize(), board.GetSize()];
             bitWiseBoard = ConvertTo2DArray(boardstring, bitWiseBoard, board.GetSize());
+            while (solver.HiddenSinglesBits(bitWiseBoard))
+            {
+                Console.WriteLine("hidden singles");
+            }
+            string updatedBoardString = "";
+            // convert board to string
+            for (int i = 0; i < board.GetSize(); i++)
+            {
+                for (int j = 0; j < board.GetSize(); j++)
+                {
+                    updatedBoardString += (char)(bitWiseBoard[i, j] + '0');
+                }
+            }
+            // print out the updated board string
+            Console.WriteLine(updatedBoardString);
+            //print out the updated board
+            Console.WriteLine("\nBitWise hidden singles board is:\n");
+            for (int i = 0; i < solver.Size; i++)
+            {
+                for (int j = 0; j < solver.Size; j++)
+                {
+                    Console.Write(bitWiseBoard[i, j] + " ");
+                }
+                Console.WriteLine(" ");
+            }
+            Console.ReadLine();
             solver.SolveSudokuUsingBitwiseBacktracking(bitWiseBoard);
             board.SetBoard(IntsToCells(bitWiseBoard));
+            Console.WriteLine("\nBitWise backtracking board is:\n");
+            PrintBoard(board.GetBoard(), board.GetSize());
+            Console.ReadLine();
             return IsSolvedInts(bitWiseBoard, solver.Size);
         }
 
