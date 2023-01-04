@@ -24,8 +24,7 @@ namespace SodukoSolver
         {
             SolvingFunctions solver = new SolvingFunctions();
             string solvedString = solver.SolveUsingBacktracking();
-            Console.WriteLine("\nSolved Board String:\n" + solvedString + "\n");
-            Console.WriteLine("Count is " + SolvingFunctions.countT); 
+            Console.WriteLine("\nSolved Board String:\n" + solvedString + "\n"); 
         }
     }
 }

@@ -324,7 +324,7 @@ namespace SodukoSolver.Algoritms
             {
                 for (int j = 0; j < size; j++)
                 {
-                    boardstring += array[i, j];
+                    boardstring += (char)(array[i, j] + '0');
                 }
             }
             return boardstring;

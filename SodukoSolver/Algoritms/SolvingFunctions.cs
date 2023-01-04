@@ -379,7 +379,6 @@ namespace SodukoSolver.Algoritms
             return;
         }
 
-        public static int countT = 0;
 
         /// <summary>
         /// function that solves a sudoku using backtracking algorithm with candidate values updating in real time
@@ -387,7 +386,6 @@ namespace SodukoSolver.Algoritms
         /// <returns>if the backtracking managed to solve the board or not</returns>
         private bool BacktrackingWithBitwiseManipulation()
         {
-            countT++;
             // store the original values for the cell and the origianl board
             int[,] copyBoard = GetBoardIntsCopy(BoardInts);
             int[] copyRowValues =  new int[Size];
@@ -397,7 +395,7 @@ namespace SodukoSolver.Algoritms
             CopyOriginalArraysIntoNewOnes(copyRowValues, copyColValues, copyBlockValues);
 
             // run the hidden singles algorithm that will fill in as many cells as possible
-            //HiddenSinglesAlgorithmWithBitwiseManipulation();
+            HiddenSinglesAlgorithmWithBitwiseManipulation();
 
             // the row and col of the cell that we are analyzing
             int CurrentRow, CurrentCol;
