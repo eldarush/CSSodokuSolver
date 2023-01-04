@@ -11,6 +11,8 @@ using static SodukoSolver.Algoritms.SolvingFunctions;
 using static SodukoSolver.Algoritms.HelperFunctions;
 using SodukoSolver.Interfaces;
 using SodukoSolver.Algoritms;
+using System.Xml.Linq;
+using System.Drawing;
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -102,7 +104,7 @@ namespace SodukoSolver
                     watch.Start();
 
                     // run the algoritms to solve the board
-                    CanBeSolved = Solve(solver);
+                    CanBeSolved = Solve3(solver);
 
                     // stop the timer
                     watch.Stop();
@@ -220,24 +222,30 @@ namespace SodukoSolver
             }
         }
 
-        // function that solves using dlx
-        //private static bool Solve2(SolvingFunctions solver)
-        //{
-        //    bool solvable = false;
+        //function that solves using dlx
+        private static bool Solve2(SolvingFunctions solver, string boardString, int size)
+        {
+            //Console.WriteLine("board string is: " + boardString);
+            Node[][] board = new Node[size][];
+            List<Node> headers = new List<Node>();
+            (board, headers) = ConvertStringBoardFixed(boardString, size);
 
-        //    solvable = solver.DancingLinks(solver.Board);
+            //if the board can be solved then return true
+            if (SolveUsingDancingLinks(board, size, headers))
+            {
+                Console.WriteLine("sucsessfully solved board: ");
+                PrintBoardNode(board, size);
+                Console.ReadLine();
+                return true;
+            }
+            Console.WriteLine("Board cannot be solved");
+            Console.ReadLine();
+            return true;
+        }
 
-        //    PrintBoard(solver.Board, solver.Size);
 
-        //    Console.ReadLine();
-
-        //    board.SetBoard(solver.Board);
-
-        //    return solvable;
-        //}
-
-        // function that solves the board using all the implemented algorithms
-        private static bool Solve(SolvingFunctions solver)
+    // function that solves the board using all the implemented algorithms
+    private static bool Solve(SolvingFunctions solver)
         {
 
             // we make an assumption that if less then 10 percent of the cells are empty,
@@ -287,8 +295,9 @@ namespace SodukoSolver
             }
 
             //Console.WriteLine("\nHidden singles board is: \n");
-            //PrintBoard(board.getBoard(), board.getSize());
+            //PrintBoard(board.GetBoard(), board.GetSize());
             //Console.WriteLine("");
+            //Console.ReadLine();
 
 
             emptyCells = CountEmptyCells(board.GetBoard(), board.GetSize());
@@ -441,11 +450,6 @@ namespace SodukoSolver
         // tasks and once one of the thread returns a result, it will stop the other threads and return the result
         public static bool RunBacktracking(SolvingFunctions solver, float emptyCellsCount)
         {
-            // fill in the obvoius cells left using hidden singles
-            while (solver.HiddenSingles())
-            {
-                // do nothing, just keep calling hiddensingles untill it returns false
-            }
 
             // update the emptyCellsArray
             EmptyCellsArray = UpdateEmptyCells(EmptyCellsArray, solver.Board, solver.Size, emptyCellsCount);
@@ -488,13 +492,13 @@ namespace SodukoSolver
             // Create three tasks, one for each algorithm
             Task<bool> t1 = Task.Run(() => solver.Backtracking(cts.Token));
             Task<bool> t2 = Task.Run(() => solver2.BacktrackingR(cts.Token));
-            Task<bool> t3 = Task.Run(() => solver3.SolveSudokuUsingBitwiseBacktracking(bitWiseBoard,cts.Token));
+            //Task<bool> t3 = Task.Run(() => solver3.SolveSudokuUsingBitwiseBacktracking(bitWiseBoard,cts.Token));
             //Task<bool> t4 = Task.Run(() => solver3.SolveSudokuUsingBitwiseBacktrackingReversed(bitWiseBoard2,cts.Token));
 
             // Wait for the first task to complete
-            int completedTaskIndex = Task.WaitAny(t1, t2, t3);
+            //int completedTaskIndex = Task.WaitAny(t1, t2, t3);
             //int completedTaskIndex = Task.WaitAny(t1, t2, t3, t4);
-            //int completedTaskIndex = Task.WaitAny(t1, t2);
+            int completedTaskIndex = Task.WaitAny(t1, t2);
             //int completedTaskIndex = Task.WaitAny(t2);
 
             // Cancel the other tasks
@@ -550,6 +554,37 @@ namespace SodukoSolver
             //    return solved;
             //}
             // if we reached here then none of the algorithms managed to solve the board
+            return false;
+        }
+
+        private static bool Solve3(SolvingFunctions solver)
+        {
+            //string boardstring = GetBoardString(board.GetBoard(), board.GetSize());
+            //bitWiseBoard = new int[board.GetSize(), board.GetSize()];
+            //bitWiseBoard = ConvertTo2DArray(boardstring, bitWiseBoard, board.GetSize());
+            //if (solver.SolveUsingBacktracking(bitWiseBoard))
+            //{
+            //    Console.WriteLine("Solved!");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Not solved!");
+            //}
+            //// print out the solved board
+            //for (int i = 0; i < board.GetSize(); i++)
+            //{
+            //    for (int j = 0; j < board.GetSize(); j++)
+            //    {
+            //        Console.Write(solver.BoardInts[i, j] + " ");
+            //    }
+            //    Console.WriteLine("");
+            //}
+            //Console.ReadLine();
+
+            //Console.WriteLine("\nBitWise backtracking board is:\n");
+            //PrintBoard(board.GetBoard(), board.GetSize());
+            //Console.ReadLine();
+            //return IsSolvedInts(bitWiseBoard, solver.Size);
             return false;
         }
 
