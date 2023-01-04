@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using static SodukoSolver.Algoritms.HelperFunctions;
-# pragma warning disable CS8602 // Dereference of a possibly null reference.
+using System.Diagnostics;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 namespace SodukoSolver.Algoritms
@@ -47,27 +48,12 @@ namespace SodukoSolver.Algoritms
         #region backtracking algorithm
 
         #region new backtracking functions
-        // TODO : implement the following functions:
-        /*
-         * 1. function that gets a board of ints and returns a the values of the empty cells in the board - each bit will represent the index of a value
-         * 2. function that gets a board of ints and returns array of possibl values in the rows, columns and blocks
-         * 3. function that will update the valid values, and a mirror function to restore the original values for when backtacking failes
-         * 4. function that will find the best empty cell - the cell with the min amount of valid values
-         * 5. function that will get the valid values for each cell
-         * 6. function that will get a value and will count how many bits there are in the number
-         * 7. isValid function that will check if the board is valid using bits
-         * 8. hidden singles using bits
-         * 9. function that will get a value and will return the index of the first bit that is 1
-         * 10. function to create a copy of a matrix of ints
-         * 11. general solve function to run all those functions
-         * 12. 
-         */
 
         // the board of ints
         public int[,] BoardInts;
-        
-        // the array of values for each cell
-        public int[] BoardValues;
+
+        // the helper mask that will be needed to modify valid candidates in the arrays
+        public int[] HelperMask;
         
         // the allowed values for each cell in a row
         public int[] RowValues;
@@ -79,11 +65,12 @@ namespace SodukoSolver.Algoritms
         public int[] BlockValues;
 
         /// <summary>
-        /// function that gets a value and returns the index of the first bit that is 1
+        /// function that gets a value and counts the amount of activated bits in the numbe
+        /// Equal to writing CountOnes from System.Numerics.BitOperations
         /// </summary>
         /// <param name="value">thevalue to be converted</param>
-        /// <returns><index of the first bit that is 1/returns>
-        private int GetBits(int value)
+        /// <returns>counts the amount of activated bits in the number</returns>
+        private int GetActivatedBits(int value)
         {
             // set value to the result of a bitwise AND operation between value and value - 1 and increment the counter
             int bits = 0;
@@ -100,7 +87,7 @@ namespace SodukoSolver.Algoritms
         /// </summary>
         /// <param name="value">the value</param>
         /// <returns>the index of the most significant bit that is set to 1</returns>
-        private int GetMostSignificantBit(int value)
+        private int GetIndexOfMostSignificantActivatedBit(int value)
         {
             int bits = 0;
             while (value != 0)
@@ -113,37 +100,36 @@ namespace SodukoSolver.Algoritms
         }
 
         /// <summary>
-        /// initialize the board values 
+        /// initialize the helperMask
         /// </summary>
-        /// <param name="board"></param>
-        private void SetBoardValues()
+        private void SetHelperMask()
         {
             // create new array with the size of one row
-            BoardValues = new int[Size];
+            HelperMask = new int[Size];
             // go over the board and initialize the values
             for(int index=0; index < Size; index++)
             {
                 // board values at each index will be 2 to the power of the index
-                // BoardValues[0] = 1 << 0 = 1, BoardValues[1] = 1 << 1 = 2, BoardValues[2] = 1 << 2 = 4 and so on...
-                BoardValues[index] = 1 << index;
+                // HelperMask[0] = 1 << 0 = 1, HelperMask[1] = 1 << 1 = 2, HelperMask[2] = 1 << 2 = 4 and so on...
+                HelperMask[index] = 1 << index;
             }
         }
 
         /// <summary>
         /// update the valid candidates for row, col and block
         /// </summary>
-        /// <param name="Row"></param>
-        /// <param name="Col"></param>
-        /// <param name="Value"></param>
+        /// <param name="Row">row of value</param>
+        /// <param name="Col">col of value</param>
+        /// <param name="Value">the value itself</param>
         private void UpdateCandidateValues(int Row, int Col, int Value)
         {
             //Use the bitwise OR operator (|) to add the mask at index value - 1 in the masks array to the element at index row in the RowValues array.
             //This has the effect of setting the bit corresponding to value in the binary representation of the element to 1,
             //indicating that the value is valid for the row.
-            RowValues[Row] |= BoardValues[Value - 1];
-            ColumnValues[Col] |= BoardValues[Value - 1];
+            RowValues[Row] |= HelperMask[Value - 1];
+            ColumnValues[Col] |= HelperMask[Value - 1];
             int SquareLocation = (Row / BlockSize) * BlockSize + Col / BlockSize;
-            BlockValues[SquareLocation] |= BoardValues[Value - 1];
+            BlockValues[SquareLocation] |= HelperMask[Value - 1];
         }
 
 
@@ -166,8 +152,10 @@ namespace SodukoSolver.Algoritms
 
                     // if the value is not 0
                     if(value != 0)
+                    {
                         // update the values
                         UpdateCandidateValues(row, col, value);
+                    }
                 }
             }
         }
@@ -175,12 +163,14 @@ namespace SodukoSolver.Algoritms
         /// <summary>
         /// This function determines the valid values for a cell at a specific row and column int the board
         /// </summary>
-        /// <param name="Row"></param>
-        /// <param name="Col"></param>
-        /// <returns></returns>
+        /// <param name="Row">the row</param>
+        /// <param name="Col">the col</param>
+        /// <returns>the amount of possible candidate values this cell has</returns>
         private int GetPossibleValuesForGivenCell(int Row, int Col)
         {
+            // Calculate the index of the block that the cell belongs to by using the formula (Row / BlockSize) * BlockSize + Col / BlockSize.
             int SquareLocation = (Row / BlockSize) * BlockSize + Col / BlockSize;
+            
             // Use the bitwise OR operator (|) to compute the sum of the non-valid values for the row, column, and box containing the cell.
             // This is done by performing a bitwise OR operation between the element at index row in the RowValues array,
             // the element at index col in the ColumnValues array,
@@ -206,11 +196,11 @@ namespace SodukoSolver.Algoritms
         /// value inside the board in this location, this is done using the possible values held in the arrays 
         /// for row, col and block
         /// </summary>
-        /// <param name="Col"></param>
-        /// <param name="Row"></param>
-        /// <param name="Value"></param>
+        /// <param name="Row">row of value</param>
+        /// <param name="Col">col of value</param>
+        /// <param name="Value">the value</param>
         /// <returns></returns>
-        private bool isValidBits(int Col, int Row, int Value)
+        private bool isValidBits(int Row, int Col, int Value)
         {
             int SquareLocation = (Row / BlockSize) * BlockSize + Col / BlockSize;
             // Use the bitwise AND operator (&) to check if the value is valid for the row, col and block
@@ -218,15 +208,15 @@ namespace SodukoSolver.Algoritms
             // and the mask at index value in the masks array.
             // If the result is 0, it means that the value is valid for the row
             // (i.e., the bit corresponding to value is not set in the binary representation of the element).
-            return (RowValues[Row] & BoardValues[Value]) == 0
-                && (ColumnValues[Row] & BoardValues[Value]) == 0
-                && (BlockValues[SquareLocation] & BoardValues[Value]) == 0;
+            return (RowValues[Row] & HelperMask[Value-1]) == 0
+                && (ColumnValues[Row] & HelperMask[Value-1]) == 0
+                && (BlockValues[SquareLocation] & HelperMask[Value-1]) == 0;
         }
 
         /// <summary>
         /// function that returns a copy of the current board
         /// </summary>
-        /// <returns></returns>
+        /// <returns>the copied board</returns>
         private int[,] GetBoardIntsCopy()
         {
             // craete copy of the board
@@ -246,7 +236,8 @@ namespace SodukoSolver.Algoritms
         /// <summary>
         /// function that returns a copy of the given board
         /// </summary>
-        /// <returns></returns>
+        /// <param name="board">the board</param>
+        /// <returns>the copied board</returns>
         private int[,] GetBoardIntsCopy(int[,] board)
         {
             // craete copy of the board
@@ -267,7 +258,7 @@ namespace SodukoSolver.Algoritms
         /// function that goes over the board and find the next cell that has the lesat possible candidates
         /// THIS FUNCTION ALSO CONTAINS THE IMPLEMENTATION OF THE SIMPLE ELIMINATION ALGORITHM
         /// </summary>
-        /// <returns></returns>
+        /// <returns>the row and col of the cell</returns>
         private (int BestRow, int BestCol) GetNextBestCell()
         {
             // row and col are set by deafult to -1, so that we know that if this function
@@ -295,11 +286,11 @@ namespace SodukoSolver.Algoritms
 
                     // if the amount of valid candidates for this cell is lower the the lowest amount, change the BestRow and BestCol
                     // and the current lowest amount of valid candidates 
-                    if(GetBits(AmountOfValidCandidates) < LowestAmountOfValidCandidates)
+                    if(GetActivatedBits(AmountOfValidCandidates) < LowestAmountOfValidCandidates)
                     {
                         BestRow = row;
                         BestCol = col;
-                        LowestAmountOfValidCandidates = GetBits(AmountOfValidCandidates);
+                        LowestAmountOfValidCandidates = GetActivatedBits(AmountOfValidCandidates);
                     }
 
                     // IMPLEMENTATION OF SIMPLE ELIMINATION:
@@ -321,17 +312,14 @@ namespace SodukoSolver.Algoritms
         /// <summary>
         /// function that copies the original values of the arrays into the new one's
         /// </summary>
-        /// <param name="copyRowValues"></param>
-        /// <param name="copyColValues"></param>
-        /// <param name="copyBlockValues"></param>
+        /// <param name="copyRowValues">original row values</param>
+        /// <param name="copyColValues">original col values</param>
+        /// <param name="copyBlockValues">original block values</param>
         private void CopyOriginalArraysIntoNewOnes(int[] copyRowValues, int[] copyColValues, int[] copyBlockValues)
         {
-            for(int i=0; i<Size; i++)
-            {
-                copyRowValues[i] = RowValues[i];
-                copyColValues[i] = ColumnValues[i];
-                copyBlockValues[i] = BlockValues[i];
-            }
+            Array.Copy(RowValues, copyRowValues, Size);
+            Array.Copy(ColumnValues, copyColValues, Size);
+            Array.Copy(BlockValues, copyBlockValues, Size);
         }
 
         /// <summary>
@@ -339,10 +327,10 @@ namespace SodukoSolver.Algoritms
         /// this also saves the board that we need to come back to - what the board looked like
         /// before the failed branch of backtracking messed up it's values
         /// </summary>
-        /// <param name="oldBoard"></param>
-        /// <param name="copyRowValues"></param>
-        /// <param name="copyColValues"></param>
-        /// <param name="copyBlockValues"></param>
+        /// <param name="oldBoard">the old board</param>
+        /// <param name="copyRowValues">the copy of the row values</param>
+        /// <param name="copyColValues">the copy of the col values</param>
+        /// <param name="copyBlockValues">the copy of the block values</param>
         private void RestoreAffectedValuesAndBoard(int[,] oldBoard, int[] copyRowValues, int[] copyColValues, int[] copyBlockValues)
         {
             BoardInts = oldBoard;
@@ -351,46 +339,87 @@ namespace SodukoSolver.Algoritms
             BlockValues = copyBlockValues;
         }
 
-        // TO BE COMPLETED
+        /// <summary>
+        /// this is the implementation of the hidden singles algorithm,
+        /// what this algorithm does is that it goes over all the possible candidates for each cell
+        /// in each house in the board, and if it is found that in a house there is only one possible
+        /// cell with that value, this cell will be filled with that value
+        /// </summary>
         private void HiddenSinglesAlgorithmWithBitwiseManipulation()
         {
-
+            // counter for how many possible candidates this cell has
+            int PossibleCandidates;
+            // the amount of activated bits in the value
+            int ActivatedBits;
+            // the value
+            int value;
+            // if changes were made to the board
+            bool ChangesWereMade = false;
+            // go over the board and for each cell, check if there is only one possible candidate for it
+            for (int row =0; row< Size; row++)
+            {
+                for (int col = 0; col < Size; col++){
+                    // if the value at the current cell isn't 0, move on
+                    if (BoardInts[row, col] != 0) continue;
+                    // otherwise, get the amount of number candidates for this location
+                    PossibleCandidates = GetPossibleValuesForGivenCell(row, col);
+                    // get the amount of activated bits in the value
+                    ActivatedBits = GetActivatedBits(PossibleCandidates);
+                    // if there is only one possible candidate for this cell, fill it with that value
+                    if (ActivatedBits == 1)
+                    {
+                        // get the value
+                        value = GetIndexOfMostSignificantActivatedBit(PossibleCandidates);
+                        // fill the cell with that value and update the affected values
+                        BoardInts[row, col] = value;
+                        UpdateCandidateValues(row, col, value);
+                        ChangesWereMade = true;
+                    }
+                }                 
+            }
+            if (ChangesWereMade)
+            {
+                // if changes were made, call the function again to check if there are more hidden singles
+                HiddenSinglesAlgorithmWithBitwiseManipulation();
+            }
+            // if no changes were made, exit the function
+            return;
         }
 
         /// <summary>
         /// function that solves a sudoku using backtracking algorithm with candidate values updating in real time
         /// </summary>
-        /// <returns></returns>
+        /// <returns>if the backtracking managed to solve the board or not</returns>
         private bool BacktrackingWithBitwiseManipulation()
         {
             // store the original values for the cell and the origianl board
-            int[,] copyBoard = GetBoardIntsCopy();
+            int[,] copyBoard = GetBoardIntsCopy(BoardInts);
             int[] copyRowValues =  new int[Size];
             int[] copyColValues = new int[Size];
             int[] copyBlockValues = new int[Size];
             // copy the old values into the copy values
             CopyOriginalArraysIntoNewOnes(copyRowValues, copyColValues, copyBlockValues);
 
+            // run the hidden singles algorithm that will fill in as many cells as possible
+            HiddenSinglesAlgorithmWithBitwiseManipulation();
 
             // the row and col of the cell that we are analyzing
             int CurrentRow, CurrentCol;
             // get the next best cell
             (CurrentRow, CurrentCol) = GetNextBestCell();
 
-            Console.WriteLine("current row is: " + CurrentRow + " Current Col is: " + CurrentCol);
-
             // if the value of one of the row or col was -1, return true because that means that there are no more
             // empty cells that the function can find inside the board
             if (CurrentRow == -1 || CurrentCol == -1) return true;
 
             // go over the possible values and check if the value is valid or not to put in the cell
-            for(int currentValue = 0; currentValue < Size; currentValue++)
+            for(int currentValue = 1; currentValue <= Size; currentValue++)
             {
                 if(isValidBits(CurrentRow,CurrentCol, currentValue))
                 {
                     // if the value is valid, the set the board at this location to be the value and update the affected cells
-                    BoardInts[CurrentRow, CurrentCol] = currentValue+1;
-                    UpdateCandidateValues(CurrentRow, CurrentCol, currentValue+1);
+                    BoardInts[CurrentRow, CurrentCol] = currentValue;
+                    UpdateCandidateValues(CurrentRow, CurrentCol, currentValue);
 
                     // run the backtracking again, if it works, then return true, else restore the original values
                     if (BacktrackingWithBitwiseManipulation()) return true;
@@ -403,34 +432,72 @@ namespace SodukoSolver.Algoritms
             return false;
         }
 
-        public bool SolveUsingBacktracking(int[,] board)
+        /// <summary>
+        /// function that solves the board using backtracking algorithm
+        /// </summary>
+        public string SolveUsingBacktracking()
         {
-            // set the current board of integer's pointing to the given board
-            BoardInts = GetBoardIntsCopy(board);
+            // print the board before solving
+            Console.WriteLine("\nInput Board:\n");
+            PrintBoardOfInts(BoardInts, Size);
 
+            // Stopwatch to measure the time it takes to solve the board
+            var Watch = new Stopwatch();
+
+            // start the timer
+            Watch.Start();
+            // run the backtracking algorithm and save the result
+            bool solved = BacktrackingWithBitwiseManipulation();
+
+            // stop the timer
+            Watch.Stop();
+            
+            // print if solved or not
+            if (solved) Console.WriteLine("\nSolved!");
+            else Console.WriteLine("\nNot solved!");
+
+            // print the board after solving
+            Console.WriteLine("\nResult Board:\n");
+            PrintBoardOfInts(BoardInts, Size);
+
+            // print out the amount of time ot took the algorithm to reach a conclusion
+            // print the elapsed times in seconds, milliseconds
+            Console.WriteLine("\nElapsed time: {0} seconds", Watch.Elapsed.TotalSeconds);
+            Console.WriteLine("Elapsed time: {0} milliseconds", Watch.Elapsed.TotalMilliseconds);
+
+            // return the board string
+            return ConvertToString(BoardInts, Size);
+        }
+
+        public SolvingFunctions()
+        {
+            Console.WriteLine("please enter board string: ");
+            string boardstring = Console.ReadLine();
+            Size = (int)Math.Sqrt(boardstring.Length);
+            BlockSize = (int)Math.Sqrt(Size);
+            BoardInts = new int[Size, Size];
+            BoardStringToBoardOfInts(boardstring, Size, BoardInts);           
+            
             // set up values
-            SetBoardValues();
+            SetHelperMask();
 
             // set up possible values for each house
             SetValuesForEachHouse();
 
-            // run the backtracking algorithm and return if it has managed to solve the board or not
-            return BacktrackingWithBitwiseManipulation();
-
         }
 
-        #endregion new backtracking functions
+            #endregion new backtracking functions
 
 
-        #region old backtracking functions
-        /// <summary>
-        ///this is the implementation of the backtracking algorithm
-        /// that goes over the board and tries to solve it
-        /// this function goes from left to right and top to bottom
-        /// </summary>
-        /// <param name="token">cancelletion token for multitasking</param>
-        /// <returns>if the board is solved</returns>
-        public bool Backtracking(CancellationToken token)
+            #region old backtracking functions
+            /// <summary>
+            ///this is the implementation of the backtracking algorithm
+            /// that goes over the board and tries to solve it
+            /// this function goes from left to right and top to bottom
+            /// </summary>
+            /// <param name="token">cancelletion token for multitasking</param>
+            /// <returns>if the board is solved</returns>
+            public bool Backtracking(CancellationToken token)
         {
             // if the location is out of bounds then the board is solved
             if (Location < 0 || Location >= EmptyCellsArray.Length)

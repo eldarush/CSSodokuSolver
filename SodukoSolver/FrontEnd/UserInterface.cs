@@ -559,32 +559,33 @@ namespace SodukoSolver
 
         private static bool Solve3(SolvingFunctions solver)
         {
-            string boardstring = GetBoardString(board.GetBoard(), board.GetSize());
-            bitWiseBoard = new int[board.GetSize(), board.GetSize()];
-            bitWiseBoard = ConvertTo2DArray(boardstring, bitWiseBoard, board.GetSize());
-            if (solver.SolveUsingBacktracking(bitWiseBoard))
-            {
-                Console.WriteLine("Solved!");
-            }
-            else
-            {
-                Console.WriteLine("Not solved!");
-            }
-            // print out the solved board
-            for (int i = 0; i < board.GetSize(); i++)
-            {
-                for (int j = 0; j < board.GetSize(); j++)
-                {
-                    Console.Write(solver.BoardInts[i, j] + " ");
-                }
-                Console.WriteLine("");
-            }
-            Console.ReadLine();
-            
-            Console.WriteLine("\nBitWise backtracking board is:\n");
-            PrintBoard(board.GetBoard(), board.GetSize());
-            Console.ReadLine();
-            return IsSolvedInts(bitWiseBoard, solver.Size);
+            //string boardstring = GetBoardString(board.GetBoard(), board.GetSize());
+            //bitWiseBoard = new int[board.GetSize(), board.GetSize()];
+            //bitWiseBoard = ConvertTo2DArray(boardstring, bitWiseBoard, board.GetSize());
+            //if (solver.SolveUsingBacktracking(bitWiseBoard))
+            //{
+            //    Console.WriteLine("Solved!");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Not solved!");
+            //}
+            //// print out the solved board
+            //for (int i = 0; i < board.GetSize(); i++)
+            //{
+            //    for (int j = 0; j < board.GetSize(); j++)
+            //    {
+            //        Console.Write(solver.BoardInts[i, j] + " ");
+            //    }
+            //    Console.WriteLine("");
+            //}
+            //Console.ReadLine();
+
+            //Console.WriteLine("\nBitWise backtracking board is:\n");
+            //PrintBoard(board.GetBoard(), board.GetSize());
+            //Console.ReadLine();
+            //return IsSolvedInts(bitWiseBoard, solver.Size);
+            return false;
         }
 
     }

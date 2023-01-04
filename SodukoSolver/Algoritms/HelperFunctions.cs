@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using static SodukoSolver.Exceptions.CustomExceptions;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
+using System.Diagnostics.Metrics;
 
 namespace SodukoSolver.Algoritms
 {
@@ -489,6 +490,7 @@ namespace SodukoSolver.Algoritms
             }
         }
 
+        # region dancing links
         // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //                                                                                                 DANCING LINKS
         // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1215,5 +1217,134 @@ namespace SodukoSolver.Algoritms
         // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         //                                                                                                 DANCING LINKS
         // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+        #endregion dancing links
+
+        
+        public static void BoardStringToBoardOfInts(string boardString, int size, int[,] board)
+        {
+            int counter = 0;
+            for (int row = 0; row < size; row++)
+            {
+                for (int col = 0; col < size; col++)
+                {
+                    board[row, col] = Convert.ToInt32(boardString[counter]) - '0';
+                    counter++;
+                }
+            }
+        }
+
+        public static void PrintBoardOfInts(int[,] board, int size)
+        {
+            {
+                // Find the maximum length of the string representation of any element in the board
+                int maxLength = 0;
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < size; j++)
+                    {
+                        int length = board[i, j].ToString().Length;
+                        if (length > maxLength)
+                        {
+                            maxLength = length;
+                        }
+                    }
+                }
+
+                // Calculate the width of each square
+                int squareWidth = maxLength + 2;
+
+                // Calculate the size of the sub-squares (if any)
+                int subSquareSize = (int)Math.Sqrt(size);
+
+                // Print the top border
+                Console.Write(" ");
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < squareWidth; j++)
+                    {
+                        Console.Write("-");
+                    }
+                    if ((i + 1) % subSquareSize == 0 && i != size - 1)
+                    {
+                        Console.Write("+");
+                    }
+                }
+                Console.WriteLine();
+
+                // Print the rows
+                for (int i = 0; i < size; i++)
+                {
+                    // Print the left border
+                    Console.Write("|");
+
+                    // Print the elements in the row
+                    for (int j = 0; j < size; j++)
+                    {
+                        // if the size more then 9, print the value with a 0 in front
+                        string element;
+                        if (size >= 10)
+                        {
+                            element = board[i, j].ToString().PadLeft(2, '0');  // add leading zero for single digit values
+                        }
+                        else
+                        {
+                            element = board[i, j].ToString();
+                        }
+                        int padding = (squareWidth - element.Length) / 2;
+                        for (int k = 0; k < padding; k++)
+                        {
+                            Console.Write(" ");
+                        }
+                        Console.Write(element);
+                        for (int k = 0; k < padding; k++)
+                        {
+                            Console.Write(" ");
+                        }
+                        if ((j + 1) % subSquareSize == 0 && j != size - 1)
+                        {
+                            Console.Write("|");
+                        }
+                    }
+
+                    // Print the right border
+                    Console.WriteLine("|");
+
+                    // Print the bottom border for the row
+                    if ((i + 1) % subSquareSize == 0 && i != size - 1)
+                    {
+                        Console.Write(" ");
+                        for (int j = 0; j < size; j++)
+                        {
+                            for (int k = 0; k < squareWidth; k++)
+                            {
+                                Console.Write("-");
+                            }
+                            if ((j + 1) % subSquareSize == 0 && j != size - 1)
+                            {
+                                Console.Write("+");
+                            }
+                        }
+                        Console.WriteLine();
+                    }
+                }
+
+                // Print the bottom border
+                Console.Write(" ");
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < squareWidth; j++)
+                    {
+                        Console.Write("-");
+                    }
+
+                    if ((i + 1) % subSquareSize == 0 && i != size - 1)
+                    {
+                        Console.Write("+");
+                    }
+                }
+                Console.WriteLine();
+            }
+        }
     }
 }
