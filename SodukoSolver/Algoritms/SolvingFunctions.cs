@@ -208,9 +208,10 @@ namespace SodukoSolver.Algoritms
             // and the mask at index value in the masks array.
             // If the result is 0, it means that the value is valid for the row
             // (i.e., the bit corresponding to value is not set in the binary representation of the element).
-            return (RowValues[Row] & HelperMask[Value-1]) == 0
-                && (ColumnValues[Row] & HelperMask[Value-1]) == 0
-                && (BlockValues[SquareLocation] & HelperMask[Value-1]) == 0;
+            return (RowValues[Row] & HelperMask[Value]) == 0
+                && (ColumnValues[Col] & HelperMask[Value]) == 0
+                && (BlockValues[SquareLocation] & HelperMask[Value]) == 0;
+
         }
 
         /// <summary>
@@ -353,8 +354,6 @@ namespace SodukoSolver.Algoritms
             int ActivatedBits;
             // the value
             int value;
-            // if changes were made to the board
-            bool ChangesWereMade = false;
             // go over the board and for each cell, check if there is only one possible candidate for it
             for (int row =0; row< Size; row++)
             {
@@ -373,18 +372,14 @@ namespace SodukoSolver.Algoritms
                         // fill the cell with that value and update the affected values
                         BoardInts[row, col] = value;
                         UpdateCandidateValues(row, col, value);
-                        ChangesWereMade = true;
                     }
                 }                 
             }
-            if (ChangesWereMade)
-            {
-                // if changes were made, call the function again to check if there are more hidden singles
-                HiddenSinglesAlgorithmWithBitwiseManipulation();
-            }
-            // if no changes were made, exit the function
+            // return the updated board
             return;
         }
+
+        public static int countT = 0;
 
         /// <summary>
         /// function that solves a sudoku using backtracking algorithm with candidate values updating in real time
@@ -392,6 +387,7 @@ namespace SodukoSolver.Algoritms
         /// <returns>if the backtracking managed to solve the board or not</returns>
         private bool BacktrackingWithBitwiseManipulation()
         {
+            countT++;
             // store the original values for the cell and the origianl board
             int[,] copyBoard = GetBoardIntsCopy(BoardInts);
             int[] copyRowValues =  new int[Size];
@@ -401,7 +397,7 @@ namespace SodukoSolver.Algoritms
             CopyOriginalArraysIntoNewOnes(copyRowValues, copyColValues, copyBlockValues);
 
             // run the hidden singles algorithm that will fill in as many cells as possible
-            HiddenSinglesAlgorithmWithBitwiseManipulation();
+            //HiddenSinglesAlgorithmWithBitwiseManipulation();
 
             // the row and col of the cell that we are analyzing
             int CurrentRow, CurrentCol;
@@ -413,13 +409,13 @@ namespace SodukoSolver.Algoritms
             if (CurrentRow == -1 || CurrentCol == -1) return true;
 
             // go over the possible values and check if the value is valid or not to put in the cell
-            for(int currentValue = 1; currentValue <= Size; currentValue++)
+            for(int currentValue = 0; currentValue < Size; currentValue++)
             {
                 if(isValidBits(CurrentRow,CurrentCol, currentValue))
                 {
                     // if the value is valid, the set the board at this location to be the value and update the affected cells
-                    BoardInts[CurrentRow, CurrentCol] = currentValue;
-                    UpdateCandidateValues(CurrentRow, CurrentCol, currentValue);
+                    BoardInts[CurrentRow, CurrentCol] = currentValue+1;
+                    UpdateCandidateValues(CurrentRow, CurrentCol, currentValue+1);
 
                     // run the backtracking again, if it works, then return true, else restore the original values
                     if (BacktrackingWithBitwiseManipulation()) return true;
@@ -437,9 +433,6 @@ namespace SodukoSolver.Algoritms
         /// </summary>
         public string SolveUsingBacktracking()
         {
-            // print the board before solving
-            Console.WriteLine("\nInput Board:\n");
-            PrintBoardOfInts(BoardInts, Size);
 
             // Stopwatch to measure the time it takes to solve the board
             var Watch = new Stopwatch();
