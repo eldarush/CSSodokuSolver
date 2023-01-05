@@ -5,34 +5,37 @@ using System.Text;
 using System.Threading.Tasks;
 using static SodukoSolver.Exceptions.CustomExceptions;
 using static SodukoSolver.Algoritms.HelperFunctions;
-#pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CA2211 // Non-constant fields should not be visible
 
 namespace SodukoSolver.Algoritms
 {
     public static class ValidatingFunctions
     {
         // the current Board that is being validated
-        public static int[,]? Vboard;
+        public static int[,] Vboard;
 
         // the allowed values for the Board
-        private static char[]? allowedValues;
+        private static char[] allowedValues;
 
-        // the bit mask for avalues in row
-        public static int[]? VRowValues;
+        // the bit mask for values in row
+        public static int[] VRowValues;
 
-        // the bit mask for avalues in column
-        public static int[]? VColValues;
+        // the bit mask for values in column
+        public static int[] VColValues;
 
-        // the bit mask for avalues in block
-        public static int[]? VBlockValues;
+        // the bit mask for values in block
+        public static int[] VBlockValues;
 
         // the helper mask
-        public static int[]? VHelperMask;
+        public static int[] VHelperMask;
 
-        // TODO add the validation functions here
-
-        // main validation function that will call all the other validation functions
+        /// <summary>
+        /// main validation function that will call all the other validation functions
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="boardString"></param>
+        /// <returns></returns>
+        /// <exception cref="SizeException"></exception>
+        /// <exception cref="InvalidCharacterException"></exception>
         public static bool Validate(int size, string boardString)
         {
 
@@ -59,8 +62,13 @@ namespace SodukoSolver.Algoritms
             return ValidateBoard(Vboard, size);
         }
 
-        // function that checks that the Board string is the same Size as the
-        // Board Size squard
+        /// <summary>
+        /// function that checks that the Board string is the same Size as the
+        /// Board Size squard
+        /// </summary>
+        /// <param name="boardString"></param>
+        /// <returns></returns>
+        /// <exception cref="SizeException"></exception>
         private static bool CheckLength(string boardString)
         {
             // if the Size is negrive return false
@@ -73,8 +81,12 @@ namespace SodukoSolver.Algoritms
             return Math.Sqrt(boardString.Length) % 1 == 0;
         }
 
-        // function that gets all the allowed numbers for the Board
-        // with given Size
+        /// <summary>
+        /// function that gets all the allowed numbers for the Board
+        /// with given Size
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public static char[] GetAllowedChars(int size)
         {
             // create an array of allowed chars
@@ -90,9 +102,13 @@ namespace SodukoSolver.Algoritms
 
         }
 
-        // this function will validate the Board string
-        // it will return true if the Board string is valid
-        // and false if the Board string is invalid
+        /// <summary>
+        /// this function will validate the Board string
+        /// it will return true if the Board string is valid
+        /// and false if the Board string is invalid
+        /// </summary>
+        /// <param name="boardString">the board string</param>
+        /// <returns></returns>
         private static bool ValidateBoardString(string boardString)
         {
             // if the Board string is null or empty
@@ -117,6 +133,13 @@ namespace SodukoSolver.Algoritms
 
         }
 
+        /// <summary>
+        /// update the valid candidates for row, col and block in the validating candidates's bit masks
+        /// </summary>
+        /// <param name="Row">row of value</param>
+        /// <param name="Col">col of value</param>
+        /// <param name="Value">the value itself</param>
+        /// <param name="BlockSize">the size of a block</param>
         private static void UpdateCandidateValues(int Row, int Col, int Value, int BlockSize)
         {
             //Use the bitwise OR operator (|) to add the mask at index value - 1 in the masks array to the element at index row in the RowValues array.
@@ -128,7 +151,17 @@ namespace SodukoSolver.Algoritms
             VBlockValues[SquareLocation] |= VHelperMask[Value - 1];
         }
 
-        private static bool isValidBits(int Row, int Col, int Value, int BlockSize)
+        /// <summary>
+        /// function that gets a location in the Board and a value and returns if it valid to put 
+        /// value inside the Board in this location, this is done using the possible values held in the bitmasks 
+        /// for row, col and block in the validating candidates's bit masks
+        /// </summary>
+        /// <param name="Row">row of value</param>
+        /// <param name="Col">col of value</param>
+        /// <param name="Value">the value</param>
+        /// <param name="BlockSize">the size of a block</param>
+        /// <returns>if the candidate is valid or not</returns>
+        private static bool IsValidBits(int Row, int Col, int Value, int BlockSize)
         {
             int SquareLocation = (Row / BlockSize) * BlockSize + Col / BlockSize;
             // Use the bitwise AND operator (&) to check if the value is valid for the row, col and block
@@ -142,9 +175,14 @@ namespace SodukoSolver.Algoritms
 
         }
 
-        // this function will validate the Board
-        // it will return true if the Board is valid
-        // and false if the Board is invalid
+        /// <summary>
+        /// function that checks if the Board is valid
+        /// </summary>
+        /// <param name="board">the board</param>
+        /// <param name="size">size of board</param>
+        /// <returns>if board valid or not</returns>
+        /// <exception cref="NullBoardException">possible exception</exception>
+        /// <exception cref="BoardCellsNotValidException">possible exception</exception>
         private static bool ValidateBoard(int[,] board, int size)
         {
             // if the Board is null
@@ -165,7 +203,7 @@ namespace SodukoSolver.Algoritms
                     if (board[row, col] == 0) continue;
 
                     // try and insert the value in the Board, if it is not valid, throw exception
-                    if (!isValidBits(row, col, board[row, col]-1, BlockSize))
+                    if (!IsValidBits(row, col, board[row, col]-1, BlockSize))
                     {
                         throw new BoardCellsNotValidException(row, col);
                     }

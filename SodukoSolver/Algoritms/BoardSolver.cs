@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static SodukoSolver.Algoritms.ValidatingFunctions;
 using static SodukoSolver.Algoritms.HelperFunctions;
-using System.Diagnostics;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
 namespace SodukoSolver.Algoritms
 {
-    public class SolvingFunctions
+    public class BoardSolver
     {
         // Size of the Board
         public int Size { get; set; }
@@ -37,38 +32,22 @@ namespace SodukoSolver.Algoritms
         #region new backtracking functions
 
         /// <summary>
-        /// function that gets a value and counts the amount of activated bits in the numbe
-        /// Equal to writing CountOnes from System.Numerics.BitOperations
+        /// constructor that gets the board and the size of the board
+        /// and initialzes the helper mask and the allowed values for each cell
         /// </summary>
-        /// <param name="value">thevalue to be converted</param>
-        /// <returns>counts the amount of activated bits in the number</returns>
-        private int GetActivatedBits(int value)
+        /// <param name="board">the board</param>
+        /// <param name="size">the size</param>
+        public BoardSolver(int[,] board, int size)
         {
-            // set value to the result of a bitwise AND operation between value and value - 1 and increment the counter
-            int bits = 0;
-            while (value > 0)
-            {
-                value &= value - 1;
-                bits++;   
-            }
-            return bits;
-        }
+            BoardInts = board;
+            Size = size;
+            BlockSize = (int)Math.Sqrt(Size);
 
-        /// <summary>
-        /// function that determines the index of the most significant bit that is set to 1 in a binary representation of a given integer value.
-        /// </summary>
-        /// <param name="value">the value</param>
-        /// <returns>the index of the most significant bit that is set to 1</returns>
-        private int GetIndexOfMostSignificantActivatedBit(int value)
-        {
-            int bits = 0;
-            while (value != 0)
-            {
-                // divide value by 2 using right shift and increment the counter
-                value >>= 1;
-                bits++;
-            }
-            return bits;
+            // create the mask of the values of the row, col and block values
+            SetValuesForEachHouse();
+
+            // create the helper mask
+            SetHelperMask();
         }
 
         /// <summary>
@@ -78,13 +57,18 @@ namespace SodukoSolver.Algoritms
         {
             // create new array with the Size of one row
             HelperMask = new int[Size];
-            // go over the Board and initialize the values
-            for(int index=0; index < Size; index++)
-            {
-                // Board values at each index will be 2 to the power of the index
-                // HelperMask[0] = 1 << 0 = 1, HelperMask[1] = 1 << 1 = 2, HelperMask[2] = 1 << 2 = 4 and so on...
-                HelperMask[index] = 1 << index;
-            }
+        }
+
+        /// <summary>
+        /// initializes the possible values for row, col and block
+        /// </summary>
+        private void SetValuesForEachHouse()
+        {
+            // create new arrays all with the Size of one row
+            RowValues = new int[Size];
+            ColumnValues = new int[Size];
+            BlockValues = new int[Size];
+
         }
 
         /// <summary>
@@ -102,34 +86,6 @@ namespace SodukoSolver.Algoritms
             ColumnValues[Col] |= HelperMask[Value - 1];
             int SquareLocation = (Row / BlockSize) * BlockSize + Col / BlockSize;
             BlockValues[SquareLocation] |= HelperMask[Value - 1];
-        }
-
-
-        /// <summary>
-        /// initializes the possible values for row, col and block
-        /// </summary>
-        private void SetValuesForEachHouse()
-        {
-            // create new arrays all with the Size of one row
-            RowValues = new int[Size];
-            ColumnValues = new int[Size];
-            BlockValues = new int[Size];
-            // go over all the values in the Board and fill the possible values accordingally for each cell in the Board
-            for(int row=0; row < Size; row++)
-            {
-                for(int col =0; col < Size; col++)
-                {
-                    // the current value
-                    int value = BoardInts[row, col];
-
-                    // if the value is not 0
-                    if(value != 0)
-                    {
-                        // update the values
-                        UpdateCandidateValues(row, col, value);
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -157,7 +113,7 @@ namespace SodukoSolver.Algoritms
             // of valid values and the range of possible values for the cell.
             // This is done by performing a bitwise AND operation between the int and((1 << Size - 1),
             // which represents a bitmask with all bits set to 1 up to the Size of the Board array.
-            ValidCandidates &= ((1 << Size) - 1);
+            ValidCandidates &= (1 << Size) - 1;
 
             // Return the result of the bitwise AND operation.
             return ValidCandidates;
@@ -172,7 +128,7 @@ namespace SodukoSolver.Algoritms
         /// <param name="Col">col of value</param>
         /// <param name="Value">the value</param>
         /// <returns></returns>
-        private bool isValidBits(int Row, int Col, int Value)
+        private bool IsValidBits(int Row, int Col, int Value)
         {
             int SquareLocation = (Row / BlockSize) * BlockSize + Col / BlockSize;
             // Use the bitwise AND operator (&) to check if the value is valid for the row, col and block
@@ -186,25 +142,6 @@ namespace SodukoSolver.Algoritms
 
         }
 
-        /// <summary>
-        /// function that returns a copy of the current Board
-        /// </summary>
-        /// <returns>the copied Board</returns>
-        private int[,] GetBoardIntsCopy()
-        {
-            // craete copy of the Board
-            int[,] BoardCopy = new int[Size, Size];
-            // go over the current Board and copy each value to the corresponding value in the new Board
-            for(int row=0; row < Size; row++)
-            {
-                for(int col=0; col < Size; col++)
-                {
-                    BoardCopy[row, col] = BoardInts[row, col];
-                }
-            }
-            // return the copied Board
-            return BoardCopy;
-        }
 
         /// <summary>
         /// function that returns a copy of the given Board
@@ -381,7 +318,7 @@ namespace SodukoSolver.Algoritms
             // go over the possible values and check if the value is valid or not to put in the cell
             for(int currentValue = 0; currentValue < Size; currentValue++)
             {
-                if(isValidBits(CurrentRow,CurrentCol, currentValue))
+                if(IsValidBits(CurrentRow,CurrentCol, currentValue))
                 {
                     // if the value is valid, the set the Board at this location to be the value and update the affected cells
                     BoardInts[CurrentRow, CurrentCol] = currentValue+1;
@@ -398,55 +335,8 @@ namespace SodukoSolver.Algoritms
             return false;
         }
 
-        /// <summary>
-        /// function that solves the Board using backtracking algorithm
-        /// </summary>
-        public string SolveUsingBacktracking()
-        {
 
-            // Stopwatch to measure the time it takes to solve the Board
-            var Watch = new Stopwatch();
-
-            // start the timer
-            Watch.Start();
-            // run the backtracking algorithm and save the result
-            bool solved = BacktrackingWithBitwiseManipulation();
-
-            // stop the timer
-            Watch.Stop();
-            
-            // print if solved or not
-            if (solved) Console.WriteLine("\nSolved!");
-            else Console.WriteLine("\nNot solved!");
-
-            // print the Board after solving
-            Console.WriteLine("\nResult Board:\n");
-            PrintBoard(BoardInts, Size);
-
-            // print out the amount of time ot took the algorithm to reach a conclusion
-            // print the elapsed times in seconds, milliseconds
-            Console.WriteLine("\nElapsed time: {0} seconds", Watch.Elapsed.TotalSeconds);
-            Console.WriteLine("Elapsed time: {0} milliseconds", Watch.Elapsed.TotalMilliseconds);
-
-            // return the Board string
-            return ConvertToString(BoardInts, Size);
-        }
-
-        public SolvingFunctions(int[,] board, int size)
-        {
-            BoardInts = board;
-            Size = size;
-            BlockSize = (int)Math.Sqrt(Size);         
-            
-            // set up values
-            SetHelperMask();
-
-            // set up possible values for each house
-            SetValuesForEachHouse();
-
-        }
-
-            #endregion new backtracking functions
+        #endregion new backtracking functions
 
     }
 

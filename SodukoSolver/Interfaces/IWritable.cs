@@ -8,7 +8,11 @@ namespace SodukoSolver.Interfaces
 {
     public interface IWritable
     {
-        // write function that will write a Board string
+        /// <summary>
+        /// write function that will be implemented in the calsses that implement this interface
+        /// </summary>
+        /// <param name="boardstring">the boardstring</param>
+        /// <returns>if the writing sucseeded or not</returns>
         bool Write(string boardstring);
     }
 }

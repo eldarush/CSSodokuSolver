@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using static SodukoSolver.Exceptions.CustomExceptions;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
-using System.Diagnostics.Metrics;
+using System.Diagnostics;
 
 namespace SodukoSolver.Algoritms
 {
@@ -79,7 +79,38 @@ namespace SodukoSolver.Algoritms
             }
         }
 
-        
+        /// <summary>
+        /// function that will get the row, col, and block and helper mask and will copy them into new copies of them
+        /// </summary>
+        /// <param name="RowValues">row bitmask</param>
+        /// <param name="ColValues">col bitmask</param>
+        /// <param name="BlockValues">block bitmask</param>
+        /// <param name="HelperMask">helper bitmask</param>
+        /// <param name="newRowValues">new row bitmask</param>
+        /// <param name="newColValues">new col bitmask</param>
+        /// <param name="newBlockValues">new block bitmask</param>
+        /// <param name="newHelperMask">new helper bitmask</param>
+        public static void CopyBitMasks(int[] RowValues, int[] ColValues, int[] BlockValues, int[] HelperMask,
+             out int[] newRowValues, out int[] newColValues, out int[] newBlockValues, out int[] newHelperMask)
+        {
+            // make the new row, col, and block values use the old one's memeory space
+            newRowValues = RowValues;
+            newColValues = ColValues;
+            newBlockValues = BlockValues;
+            newHelperMask = HelperMask;
+        }
+
+
+        /// <summary>
+        /// function that gets a stop watch and prints out the seconds and ms in the watch
+        /// </summary>
+        /// <param name="watch">the stopwatch</param>
+        public static void PrintOutTime(Stopwatch watch)
+        {
+            // print the elapsed times in seconds, milliseconds
+            Console.WriteLine("\nElapsed time: {0} seconds", watch.Elapsed.TotalSeconds);
+            Console.WriteLine("Elapsed time: {0} milliseconds", watch.Elapsed.TotalMilliseconds);
+        }
 
         /// <summary>
         /// Function that chekcs if the Board is valid
@@ -319,6 +350,41 @@ namespace SodukoSolver.Algoritms
                 }
                 Console.WriteLine();
             }
+        }
+
+        /// <summary>
+        /// function that gets a value and counts the amount of activated bits in the numbe
+        /// Equal to writing CountOnes from System.Numerics.BitOperations
+        /// </summary>
+        /// <param name="value">thevalue to be converted</param>
+        /// <returns>counts the amount of activated bits in the number</returns>
+        public static int GetActivatedBits(int value)
+        {
+            // set value to the result of a bitwise AND operation between value and value - 1 and increment the counter
+            int bits = 0;
+            while (value > 0)
+            {
+                value &= value - 1;
+                bits++;
+            }
+            return bits;
+        }
+
+        /// <summary>
+        /// function that determines the index of the most significant bit that is set to 1 in a binary representation of a given integer value.
+        /// </summary>
+        /// <param name="value">the value</param>
+        /// <returns>the index of the most significant bit that is set to 1</returns>
+        public static int GetIndexOfMostSignificantActivatedBit(int value)
+        {
+            int bits = 0;
+            while (value != 0)
+            {
+                // divide value by 2 using right shift and increment the counter
+                value >>= 1;
+                bits++;
+            }
+            return bits;
         }
     }
 }

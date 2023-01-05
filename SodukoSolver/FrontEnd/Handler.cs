@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using static SodukoSolver.Algoritms.HelperFunctions;
-using static SodukoSolver.Algoritms.SolvingFunctions;
+using static SodukoSolver.Algoritms.BoardSolver;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using SodukoSolver.Algoritms;
 

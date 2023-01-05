@@ -73,9 +73,9 @@ This file is temporary and will be deleted once the project is complete.
 
 file path for test file:
 
-C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\testboard.txt
+C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\TextFiles\empty16by16board.txt
 
-C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\empty16by16board.txt
+C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\TextFiles\testboard.txt
 
 25 by 25:
 
