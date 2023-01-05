@@ -18,7 +18,7 @@ namespace SodukoSolver
             this.writer = writer;
         }
 
-        // write function that will write a board string
+        // write function that will write a Board string
         public bool Write(string boardstring)
         {
             return writer.Write(boardstring);

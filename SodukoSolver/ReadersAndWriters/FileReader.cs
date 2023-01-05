@@ -21,7 +21,7 @@ namespace SodukoSolver
         }
 
         /// <summary>
-        /// read Function that will return a board string
+        /// read Function that will return a Board string
         /// </summary>
         /// <returns></returns>
         public string Read()
@@ -34,7 +34,7 @@ namespace SodukoSolver
                     throw new FileNotFoundException("file path does not exist, cannot read file \n "+
                         $"entered file path is: {filepath}");
                 }
-                // read the file and return the board string
+                // read the file and return the Board string
                 string text = File.ReadAllText(filepath);
                 // keep just the characters that represent the values
                 text = text.Replace(" ", "");
@@ -52,7 +52,7 @@ namespace SodukoSolver
         }
 
 
-        // write function that will write a board string to the file
+        // write function that will write a Board string to the file
         public bool Write(string boardstring)
         {
             // get the file name from the file path
@@ -67,13 +67,13 @@ namespace SodukoSolver
             {
                 if (File.Exists(solvedfilepath))
                 {
-                    // replace the contents of the file with the board string
+                    // replace the contents of the file with the Board string
                     File.WriteAllText(solvedfilepath, boardstring);
                 }
                 else
                 {
                     Console.WriteLine("NOTICE - A new file was created during this process");
-                    // create new file with this name and write the board string to it
+                    // create new file with this name and write the Board string to it
                     File.WriteAllText(solvedfilepath, boardstring);
                 }
             }

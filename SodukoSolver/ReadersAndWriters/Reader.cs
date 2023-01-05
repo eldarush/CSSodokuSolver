@@ -17,7 +17,7 @@ namespace SodukoSolver.Interfaces
             this.reader = reader;
         }
 
-        // read function that will return a board string
+        // read function that will return a Board string
         public string Read()
         {
             return reader.Read();

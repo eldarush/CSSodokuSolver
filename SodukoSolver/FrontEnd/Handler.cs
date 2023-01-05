@@ -13,18 +13,12 @@ namespace SodukoSolver
 {
     public class Handler
     {
-        //static void Main()
-        //{
-        //    // start the program that gets soduko board from the user 
-        //    // and runs the algorithm
-        //    UserInterface.Run();
-
-        //}
         static void Main()
         {
-            SolvingFunctions solver = new SolvingFunctions();
-            string solvedString = solver.SolveUsingBacktracking();
-            Console.WriteLine("\nSolved Board String:\n" + solvedString + "\n"); 
+            // start the program that gets soduko Board from the user 
+            // and runs the algorithm
+            UserInterface.Run();
+
         }
     }
 }

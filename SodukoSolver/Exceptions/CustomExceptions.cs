@@ -8,17 +8,17 @@ namespace SodukoSolver.Exceptions
 {
     public class CustomExceptions
     {
-        // size exception that gets a size as its value and dispalys it in the message
+        // Size exception that gets a Size as its value and dispalys it in the message
         public class SizeException : Exception
         {
             public SizeException(int size)
-                : base("The board string cannot be used to create a board with the given dimensions, " +
-                    $"the current board string's size is {size} and that's not a square number.")
+                : base("The Board string cannot be used to create a Board with the given dimensions, " +
+                    $"the current Board string's Size is {size} and that's not a square number.")
             {
             }
             public SizeException()
-                : base("The board string cannot be used to create a board with the given dimensions, " +
-                    $"the current board string's length is 4, but a 2 by 2 board is not a thing.")
+                : base("The Board string cannot be used to create a Board with the given dimensions, " +
+                    $"the current Board string's length is 4, but a 2 by 2 Board is not a thing.")
             {
             }
         }
@@ -27,13 +27,13 @@ namespace SodukoSolver.Exceptions
         public class InvalidCharacterException : Exception
         {
             public InvalidCharacterException()
-                : base("The board string contains invalid characters")
+                : base("The Board string contains invalid characters")
             {
             }
         }
 
 
-        // exception if the board's cells are not valid
+        // exception if the Board's cells are not valid
         public class BoardCellsNotValidException : Exception
         {
             public BoardCellsNotValidException(int row, int col)
@@ -42,11 +42,11 @@ namespace SodukoSolver.Exceptions
             }
         }
 
-        // exception if the board is null
+        // exception if the Board is null
         public class NullBoardException : Exception
         {
             public NullBoardException()
-                : base("The board is null")
+                : base("The Board is null")
             {
             }
         }

@@ -16,91 +16,97 @@ using SodukoSolver.Algoritms;
 
 namespace SodukoSolver
 {
-    // this is a class for the soduko board
-    // that will contain the board, its properties, and methods
-    // to solve the soduko board
+    // this is a class for the soduko Board
+    // that will contain the Board, its properties, and methods
+    // to solve the soduko Board
     class SodokuBoard
     {
-        // board dimentions
-        private readonly int size;
+        // Board dimentions
+        public int Size { get; set; }
 
-        // the string that will be used to create the board
-        public readonly string boardString;
+        // the string that will be used to create the Board
+        public string boardString { get; set; }
 
-        // the board itself
-        private Cell[,] board;
+        // the Board itself
+        public int[,] Board { get; set; }
 
-        // getters for the dimensions
-        public int GetSize()
-        {
-            return size;
-        }
+        // the bit mask for values in row
+        public int[] RowValues { get; set; }
 
-        // getter for the board
-        public Cell[,] GetBoard()
-        {
-            return board;
-        }
+        // the bit mask for values in column
+        public int[] ColValues { get; set; }
 
-        // setter for the board
-        public void SetBoard(Cell[,] board)
-        {
+        // the bit mask for values in block
+        public int[] BlockValues { get; set; }
 
-            this.board = board;
-        }
+        // the helper mask
+        public int[] HelperMask { get; set; }
 
 
-        // Constructor that will the board string from the console
-        // and then creates the board
+        // Constructor that will the Board string from the console
+        // and then creates the Board
         public SodokuBoard()
         {
             // create new console reader
             _ = new ConsoleReader();
 
-            // ask the user for the board string
-            Console.WriteLine("Please enter the board string:");
+            // ask the user for the Board string
+            Console.WriteLine("Please enter the Board string:");
             boardString = Console.ReadLine();
-            // while the board string is null or white space, ask the user to enter board again
+            // while the Board string is null or white space, ask the user to enter Board again
             while (String.IsNullOrWhiteSpace(boardString))
             {
-                Console.WriteLine("The entered board string is empty, please enter a valid string:");
+                Console.WriteLine("The entered Board string is empty, please enter a valid string:");
                 boardString = Console.ReadLine();
             }
 
-            // size is the square root of the length of the board string
-            size = (int)Math.Sqrt(boardString.Length);
+            // Size is the square root of the length of the Board string
+            Size = (int)Math.Sqrt(boardString.Length);
 
-            if (IsTheBoardValid(size, boardString))
+            if (IsTheBoardValid(Size, boardString))
             {
-                // copy the board that the testing was done on
+                // copy the Board that the testing was done on
                 // because it is valid
-                board = Vboard;
+                Board = Vboard;
+
+                // copy the bit masks and the helper mask
+                RowValues = VRowValues;
+                ColValues = VColValues;
+                BlockValues = VBlockValues;
+                HelperMask = VHelperMask;
+
             }
-            // if the board is not valid, an exception will be thrown 
+            // if the Board is not valid, an exception will be thrown 
         }
 
-        // Constructor that will take the board string from a given file path
-        // and will create the board
+        // Constructor that will take the Board string from a given file path
+        // and will create the Board
         public SodokuBoard(string path)
         {
             // create new file reader
             IReadable reader = new FileReader(path);
 
-            // read the board string from the file
+            // read the Board string from the file
             boardString = reader.Read();
 
-            // size is the square root of the length of the board string
-            size = (int)Math.Sqrt(boardString.Length);
+            // Size is the square root of the length of the Board string
+            Size = (int)Math.Sqrt(boardString.Length);
 
-            // if the given board string passed the validation,
-            // create the board
-            if (IsTheBoardValid(size,boardString))
+            // if the given Board string passed the validation,
+            // create the Board
+            if (IsTheBoardValid(Size,boardString))
             {
-                // copy the board that the testing was done on
+                // copy the Board that the testing was done on
                 // because it is valid
-                board = ValidatingFunctions.Vboard;
+                Board = Vboard;
+
+                // copy the bit masks and the helper mask
+                RowValues = VRowValues;
+                ColValues = VColValues;
+                BlockValues = VBlockValues;
+                HelperMask = VHelperMask;
             }
-            // if the board is not valid, an exception will be thrown 
+            // if the Board is not valid, an exception will be thrown 
         }
     }
 }

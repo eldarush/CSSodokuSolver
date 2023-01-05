@@ -11,12 +11,12 @@ namespace SodukoSolver
 {
     public class ConsoleReader : IReadable, IWritable
     {
-        // read Function that will return a board string
+        // read Function that will return a Board string
         public string Read()
         {
             try
             {
-                // read the board string from the console
+                // read the Board string from the console
                 string text = Console.ReadLine();
                 // keep just the characters that represent the values
                 text = text.Replace(" ", "");
@@ -33,7 +33,7 @@ namespace SodukoSolver
             }
         }
 
-        // write function that will write a board string
+        // write function that will write a Board string
         public bool Write(string boardstring)
         {
             Console.WriteLine(boardstring);

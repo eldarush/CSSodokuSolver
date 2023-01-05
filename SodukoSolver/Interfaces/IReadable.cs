@@ -8,7 +8,7 @@ namespace SodukoSolver.Interfaces
 {
     public interface IReadable
     {
-        // read Function that will return a board string
+        // read Function that will return a Board string
         string Read();
     }
 }

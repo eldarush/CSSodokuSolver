@@ -8,7 +8,7 @@ namespace SodukoSolver.Interfaces
 {
     public interface IWritable
     {
-        // write function that will write a board string
+        // write function that will write a Board string
         bool Write(string boardstring);
     }
 }

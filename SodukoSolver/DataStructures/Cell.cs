@@ -17,7 +17,7 @@ namespace SodukoSolver
         // public boolean that keeps track if this cell is solved
         public bool Solved { get; set; }
 
-        // Constructor that gets size and initializes the possible Candidates 1-size
+        // Constructor that gets Size and initializes the possible Candidates 1-Size
         public Cell(int size, int value)
         {
             // if the value is 0 then the cell is not solved
@@ -74,7 +74,7 @@ namespace SodukoSolver
             // we need to check the row
             for (int i = 0; i < size; i++)
             {
-                // if the board in the current row has a final value and the value is in the list of candidates
+                // if the Board in the current row has a final value and the value is in the list of candidates
                 // then we need to remove it from the list of candidates
                 if (board[currentRow, i].Solved && Candidates.Contains(board[currentRow, i].Value))
                 {
@@ -85,7 +85,7 @@ namespace SodukoSolver
             // we need to check the column
             for (int i = 0; i < size; i++)
             {
-                // if the board in the current column has a final value and the value is in the list of candidates
+                // if the Board in the current column has a final value and the value is in the list of candidates
                 // then we need to remove it from the list of candidates
                 if (board[i,currentCol].Solved && Candidates.Contains(board[i, currentCol].Value))
                 {
@@ -103,7 +103,7 @@ namespace SodukoSolver
             {
                 for (int j = boxCol; j < boxCol + (int)Math.Sqrt(size); j++)
                 {
-                    // if the board in the current box has a final value and the value is in the list of candidates
+                    // if the Board in the current box has a final value and the value is in the list of candidates
                     // then remove the current value from the list of candidates
                     if (board[i, j].Solved && Candidates.Contains(board[i, j].Value))
                     {
