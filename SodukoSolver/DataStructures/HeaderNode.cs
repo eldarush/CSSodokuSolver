@@ -35,7 +35,7 @@ namespace SodukoSolver.DataStructures
 
             // keep track of what row we are on
             Node CurrentRow = Down;
-            // keep track of what node we re on
+            // keep track of what node we are on
             Node CurrentNode;
 
             // while there are still rows to be proccesed
@@ -63,7 +63,7 @@ namespace SodukoSolver.DataStructures
         public void UncoverCol()
         {
             // keep track of what row we are on
-            Node CurrentRow = Down;
+            Node CurrentRow = Up;
             // keep track of what node we re on
             Node CurrentNode;
 

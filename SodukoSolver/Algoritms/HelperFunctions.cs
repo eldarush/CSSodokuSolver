@@ -1,10 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Threading.Tasks.Dataflow;
+using System.Xml;
+using System.Numerics;
+using System.Reflection.Metadata;
+using System.Collections.Specialized;
 using System.Text;
+using System.Reflection.Metadata.Ecma335;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Diagnostics;
 using static SodukoSolver.Exceptions.CustomExceptions;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using System.Diagnostics;
@@ -380,20 +385,20 @@ namespace SodukoSolver.Algoritms
                 while (TempFirstNode != CurrentNode)
                 {
                     // get the value the name of the header col of the current node
-                    CurrentHeaderValue = Convert.ToInt32(TempFirstNode.Header.Name);
+                    CurrentHeaderValue = (int)Int64.Parse(TempFirstNode.Header.Name);
 
                     // if the current vlaue is smaller then the min value
                     if (CurrentHeaderValue < MinHeaderValue)
                     {
                         // change the current value and the first node
                         FirstNode = TempFirstNode;
-                        MinHeaderValue = Convert.ToInt32(FirstNode.Header.Name);
+                        MinHeaderValue = (int)Int64.Parse(FirstNode.Header.Name);
                     }
                     // go to the next node in the current row
                     TempFirstNode = TempFirstNode.Right;
                 }
                 // set the value of the node to the right that will be used to set the value
-                RightHeaderValue = Convert.ToInt32(FirstNode.Right.Header.Name);
+                RightHeaderValue = (int)Int64.Parse(FirstNode.Right.Header.Name);
 
                 // the name represents the inhe index from the start of the array of how many
                 // cells we need to move to rach the curent cell so for example in a 9 by 9 board
