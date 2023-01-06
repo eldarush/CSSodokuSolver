@@ -367,7 +367,7 @@ namespace SodukoSolver.Algoritms
             Console.WriteLine("\nentered constructor\n");
 
             Console.WriteLine(boardstring);
-            Console.WriteLine($"\nsize is {Size} \n");
+            Console.WriteLine($"\nsize is {Size}, block size is {BlockSize} \n");
 
             // create the matrix
             ConvertStringToByteMatrix(boardstring, Size, out matrix);
@@ -389,37 +389,34 @@ namespace SodukoSolver.Algoritms
 
             Console.WriteLine("\nsucsessfully converted into cover matrix\n");
 
-            for (int i = 0; i < CoverMatrix.GetLength(0); i++)
-            {
-                for (int j = 0; j < CoverMatrix.GetLength(1); j++)
-                {
-                    Console.Write(CoverMatrix[i, j]);
-                    Console.Write(" ");
-                }
-                Console.WriteLine("");
-            }
+            //for (int i = 0; i < CoverMatrix.GetLength(0); i++)
+            //{
+            //    for (int j = 0; j < CoverMatrix.GetLength(1); j++)
+            //    {
+            //        Console.Write(CoverMatrix[i, j]);
+            //        Console.Write(" ");
+            //    }
+            //    Console.WriteLine("");
+            //}
 
             // convert the 0,1 matrix into a linked list matrix
             ConvertCoverMatrixToNodeMatrix(CoverMatrix, out Root);
 
             Console.WriteLine("\nsucsessfully converted into node matrix\n");
 
-            //HeaderNode headerPointer = (HeaderNode)Root.Right;
-            //Node nodePointer;
-            //while (headerPointer != Root)
-            //{
-            //    if (headerPointer.Size != 0)
-            //    {
-            //        nodePointer = headerPointer.Down;
-            //        while (nodePointer.Down != (Node)headerPointer)
-            //        {
-            //            Console.Write("N ");
-            //            nodePointer = nodePointer.Down;
-            //        }
-            //    }
-            //    Console.WriteLine("H ");
-            //    headerPointer = (HeaderNode)headerPointer.Right;
-            //}
+            HeaderNode headerPointer = (HeaderNode)Root.Right;
+            while (headerPointer != Root)
+            {
+                Console.WriteLine($"\nheader name is {headerPointer.Name}\n");
+                Node nodePointer = headerPointer.Down;
+                while (nodePointer != headerPointer)
+                {
+                    Console.WriteLine("Node");
+                    nodePointer = nodePointer.Down;
+                }
+
+                headerPointer = (HeaderNode)headerPointer.Right;
+            }
 
             // create new list that will hold the solution nodes
             DLX_Solution = new Stack<Node>();
@@ -511,6 +508,8 @@ namespace SodukoSolver.Algoritms
         {
             // apply the search function
             Search();
+
+            //Console.WriteLine("\n Search concluded \n");
 
             // return the stack that contains the nodes that are the solution
             return DLX_Solution;

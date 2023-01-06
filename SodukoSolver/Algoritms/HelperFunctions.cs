@@ -228,7 +228,7 @@ namespace SodukoSolver.Algoritms
             HeaderNode[] headersRow = new HeaderNode[ColAmount];
             
             // initialize the headers row with the given row index as the name 
-            for(int CurrentRowIndex =0; CurrentRowIndex<ColAmount; CurrentRowIndex++)
+            for(int CurrentRowIndex = 0; CurrentRowIndex < ColAmount; CurrentRowIndex++)
             {
                 // create new header and insert it into the headers row
                 // note that when debugging the names of the row will just be the index of the place
@@ -337,6 +337,84 @@ namespace SodukoSolver.Algoritms
             return;
         }
 
+        /// <summary>
+        /// this is a function that will get the stack of nodes that represent the solution
+        /// and will convert this stack to a board of bytes that willl visibally represent
+        /// the correct solution of the board
+        /// </summary>
+        /// <param name="solutionStack"></param>
+        /// <param name="size"></param>
+        /// <param name="board"></param>
+        public static void ConvertSolutionStackToBoard(Stack<Node> solutionStack, int size, out int[,] board)
+        {
+            // initialize the board
+            board = new int[size, size];
+
+            // keep track of the current node, the first node and the temp firstNode
+            Node CurrentNode, FirstNode, TempFirstNode;
+
+            // save the current header's name value and the min header value
+            int CurrentHeaderValue, MinHeaderValue;
+
+            // the right node's name's value
+            int RightHeaderValue;
+
+            // the row, col and the value that will be placed in the board
+            int Row, Col, Value;
+
+            // go over all the nodes in the stack
+            while (solutionStack.Count!= 0)
+            {
+                // get the current node by poping the stack
+                CurrentNode = solutionStack.Pop();
+                // set the first node to be the current node and the temp to be the right 
+                // of he current node
+                FirstNode = CurrentNode;
+                TempFirstNode = FirstNode.Right;
+
+                // set the value of the name of the header col of the first node
+                MinHeaderValue = Convert.ToInt32(FirstNode.Header.Name);
+
+                // go over all the header's names of the nodes in the same row as the current node
+                // and find the header with the smallest name 
+                while (TempFirstNode != CurrentNode)
+                {
+                    // get the value the name of the header col of the current node
+                    CurrentHeaderValue = Convert.ToInt32(TempFirstNode.Header.Name);
+
+                    // if the current vlaue is smaller then the min value
+                    if (CurrentHeaderValue < MinHeaderValue)
+                    {
+                        // change the current value and the first node
+                        FirstNode = TempFirstNode;
+                        MinHeaderValue = Convert.ToInt32(FirstNode.Header.Name);
+                    }
+                    // go to the next node in the current row
+                    TempFirstNode = TempFirstNode.Right;
+                }
+                // set the value of the node to the right that will be used to set the value
+                RightHeaderValue = Convert.ToInt32(FirstNode.Right.Header.Name);
+
+                // the name represents the inhe index from the start of the array of how many
+                // cells we need to move to rach the curent cell so for example in a 9 by 9 board
+                // index of 64 means row = (64/9) = 7 and col = (64%9) = 1
+
+                // get the row, col from the Min value
+                Row = MinHeaderValue / size;
+                Col = MinHeaderValue % size;
+
+                // calculate the value from the value of the node to the right of the first node
+                Value = RightHeaderValue % size + 1;
+
+                // insert the value into the board
+                board[Row, Col] = Value;
+
+                // continue the recursion for all nodes in the stack
+            }
+
+            // return the final board as a 2d array of ints
+            return;
+        }
 
         /// <summary>
         /// function that will get the row, col, and block and helper mask and will copy them into new copies of them

@@ -25,7 +25,8 @@ namespace SodukoSolver.DataStructures
         }
 
         /// <summary>
-        /// cover the column by removing the column and all the rows that contain a 1 in the column
+        /// cover the column by removing the column and all the rows that are 
+        /// at the same row as the nodes in the column
         /// </summary>
         public void CoverCol()
         {
@@ -41,7 +42,7 @@ namespace SodukoSolver.DataStructures
             while (CurrentRow != this)
             {
                 // get the current node and delete all the nodes on the same row
-                CurrentNode = CurrentRow.Down;
+                CurrentNode = CurrentRow.Right;
                 while (CurrentNode != CurrentRow)
                 {
                     // remove the current node from the col and change the size 

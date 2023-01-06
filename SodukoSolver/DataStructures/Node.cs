@@ -74,8 +74,8 @@ namespace SodukoSolver.DataStructures
         // remove this node from the row it is in
         public void RemoveUpDown()
         {
-            Up.Down = Down;
             Down.Up = Up;
+            Up.Down = Down;         
         }
 
         // reinsert this node into the column it is in
