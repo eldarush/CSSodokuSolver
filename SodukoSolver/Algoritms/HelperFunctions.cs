@@ -93,16 +93,22 @@ namespace SodukoSolver.Algoritms
         /// <returns></returns>
         public static void ConvertStringToByteMatrix(string boardstring, int size, out byte[,] board)
         {
+            // initialize the board
             board = new byte[size, size];
-            int count = 0;
+            // counter for the position in the string
+            int location = 0;
             for(int i =0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
-                    board[i,j] = (byte)(boardstring[count] - '0');
-                    count++;
+                    // fill in the board at the current place
+                    board[i,j] = (byte)(boardstring[location] - '0');
+                    // continue to the next location in the string
+                    location++;
                 }
             }
+            // return the board
+            return;
         }
 
         /// <summary>
@@ -113,7 +119,8 @@ namespace SodukoSolver.Algoritms
         /// <param name="board"></param>
         /// <param name="size"></param>
         /// <param name="coverMatrix"></param>
-        public static void ConvertMatrixToExactCoverMatrix(byte[,] board, int size, int blockSize, int constrains, out byte[,] coverMatrix)
+        public static void ConvertMatrixToExactCoverMatrix(byte[,] board, int size, int blockSize, int constrains,
+            out byte[,] coverMatrix)
         {
             // initialize the new cover matrix
             coverMatrix = new byte[size * size * size, constrains * size * size];
@@ -122,7 +129,7 @@ namespace SodukoSolver.Algoritms
             int CurrentRow = 0;
 
             // current value indicator
-            int CurrentValue;
+            byte CurrentValue;
 
             // please note that the next part is hard coded for 4 constraints and for this exact order,
             // this is the order described in the thesis 'Solving Sudoku efficiently with Dancing Links'
@@ -141,18 +148,19 @@ namespace SodukoSolver.Algoritms
             int CurrentBlockConstraint = size * size * 3;
 
             // current candidate row index
+            // a-symetry shifting 
             int CandidateRowIndex;
 
             // current candidate block index;
             int CandidateBlockIndex;
 
             // go over the board
-            for(int row =0; row<size; row++)
+            for(int row = 0; row < size; row++)
             {
                 // reset the indicator for the current col constraint
                 CurrentColConstraint = size * size;
                 
-                for (int col =0; col<size; col++)
+                for (int col = 0; col < size; col++)
                 {
                     // the current value at row,col
                     CurrentValue = board[row, col];
@@ -166,7 +174,7 @@ namespace SodukoSolver.Algoritms
                         // if the current value is 0 or if the current candidate IS the current value, then
                         // we update the cover matrix to contain 1's at the constraints
                         // if not then we just move to the next row and the next ColConstraint indicator
-                        if(CurrentValue==0 || CurrentValue == CurrentCandidate)
+                        if(CurrentValue == 0 || CurrentValue == CurrentCandidate)
                         {
                             // update the current cell constraint to be 1 at the appropriate location
                             coverMatrix[CurrentRow, CurrentCellConstraint] = 1;
@@ -229,7 +237,8 @@ namespace SodukoSolver.Algoritms
 
             // create the row of headers (A-H) but for diffrent sizes that will be at the top of the 
             // node matrix, will all be linked to one another and will all have link to the col that they
-            // are 'heading'
+            // are 'heading', the headeers value will later be used to indentify the col and the row
+            // of the current cell to be placed in the final board that will represt the answer to the board
             HeaderNode[] headersRow = new HeaderNode[ColAmount];
             
             // initialize the headers row with the given row index as the name 
@@ -266,13 +275,13 @@ namespace SodukoSolver.Algoritms
             Node NodeToBeInserted;
 
             // go over all the rows in the 0,1 matrix and where there is a '1', insert a new node
-            for(int CurrentRowIndex =0; CurrentRowIndex< RowAmount; CurrentRowIndex++)
+            for(int CurrentRowIndex = 0; CurrentRowIndex < RowAmount; CurrentRowIndex++)
             {
                 // reset the last inserted node with every passing row
                 LastInsertedNode = null;
 
                 // go over the cols in the current row index
-                for(int CurrentColIndex =0; CurrentColIndex<ColAmount; CurrentColIndex++)
+                for(int CurrentColIndex = 0; CurrentColIndex < ColAmount; CurrentColIndex++)
                 {
                     // update the current value
                     CurrentValue = coverMatrix[CurrentRowIndex, CurrentColIndex];
