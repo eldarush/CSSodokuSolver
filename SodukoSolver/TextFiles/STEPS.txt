@@ -45,22 +45,26 @@ This file is temporary and will be deleted once the project is complete.
 
  
  BUGS:
- 1. fix elimination with bitwise backtrackingm, problem with ubmatrixDigits, rowDigits and columnDigits that are not being updated correctly
+ 1. change int matrix to byte matrix, because int matrix is too big and is causing the program to leak memory
+ 2. change 2d matrix to 1d matrix, because it is more memory efficiant and accsess by row*10 + col is faster then accsess by matrix[row][col]
+ 3. change array copying to stack state saving and restoring, because it is faster and more efficiant
+ 4. implement true hidden singles and maybe hidden pairs, because they are faster and more efficiant on the memory and the program
+ 5. when all is done, implement backwards backtracking with threads, again...
 
 
  DIFFICULT PUZZLES:
  
- 400000805030000000000700000020000060000080400000010000000603070500200000104000000 -- still problematic
+ 400000805030000000000700000020000060000080400000010000000603070500200000104000000 
  
- 000000000000003085001020000000507000004000100090000000500000073002010000000040009 
+ 000000000000003085001020000000507000004000100090000000500000073002010000000040009 -- still kinda problematic
 
- 000006000059000008200008000045000000003000000006003054000325006000000000000000000 
+ 000006000059000008200008000045000000003000000006003054000325006000000000000000000 -- still problematic
  
  000700000100000000000430200000000006000509000000000418000081000002000050040000300 
 
  900800000000000500000000000020010003010000060000400070708600000000030100400000200 
  
- 000005080000601043000000000010500000000106000300000005530000061000000004000000000 -- still problematic
+ 000005080000601043000000000010500000000106000300000005530000061000000004000000000 -- still very problematic
 
  16 by 16:
  
@@ -73,9 +77,9 @@ This file is temporary and will be deleted once the project is complete.
 
 file path for test file:
 
-C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\testboard.txt
+C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\TextFiles\empty16by16board.txt
 
-C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\empty16by16board.txt
+C:\Users\eldar\source\repos\eldarush\CSSodokuSolver\SodukoSolver\TextFiles\testboard.txt
 
 25 by 25:
 

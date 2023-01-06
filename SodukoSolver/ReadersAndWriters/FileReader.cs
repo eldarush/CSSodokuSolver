@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using SodukoSolver.Interfaces;
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-#pragma warning disable CS8604 // Possible null reference argument.
 namespace SodukoSolver
 {
     public class FileReader : IReadable, IWritable
@@ -14,14 +12,17 @@ namespace SodukoSolver
         // the name of the file that will contain the soduko puzzle
         private readonly string filepath;
 
-        // constructor that will set the filename
+        /// <summary>
+        /// constructor that will set the filepath
+        /// </summary>
+        /// <param name="filepath">fiven file path</param>
         public FileReader(string filepath)
         {
             this.filepath = filepath;
         }
 
         /// <summary>
-        /// read Function that will return a board string
+        /// read Function that will return a Board string
         /// </summary>
         /// <returns></returns>
         public string Read()
@@ -31,10 +32,10 @@ namespace SodukoSolver
                 // first check if the file exists
                 if (!File.Exists(filepath))
                 {
-                    throw new FileNotFoundException("file path does not exist, cannot read file \n "+
-                        $"entered file path is: {filepath}");
+                    throw new FileNotFoundException("file path does not exist, cannot read file\n"+
+                        $"entered file path is: {filepath}\n");
                 }
-                // read the file and return the board string
+                // read the file and return the Board string
                 string text = File.ReadAllText(filepath);
                 // keep just the characters that represent the values
                 text = text.Replace(" ", "");
@@ -52,7 +53,11 @@ namespace SodukoSolver
         }
 
 
-        // write function that will write a board string to the file
+        /// <summary>
+        /// write function that will write a Board string to the file
+        /// </summary>
+        /// <param name="boardstring"></param>
+        /// <returns>if the writing sucseeced or not</returns>
         public bool Write(string boardstring)
         {
             // get the file name from the file path
@@ -67,13 +72,13 @@ namespace SodukoSolver
             {
                 if (File.Exists(solvedfilepath))
                 {
-                    // replace the contents of the file with the board string
+                    // replace the contents of the file with the Board string
                     File.WriteAllText(solvedfilepath, boardstring);
                 }
                 else
                 {
                     Console.WriteLine("NOTICE - A new file was created during this process");
-                    // create new file with this name and write the board string to it
+                    // create new file with this name and write the Board string to it
                     File.WriteAllText(solvedfilepath, boardstring);
                 }
             }
@@ -81,6 +86,7 @@ namespace SodukoSolver
             {
                 // print the message
                 Console.WriteLine(e.Message);
+                return false;
             }
             return true;
         }

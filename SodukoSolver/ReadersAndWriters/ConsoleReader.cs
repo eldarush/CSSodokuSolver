@@ -4,19 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SodukoSolver.Interfaces;
-# pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-# pragma warning disable CS8602 // Dereference of a possibly null reference.
 
 namespace SodukoSolver
 {
     public class ConsoleReader : IReadable, IWritable
     {
-        // read Function that will return a board string
+        /// <summary>
+        /// read function that will read the input from the console and will return it
+        /// </summary>
+        /// <returns>the input in string format</returns>
         public string Read()
         {
             try
             {
-                // read the board string from the console
+                // ask the user for the Board string
+                Console.WriteLine("Please enter the Board string:");
+                
+                // read the Board string from the console
                 string text = Console.ReadLine();
                 // keep just the characters that represent the values
                 text = text.Replace(" ", "");
@@ -25,6 +29,7 @@ namespace SodukoSolver
                 text = text.Replace("\r", "");
                 return text;
             }
+            // catch any exception that might happen and print it, returning empty string
             catch (Exception e)
             {
                 // print the error message
@@ -33,7 +38,11 @@ namespace SodukoSolver
             }
         }
 
-        // write function that will write a board string
+        /// <summary>
+        /// write function that will write a Board string into the console
+        /// </summary>
+        /// <param name="boardstring"></param>
+        /// <returns></returns>
         public bool Write(string boardstring)
         {
             Console.WriteLine(boardstring);

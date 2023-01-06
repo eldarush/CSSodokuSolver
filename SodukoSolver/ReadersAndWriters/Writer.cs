@@ -12,13 +12,20 @@ namespace SodukoSolver
         // an instance of a class that implements the IWritable interface
         protected IWritable writer;
 
-        // constructor
+        /// <summary>
+        /// construcntor that takes an instance of a class that implements the IWritable interface
+        /// </summary>
+        /// <param name="writer">the writer implemetation</param>
         public Writer(IWritable writer)
         {
             this.writer = writer;
         }
 
-        // write function that will write a board string
+        /// <summary>
+        /// write function that will write a Board string to the file
+        /// </summary>
+        /// <param name="boardstring"></param>
+        /// <returns></returns>
         public bool Write(string boardstring)
         {
             return writer.Write(boardstring);

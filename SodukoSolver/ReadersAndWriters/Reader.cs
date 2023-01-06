@@ -11,13 +11,19 @@ namespace SodukoSolver.Interfaces
         // an instance of a class that implements the IReadable interface
         protected IReadable reader;
 
-        // constructor
+        /// <summary>
+        /// constructor that takes an instance of a class that implements the IReadable interface
+        /// </summary>
+        /// <param name="reader">the reader implementation</param>
         public Reader(IReadable reader)
         {
             this.reader = reader;
         }
 
-        // read function that will return a board string
+        /// <summary>
+        /// reads the input 
+        /// </summary>
+        /// <returns></returns>
         public string Read()
         {
             return reader.Read();

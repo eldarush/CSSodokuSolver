@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SodukoSolver.DataStructures
 {
-    internal class Node
+    internal class HeaderNode
     {
     }
 }
