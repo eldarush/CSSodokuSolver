@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using static SodukoSolver.Algoritms.HelperFunctions;
-using static SodukoSolver.Algoritms.BoardSolver;
-using static SodukoSolver.Algoritms.ValidatingFunctions;
 using SodukoSolver.Algoritms;
+using SodukoSolver.DataStructures;
 
 namespace SodukoSolver
 {
@@ -17,7 +15,11 @@ namespace SodukoSolver
         {
             // start the program that gets soduko Board from the user 
             // and runs the algorithm
-            UserInterface.Run();
+            //UserInterface.Run();
+
+            BoardSolver solver = new BoardSolver("0000000000000000");
+            Stack<Node> solution = solver.SolveUsingDancingLinks();
+            Console.WriteLine("finito");
 
         }
     }
