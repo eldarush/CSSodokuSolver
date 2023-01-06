@@ -45,7 +45,11 @@ This file is temporary and will be deleted once the project is complete.
 
  
  BUGS:
- 1. fix elimination with bitwise backtrackingm, problem with ubmatrixDigits, rowDigits and columnDigits that are not being updated correctly
+ 1. change int matrix to byte matrix, because int matrix is too big and is causing the program to leak memory
+ 2. change 2d matrix to 1d matrix, because it is more memory efficiant and accsess by row*10 + col is faster then accsess by matrix[row][col]
+ 3. change array copying to stack state saving and restoring, because it is faster and more efficiant
+ 4. implement true hidden singles and maybe hidden pairs, because they are faster and more efficiant on the memory and the program
+ 5. when all is done, implement backwards backtracking with threads, again...
 
 
  DIFFICULT PUZZLES:

@@ -103,10 +103,10 @@ namespace SodukoSolver.Algoritms
             // This is done by performing a bitwise OR operation between the element at index row in the RowValues array,
             // the element at index col in the ColumnValues array,
             // and the element at index SquareLocation in the BlockValues array.
-            int SumInvalidCandidates = RowValues[Row] | ColumnValues[Col] | BlockValues[SquareLocation];
+            int SumInvalidCandidates = RowValues[Row] | ColumnValues[Col] | BlockValues[SquareLocation]; 
 
             // Use the bitwise NOT operator (~) to negate the sum of the non-valid values,
-            // effectively turning the 0 bits into 1 bits and the 1 bits into 0 bits.
+            // effectively turning the 0 bits into 1 bits and the 1 bits into 0 bits. 
             int ValidCandidates = ~SumInvalidCandidates;
 
             // Use the bitwise AND operator (&) to compute the intersection between the int
@@ -166,7 +166,6 @@ namespace SodukoSolver.Algoritms
 
         /// <summary>
         /// function that goes over the Board and find the next cell that has the lesat possible candidates
-        /// THIS FUNCTION ALSO CONTAINS THE IMPLEMENTATION OF THE SIMPLE ELIMINATION ALGORITHM
         /// </summary>
         /// <returns>the row and col of the cell</returns>
         private (int BestRow, int BestCol) GetNextBestCell()
@@ -203,12 +202,9 @@ namespace SodukoSolver.Algoritms
                         LowestAmountOfValidCandidates = GetActivatedBits(AmountOfValidCandidates);
                     }
 
-                    // IMPLEMENTATION OF SIMPLE ELIMINATION:
-                    // Simple elimination is an algorithm that is used to improve the search time for a backtrackig algorithm
-                    // over a sudoku puzzle, it works this way:
-                    // go over a Board and for each cell check if there is only one possible candidate that can fit in that cell,
-                    // if there is only one, then this cell has to contain that value, so fill it with that value
-                    if(LowestAmountOfValidCandidates == 1)
+                    // if the cell has only one valid candidate, return it, as it is the best cell to start with
+                    // and closest to the top left corner
+                    if (LowestAmountOfValidCandidates == 1)
                     {
                         // return that cell that can only be filled with one possible value
                         return (BestRow, BestCol);
@@ -250,12 +246,12 @@ namespace SodukoSolver.Algoritms
         }
 
         /// <summary>
-        /// this is the implementation of the hidden singles algorithm,
+        /// this is the implementation of the simple elimination algorithm,
         /// what this algorithm does is that it goes over all the possible candidates for each cell
         /// in each house in the Board, and if it is found that in a house there is only one possible
         /// cell with that value, this cell will be filled with that value
         /// </summary>
-        private void HiddenSinglesAlgorithmWithBitwiseManipulation()
+        private void SimpleElimination()
         {
             // counter for how many possible candidates this cell has
             int PossibleCandidates;
@@ -293,7 +289,7 @@ namespace SodukoSolver.Algoritms
         /// function that solves a sudoku using backtracking algorithm with candidate values updating in real time
         /// </summary>
         /// <returns>if the backtracking managed to solve the Board or not</returns>
-        public bool BacktrackingWithBitwiseManipulation()
+        public bool Backtracking()
         {
             // store the original values for the cell and the origianl Board
             int[,] copyBoard = GetBoardIntsCopy(BoardInts);
@@ -304,7 +300,7 @@ namespace SodukoSolver.Algoritms
             CopyOriginalArraysIntoNewOnes(copyRowValues, copyColValues, copyBlockValues);
 
             // run the hidden singles algorithm that will fill in as many cells as possible
-            HiddenSinglesAlgorithmWithBitwiseManipulation();
+            SimpleElimination();
 
             // the row and col of the cell that we are analyzing
             int CurrentRow, CurrentCol;
@@ -325,7 +321,7 @@ namespace SodukoSolver.Algoritms
                     UpdateCandidateValues(CurrentRow, CurrentCol, currentValue+1);
 
                     // run the backtracking again, if it works, then return true, else restore the original values
-                    if (BacktrackingWithBitwiseManipulation()) return true;
+                    if (Backtracking()) return true;
 
                     // if the current backtracking branch failed, restore the original values
                     RestoreAffectedValuesAndBoard(copyBoard, copyRowValues, copyColValues, copyBlockValues);

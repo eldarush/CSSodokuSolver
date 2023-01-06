@@ -224,7 +224,7 @@ namespace SodukoSolver
                      out solver.RowValues, out solver.ColumnValues, out solver.BlockValues, out solver.HelperMask);
 
             // return if the backtacking sucseeded or not
-            return solver.BacktrackingWithBitwiseManipulation();
+            return solver.Backtracking();
         }
 
     }
