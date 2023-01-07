@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace SodukoSolver.DataStructures
 {
-    // class for a node that will fill the sparse matrix
+    /// <summary>
+    /// class for a node that will fill the sparse Matrix
+    /// </summary>
     public class Node
     {
         // pointers to each direction
@@ -18,17 +20,22 @@ namespace SodukoSolver.DataStructures
         // pointer to the header node that represents the column that this node is in
         public HeaderNode Header { get; set; }
 
-        // counstructor for the node that links it to itself
+        /// <summary>
+        /// counstructor for the node that links it to itself
+        /// </summary>
+        /// <param name="header">a header for the node</param>
         public Node(HeaderNode header)
         {
+            // make the node point to itself in all directions
             Left = this;
             Right = this;
             Up = this;
             Down = this;
+            // set the header to the passed header
             Header = header;
         }
 
-        // attach this node to the right of the node passed in
+        // attach the passed node between this node and the node to the right of this node
         public void AttachRight(Node node)
         {
             node.Right = Right;
@@ -37,7 +44,7 @@ namespace SodukoSolver.DataStructures
             node.Left = this;
         }
 
-        // attach this node to the left of the node passed in
+        // attach the passed node between this node and the node below this node
         public void AttachLeft(Node node)
         {
             node.Left = Left;
@@ -46,7 +53,7 @@ namespace SodukoSolver.DataStructures
             node.Right = this;
         }
 
-        // attach this node to the down of the node passed in
+        // attach the passed node between this node and the node above this node
         public void AttachDown(Node node)
         {
             node.Down = Down;
@@ -55,7 +62,7 @@ namespace SodukoSolver.DataStructures
             node.Up = this;
         }
 
-        // attach this node to the up of the node passed in
+        // attach the passed node between this node and the node below this node
         public void AttachUp(Node node)
         {
             node.Up = Up;
@@ -64,29 +71,29 @@ namespace SodukoSolver.DataStructures
             node.Down = this;
         }
 
-        // remove this node from the column it is in
+        // remove the node from the row
         public void RemoveLeftRight()
         {
             Right.Left = Left;
             Left.Right = Right;
         }
 
-        // remove this node from the row it is in
+        // remove the node from the column
         public void RemoveUpDown()
         {
             Down.Up = Up;
             Up.Down = Down;         
         }
 
-        // reinsert this node into the column it is in
-        public void ReinsertLeftRight()
+        // reinsert this node into the row it originally was in
+        public void ReAttachRow()
         {
             Right.Left = this;
             Left.Right = this;
         }
 
-        // reinsert this node into the row it is in
-        public void ReinsertUpDown()
+        // reinsert this node into the col it originally was in
+        public void ReAttachCol()
         {
             Up.Down = this;
             Down.Up = this;

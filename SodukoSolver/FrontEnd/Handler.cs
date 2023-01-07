@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using SodukoSolver.DataStructures;
-using static SodukoSolver.Algoritms.HelperFunctions;
-using SodukoSolver.BoardSolvers;
 
 namespace SodukoSolver
 {
+    /// <summary>
+    /// this is the class that will run the program
+    /// </summary>
     public class Handler
     {
         static void Main()

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SodukoSolver.Interfaces
 {
+    /// <summary>
+    /// interface for the classes that will read the soduko board
+    /// </summary>
     public interface IWritable
     {
         /// <summary>
