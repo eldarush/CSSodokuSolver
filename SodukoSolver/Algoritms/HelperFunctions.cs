@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Threading.Tasks.Dataflow;
+using System.Xml;
+using System.Numerics;
+using System.Reflection.Metadata;
+using System.Collections.Specialized;
 using System.Text;
+using System.Reflection.Metadata.Ecma335;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Diagnostics;
 using static SodukoSolver.Exceptions.CustomExceptions;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
-using System.Diagnostics;
+using SodukoSolver.DataStructures;
 
 namespace SodukoSolver.Algoritms
 {
@@ -77,6 +82,351 @@ namespace SodukoSolver.Algoritms
                     counter++;
                 }
             }
+        }
+
+        /// <summary>
+        /// function that gets a boardstring and a size and converts it to a board of bytes
+        /// </summary>
+        /// <param name="boardstring"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public static void ConvertStringToByteMatrix(string boardstring, int size, out byte[,] board)
+        {
+            // initialize the board
+            board = new byte[size, size];
+            // counter for the position in the string
+            int location = 0;
+            for(int i =0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    // fill in the board at the current place
+                    board[i,j] = (byte)(boardstring[location] - '0');
+                    // continue to the next location in the string
+                    location++;
+                }
+            }
+            // return the board
+            return;
+        }
+
+        /// <summary>
+        /// function that will get a board that represents the values of the cells 
+        /// and the size of the board and will return a cover matrix for the board
+        /// that will be of size (size^3) * (constrains* size^2)
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="size"></param>
+        /// <param name="coverMatrix"></param>
+        public static void ConvertMatrixToExactCoverMatrix(byte[,] board, int size, int blockSize, int constrains,
+            out byte[,] coverMatrix)
+        {
+            // initialize the new cover matrix
+            coverMatrix = new byte[size * size * size, constrains * size * size];
+
+            // current row indicator
+            int CurrentRow = 0;
+
+            // current value indicator
+            byte CurrentValue;
+
+            // please note that the next part is hard coded for 4 constraints and for this exact order,
+            // this is the order described in the thesis 'Solving Sudoku efficiently with Dancing Links'
+            // by MATTIAS HARRYSSON and HJALMAR LAESTANDER and for a diffrent number of constraints or 
+            // for a diffrent order, this function would need to be modified and so will the other functions
+            // that acsess the cover matrix that is created by this function
+
+            // indicator for each constraint
+            // first 'size' portion of the array is for cell constraints
+            int CurrentCellConstraint = 0;
+            // second 'size' portion of the array is for col constraints
+            int CurrentColConstraint = size * size;
+            // third 'size' portion of the array is for row constraints
+            int CurrentRowConstraint = size * size * 2;
+            // fourth 'size' portion of the array is for block constraints
+            int CurrentBlockConstraint = size * size * 3;
+
+            // current candidate row index
+            // a-symetry shifting 
+            int CandidateRowIndex;
+
+            // current candidate block index;
+            int CandidateBlockIndex;
+
+            // go over the board
+            for(int row = 0; row < size; row++)
+            {
+                // reset the indicator for the current col constraint
+                CurrentColConstraint = size * size;
+                
+                for (int col = 0; col < size; col++)
+                {
+                    // the current value at row,col
+                    CurrentValue = board[row, col];
+
+                    // calcualte the block index
+                    CandidateBlockIndex = (row / blockSize) * blockSize + col / blockSize;
+
+                    // try all possible candidates for this size to see which one's fit and which ones dont
+                    for (int CurrentCandidate=1; CurrentCandidate<=size; CurrentCandidate++)
+                    {
+                        // if the current value is 0 or if the current candidate IS the current value, then
+                        // we update the cover matrix to contain 1's at the constraints
+                        // if not then we just move to the next row and the next ColConstraint indicator
+                        if(CurrentValue == 0 || CurrentValue == CurrentCandidate)
+                        {
+                            // update the current cell constraint to be 1 at the appropriate location
+                            coverMatrix[CurrentRow, CurrentCellConstraint] = 1;
+
+                            // update the current col constraint to be 1 at the appropriate location
+                            coverMatrix[CurrentRow, CurrentColConstraint] = 1;
+
+                            // update the current row constraint to be 1 at the appropriate location
+                            CandidateRowIndex = CurrentCandidate - 1;
+                            coverMatrix[CurrentRow, CurrentRowConstraint + CandidateRowIndex] = 1;
+
+                            // update the current block constraint to be 1 at the appropriate location
+                            coverMatrix[CurrentRow, CurrentBlockConstraint + CandidateBlockIndex * size + CandidateRowIndex] = 1;
+                        }
+                        // OUTSIDE THE IF STATEMENT IF VALUE IS 0 OR IS CURRENT CANDIDATE
+
+                        // continue to the next row
+                        CurrentRow++;
+                        // continue to the next col constraint indicator
+                        CurrentColConstraint++;
+                    }
+                    // OUTSIDE THE CANDIDATE LOOPING
+
+                    // continue to the next cell constraint indicator
+                    CurrentCellConstraint++;
+                }
+                // OUTSIDE THE COL LOOPING
+
+                // continue to the next row constraint indicator
+                // this is done becaue every constraint take up 'size' amount in the array
+                // so we skip to next one by adding 'size' to the row constraint indicator
+                CurrentRowConstraint += size;
+            }
+            // OUTSIDE THE ROW LOOPING
+
+            // return the ready cover matrix
+            return;
+        }
+
+        /// <summary>
+        /// this is a function that takes in the cover matrix as a matrix of 0'es and one's and converts it to a new 
+        /// node matrix that will be used by the dancing links algorithm
+        /// this function just returns the root of the new matrix, of which the matrix is represented by the connections
+        /// between the nodes themselves
+        /// </summary>
+        /// <param name="coverMatrix"></param>
+        /// <param name="size"></param>
+        /// <param name="blockSize"></param>
+        /// <param name="rootOfNewMatrix"></param>
+        public static void ConvertCoverMatrixToNodeMatrix(byte[,] coverMatrix, out HeaderNode rootOfNewMatrix)
+        {
+            // create the root of the matrix that will be returned
+            rootOfNewMatrix = new HeaderNode("root");
+
+            // calcualte the amount of rows and cols
+            // rows = n^3
+            int RowAmount = coverMatrix.GetLength(0);
+            // cols = constraints*n^2
+            int ColAmount = coverMatrix.GetLength(1);
+
+            // create the row of headers (A-H) but for diffrent sizes that will be at the top of the 
+            // node matrix, will all be linked to one another and will all have link to the col that they
+            // are 'heading', the headeers value will later be used to indentify the col and the row
+            // of the current cell to be placed in the final board that will represt the answer to the board
+            HeaderNode[] headersRow = new HeaderNode[ColAmount];
+            
+            // initialize the headers row with the given row index as the name 
+            for(int CurrentRowIndex = 0; CurrentRowIndex < ColAmount; CurrentRowIndex++)
+            {
+                // create new header and insert it into the headers row
+                // note that when debugging the names of the row will just be the index of the place
+                // where they are located 0 -> (size-1) and not A-Z letters as described
+                HeaderNode CurrentHeaderNode = new HeaderNode(CurrentRowIndex.ToString());
+                headersRow[CurrentRowIndex] = CurrentHeaderNode;
+
+                // attach the header node to the root (root will be to the left of the headers node and will point
+                // to to first header node at the index 0 at the headers row)
+                rootOfNewMatrix.AttachRight(CurrentHeaderNode);
+
+                // change the root to be the current header so that we can link all the nodes together
+                rootOfNewMatrix = (HeaderNode)CurrentHeaderNode;
+            }
+
+            // change the root back to what it was originally (the node to the left of all headers)
+            rootOfNewMatrix = (HeaderNode)rootOfNewMatrix.Right.Header;
+
+            // keep track of the location of the node that we inserted last so that when we want
+            // to insert a new node, we can link the last inserted node to the new node
+            Node LastInsertedNode;
+
+            // keep track of the current value at the 0,1 matrix
+            byte CurrentValue;
+
+            // keep track of the current header node of this row
+            HeaderNode CurrentHeader;
+
+            // new node to be inserted
+            Node NodeToBeInserted;
+
+            // go over all the rows in the 0,1 matrix and where there is a '1', insert a new node
+            for(int CurrentRowIndex = 0; CurrentRowIndex < RowAmount; CurrentRowIndex++)
+            {
+                // reset the last inserted node with every passing row
+                LastInsertedNode = null;
+
+                // go over the cols in the current row index
+                for(int CurrentColIndex = 0; CurrentColIndex < ColAmount; CurrentColIndex++)
+                {
+                    // update the current value
+                    CurrentValue = coverMatrix[CurrentRowIndex, CurrentColIndex];
+
+                    // if current value is 1, new node
+                    // if current value 0, do nothing
+                    if (CurrentValue == 0) continue;
+
+                    // if we reached this place, the current value is 1
+                    // get the coorespoinding header node
+                    CurrentHeader = headersRow[CurrentColIndex];
+
+                    NodeToBeInserted = new Node(CurrentHeader);
+
+                    // attach the header node to the node to be inserted
+                    CurrentHeader.Up.AttachDown(NodeToBeInserted);
+
+                    // if it is the first inserted node in this col, make it the last inserted node
+                    // if not, attach the last inserted node to this node and then update the last inserted
+                    if(LastInsertedNode != null)
+                    {
+                        LastInsertedNode.AttachRight(NodeToBeInserted);
+                        LastInsertedNode = LastInsertedNode.Right;
+                    }
+                    // if no last inserted node exists, make the current one the last inserted
+                    else
+                    {
+                        LastInsertedNode = NodeToBeInserted;
+                    }
+                    // update the size of the current header node after every insertion
+                    CurrentHeader.Size++;
+                }
+            }
+            // return the root of the new node matrix
+            return;
+        }
+
+        /// <summary>
+        /// this is a fuction that gets the root of the matrix of nodes, and goes over
+        /// all the header nodes and compares their sizes and 
+        /// it picks the header node with the smallest size
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="colWithMinSize"></param>
+        public static void FindHeaderWithLeastNodes(HeaderNode root, out HeaderNode colWithMinSize)
+        {
+            // current header node 
+            // by deafult set to the first header node
+            HeaderNode CurrentHeaderNode = (HeaderNode)root.Right;
+
+            // the header node with the samllest size 
+            // by deafult set to the first header node
+            colWithMinSize = (HeaderNode)root.Right;
+
+            // go over all the header nodes and change the min node if needed
+            // while we havent reached the root
+            while (CurrentHeaderNode != root)
+            {
+                // comapre the two sizes and change the min if 
+                // the current size is smaller then min node size
+                if (CurrentHeaderNode.Size < colWithMinSize.Size) colWithMinSize = CurrentHeaderNode;
+
+                // continue going right untill we reach the root again
+                CurrentHeaderNode = (HeaderNode)CurrentHeaderNode.Right;
+            }
+            // return the heder node witht eh smallest size
+            return;
+        }
+
+        /// <summary>
+        /// this is a function that will get the stack of nodes that represent the solution
+        /// and will convert this stack to a board of bytes that willl visibally represent
+        /// the correct solution of the board
+        /// </summary>
+        /// <param name="solutionStack"></param>
+        /// <param name="size"></param>
+        /// <param name="board"></param>
+        public static int[,] ConvertSolutionStackToBoard(Stack<Node> solutionStack, int size)
+        {
+            // initialize the board
+            int[,] board = new int[size, size];
+
+            // keep track of the current node, the first node and the temp firstNode
+            Node CurrentNode, FirstNode, TempFirstNode;
+
+            // save the current header's name value and the min header value
+            int CurrentHeaderValue, MinHeaderValue;
+
+            // the right node's name's value
+            int RightHeaderValue;
+
+            // the row, col and the value that will be placed in the board
+            int Row, Col, Value;
+
+            // go over all the nodes in the stack
+            while (solutionStack.Count!= 0)
+            {
+                // get the current node by poping the stack
+                CurrentNode = solutionStack.Pop();
+                // set the first node to be the current node and the temp to be the right 
+                // of he current node
+                FirstNode = CurrentNode;
+                TempFirstNode = FirstNode.Right;
+
+                // set the value of the name of the header col of the first node
+                MinHeaderValue = Convert.ToInt32(FirstNode.Header.Name);
+
+                // go over all the header's names of the nodes in the same row as the current node
+                // and find the header with the smallest name 
+                while (TempFirstNode != CurrentNode)
+                {
+                    // get the value the name of the header col of the current node
+                    CurrentHeaderValue = (int)Int64.Parse(TempFirstNode.Header.Name);
+
+                    // if the current vlaue is smaller then the min value
+                    if (CurrentHeaderValue < MinHeaderValue)
+                    {
+                        // change the current value and the first node
+                        FirstNode = TempFirstNode;
+                        MinHeaderValue = (int)Int64.Parse(FirstNode.Header.Name);
+                    }
+                    // go to the next node in the current row
+                    TempFirstNode = TempFirstNode.Right;
+                }
+                // set the value of the node to the right that will be used to set the value
+                RightHeaderValue = (int)Int64.Parse(FirstNode.Right.Header.Name);
+
+                // the name represents the inhe index from the start of the array of how many
+                // cells we need to move to rach the curent cell so for example in a 9 by 9 board
+                // index of 64 means row = (64/9) = 7 and col = (64%9) = 1
+
+                // get the row, col from the Min value
+                Row = MinHeaderValue / size;
+                Col = MinHeaderValue % size;
+
+                // calculate the value from the value of the node to the right of the first node
+                Value = RightHeaderValue % size + 1;
+
+                // insert the value into the board
+                board[Row, Col] = Value;
+
+                // continue the recursion for all nodes in the stack
+            }
+
+            // return the final board as a 2d array of ints
+            return board;
         }
 
         /// <summary>
@@ -234,6 +584,24 @@ namespace SodukoSolver.Algoritms
             return boardstring;
         }
     
+        /// <summary>
+        /// function that converts a int board to a byte matrix
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
+        public static byte[,] IntBoardToByteMatrix(int[,] board, int size)
+        {
+            byte[,] matrix = new byte[size, size];
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    matrix[i, j] = (byte)board[i, j];   
+                }
+            }
+            return matrix;
+        }
+        
         /// <summary>
         /// function that prints the board 
         /// </summary>
