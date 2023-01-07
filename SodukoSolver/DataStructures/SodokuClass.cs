@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-// import classes whose functions will be used
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using static SodukoSolver.Algoritms.HelperFunctions;
 using SodukoSolver.Interfaces;
 
 namespace SodukoSolver
 {
-    // general class that will take care of creating new boards
-    class SodokuBoard
+    /// <summary>
+    /// general class that will take care of creating new boards
+    /// and validating them
+    /// </summary>
+    public class SudokuBoard
     {
-        // Board dimentions
+        // Board size
         public int Size { get; set; }
 
         // the string that will be used to create the Board
@@ -29,13 +30,13 @@ namespace SodukoSolver
         /// Constructor that will the Board string from the console
         /// and then creates the Board
         /// </summary>
-        public SodokuBoard()
+        public SudokuBoard()
         {
-            // create new console reader
-            IReadable Reader= new ConsoleReader();
+            // create new console _reader
+            IReadable reader= new ConsoleReader();
 
-            // get the boardstring using the reader
-            string boardString = Reader.Read();
+            // get the boardstring using the _reader
+            string boardString = reader.Read();
 
             // while the Board string is null or white space, ask the user to enter Board again
             while (String.IsNullOrWhiteSpace(boardString))
@@ -65,9 +66,9 @@ namespace SodukoSolver
         /// and will create the Board
         /// </summary>
         /// <param name="path"></param>
-        public SodokuBoard(string path)
+        public SudokuBoard(string path)
         {
-            // create new file reader
+            // create new file _reader
             IReadable reader = new FileReader(path);
 
             // read the Board string from the file

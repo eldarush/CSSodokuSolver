@@ -8,13 +8,16 @@ using static SodukoSolver.Algoritms.HelperFunctions;
 
 namespace SodukoSolver.Algoritms
 {
+    /// <summary>
+    /// class that holds all the validating functions for the SudokuBoard
+    /// </summary>
     public static class ValidatingFunctions
     {
         // the current Board that is being validated
         public static int[,] Vboard;
 
         // the allowed values for the Board
-        private static char[] allowedValues;
+        private static char[] _allowedValues;
 
         // the bit mask for values in row
         public static int[] VRowValues;
@@ -31,11 +34,9 @@ namespace SodukoSolver.Algoritms
         /// <summary>
         /// main validation function that will call all the other validation functions
         /// </summary>
-        /// <param name="size"></param>
-        /// <param name="boardString"></param>
-        /// <returns></returns>
-        /// <exception cref="SizeException"></exception>
-        /// <exception cref="InvalidCharacterException"></exception>
+        /// <param name="size">size of the SudokuBoard</param>
+        /// <param name="boardString">string that represents SudokuBoard</param>
+        /// <returns>if SudokuBoard valid or not</returns>
         public static bool Validate(int size, string boardString)
         {
 
@@ -47,7 +48,7 @@ namespace SodukoSolver.Algoritms
             }
 
             // get allwoed values for the Board with given length
-            allowedValues = GetAllowedChars(size);
+            _allowedValues = GetAllowedChars(size);
 
             // check if the Board string contains only numbers
             if (!ValidateBoardString(boardString))
@@ -66,9 +67,8 @@ namespace SodukoSolver.Algoritms
         /// function that checks that the Board string is the same Size as the
         /// Board Size squard
         /// </summary>
-        /// <param name="boardString"></param>
-        /// <returns></returns>
-        /// <exception cref="SizeException"></exception>
+        /// <param name="boardString">string that represents SudokuBoard</param>
+        /// <returns>if the size is valid or not</returns>
         private static bool CheckLength(string boardString)
         {
             // if the Size is negrive return false
@@ -87,7 +87,7 @@ namespace SodukoSolver.Algoritms
         /// </summary>
         /// <param name="size"></param>
         /// <returns></returns>
-        public static char[] GetAllowedChars(int size)
+        private static char[] GetAllowedChars(int size)
         {
             // create an array of allowed chars
             char[] allowed = new char[size + 1];
@@ -107,8 +107,8 @@ namespace SodukoSolver.Algoritms
         /// it will return true if the Board string is valid
         /// and false if the Board string is invalid
         /// </summary>
-        /// <param name="boardString">the board string</param>
-        /// <returns></returns>
+        /// <param name="boardString">the SudokuBoard string</param>
+        /// <returns>if SudokuBoard string is valid or not</returns>
         private static bool ValidateBoardString(string boardString)
         {
             // if the Board string is null or empty
@@ -122,7 +122,7 @@ namespace SodukoSolver.Algoritms
             for (int i = 0; i < boardString.Length; i++)
             {
 
-                if (!allowedValues.Contains(boardString[i]))
+                if (!_allowedValues.Contains(boardString[i]))
                 {
                     return false;
                 }
@@ -136,19 +136,19 @@ namespace SodukoSolver.Algoritms
         /// <summary>
         /// update the valid candidates for row, col and block in the validating candidates's bit masks
         /// </summary>
-        /// <param name="Row">row of value</param>
-        /// <param name="Col">col of value</param>
-        /// <param name="Value">the value itself</param>
-        /// <param name="BlockSize">the size of a block</param>
-        private static void UpdateCandidateValues(int Row, int Col, int Value, int BlockSize)
+        /// <param name="row">row of value</param>
+        /// <param name="col">col of value</param>
+        /// <param name="value">the value itself</param>
+        /// <param name="blockSize">the size of a block</param>
+        private static void UpdateCandidateValues(int row, int col, int value, int blockSize)
         {
             //Use the bitwise OR operator (|) to add the mask at index value - 1 in the masks array to the element at index row in the RowValues array.
             //This has the effect of setting the bit corresponding to value in the binary representation of the element to 1,
             //indicating that the value is valid for the row.
-            VRowValues[Row] |= VHelperMask[Value - 1];
-            VColValues[Col] |= VHelperMask[Value - 1];
-            int SquareLocation = (Row / BlockSize) * BlockSize + Col / BlockSize;
-            VBlockValues[SquareLocation] |= VHelperMask[Value - 1];
+            VRowValues[row] |= VHelperMask[value - 1];
+            VColValues[col] |= VHelperMask[value - 1];
+            int squareLocation = (row / blockSize) * blockSize + col / blockSize;
+            VBlockValues[squareLocation] |= VHelperMask[value - 1];
         }
 
         /// <summary>
@@ -156,33 +156,31 @@ namespace SodukoSolver.Algoritms
         /// value inside the Board in this location, this is done using the possible values held in the bitmasks 
         /// for row, col and block in the validating candidates's bit masks
         /// </summary>
-        /// <param name="Row">row of value</param>
-        /// <param name="Col">col of value</param>
-        /// <param name="Value">the value</param>
-        /// <param name="BlockSize">the size of a block</param>
+        /// <param name="row">row of value</param>
+        /// <param name="col">col of value</param>
+        /// <param name="value">the value</param>
+        /// <param name="blockSize">the size of a block</param>
         /// <returns>if the candidate is valid or not</returns>
-        private static bool IsValidBits(int Row, int Col, int Value, int BlockSize)
+        private static bool IsValidBits(int row, int col, int value, int blockSize)
         {
-            int SquareLocation = (Row / BlockSize) * BlockSize + Col / BlockSize;
+            int squareLocation = (row / blockSize) * blockSize + col / blockSize;
             // Use the bitwise AND operator (&) to check if the value is valid for the row, col and block
             // This is done by performing a bitwise AND operation between the element at index row in the RowValues array
             // and the mask at index value in the masks array.
             // If the result is 0, it means that the value is valid for the row
             // (i.e., the bit corresponding to value is not set in the binary representation of the element).
-            return (VRowValues[Row] & VHelperMask[Value]) == 0
-                && (VColValues[Col] & VHelperMask[Value]) == 0
-                && (VBlockValues[SquareLocation] & VHelperMask[Value]) == 0;
+            return (VRowValues[row] & VHelperMask[value]) == 0
+                && (VColValues[col] & VHelperMask[value]) == 0
+                && (VBlockValues[squareLocation] & VHelperMask[value]) == 0;
 
         }
 
         /// <summary>
         /// function that checks if the Board is valid
         /// </summary>
-        /// <param name="board">the board</param>
-        /// <param name="size">size of board</param>
-        /// <returns>if board valid or not</returns>
-        /// <exception cref="NullBoardException">possible exception</exception>
-        /// <exception cref="BoardCellsNotValidException">possible exception</exception>
+        /// <param name="board">the SudokuBoard</param>
+        /// <param name="size">size of SudokuBoard</param>
+        /// <returns>if SudokuBoard valid or not</returns>
         private static bool ValidateBoard(int[,] board, int size)
         {
             // if the Board is null

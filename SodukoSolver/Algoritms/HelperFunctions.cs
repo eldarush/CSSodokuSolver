@@ -12,19 +12,47 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using static SodukoSolver.Exceptions.CustomExceptions;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
+using static SodukoSolver.UserInterface;
 using SodukoSolver.DataStructures;
+using SodukoSolver.BoardSolvers;
+using System.Drawing;
 
 namespace SodukoSolver.Algoritms
 {
+    /// <summary>
+    /// class that contains general helpful functions that are used in other classes
+    /// </summary>
     public static class HelperFunctions
     {
+
+        /// <summary>
+        /// function that returns a copy of the given Board
+        /// </summary>
+        /// <param name="board">the Board</param>
+        /// <returns>the copied Board</returns>
+        public static int[,] GetBoardIntsCopy(int[,] board, int size)
+        {
+            // craete copy of the Board
+            int[,] boardCopy = new int[size, size];
+            // go over the current Board and copy each value to the corresponding value in the new Board
+            for (int row = 0; row < size; row++)
+            {
+                for (int col = 0; col < size; col++)
+                {
+                    boardCopy[row, col] = board[row, col];
+                }
+            }
+            // return the copied Board
+            return boardCopy;
+        }
+
         /// <summary>
         /// Function that gets a Board string and returns a Board of cells
         /// </summary>
         /// <param name="size"> the Size of the Board</param>
         /// <param name="boardString">the string that represents the Board</param>
         /// <returns>the Board of cells</returns>
-        public static int[,] CreateBoard(int size, string boardString, out int[] rowValues, out int[] colValues, out int[] blockValues, out int[] HelperMask)
+        public static int[,] CreateBoard(int size, string boardString, out int[] rowValues, out int[] colValues, out int[] blockValues, out int[] helperMask)
         {
             // create a new Board
             int[,] board = new int[size, size];
@@ -37,14 +65,14 @@ namespace SodukoSolver.Algoritms
             colValues = new int[size];
             blockValues = new int[size];
             // create the mask
-            HelperMask = new int[size];
+            helperMask = new int[size];
 
             // initialize the mask 
             for (int index = 0; index < size; index++)
             {
                 // Board values at each index will be 2 to the power of the index
-                // HelperMask[0] = 1 << 0 = 1, HelperMask[1] = 1 << 1 = 2, HelperMask[2] = 1 << 2 = 4 and so on...
-                HelperMask[index] = 1 << index;
+                // helperMask[0] = 1 << 0 = 1, helperMask[1] = 1 << 1 = 2, helperMask[2] = 1 << 2 = 4 and so on...
+                helperMask[index] = 1 << index;
             }
 
             // initialize the row, col, and block values to be all 0s
@@ -67,187 +95,202 @@ namespace SodukoSolver.Algoritms
         /// <param name="board">the Board to copy the string to</param>
         private static void CopyBoardStringToBoard(int size, string boardString, int[,] board)
         {
-            // create a counter for the Board string
-            int counter = 0;
+            // create a location for the Board string
+            int location = 0;
 
             // loop through the rows
-            for (int i = 0; i < size; i++)
+            for (int row = 0; row < size; row++)
             {
                 // loop through the columns
-                for (int j = 0; j < size; j++)
+                for (int col = 0; col < size; col++)
                 {
                     // copy the Board string to the Board
-                    board[i, j] = Convert.ToInt32(boardString[counter]) - '0';
-                    // increment the counter
-                    counter++;
-                }
-            }
-        }
-
-        /// <summary>
-        /// function that gets a boardstring and a size and converts it to a board of bytes
-        /// </summary>
-        /// <param name="boardstring"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        public static void ConvertStringToByteMatrix(string boardstring, int size, out byte[,] board)
-        {
-            // initialize the board
-            board = new byte[size, size];
-            // counter for the position in the string
-            int location = 0;
-            for(int i =0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                {
-                    // fill in the board at the current place
-                    board[i,j] = (byte)(boardstring[location] - '0');
-                    // continue to the next location in the string
+                    board[row, col] = Convert.ToInt32(boardString[location]) - '0';
+                    // increment the location
                     location++;
                 }
             }
-            // return the board
-            return;
         }
 
         /// <summary>
-        /// function that will get a board that represents the values of the cells 
-        /// and the size of the board and will return a cover matrix for the board
+        /// function that gets a SudokuBoard solver, ask the user using what algorith, he wants to solve the SudokuBoard,
+        /// creates new solver using the input from the user
+        /// </summary>
+        /// <param name="board">the SudokuBoard</param>
+        /// <param name="boardSolver">the returned SudokuBoard solver</param>
+        public static void GetTypeOfBoardSolver(SudokuBoard board, out BoardSolver boardSolver)
+        {
+            // create input string
+            string userInput;
+
+            // ask the user in which way does he want to solve the Board
+            Console.WriteLine("\nPlease choose the way you want to solve the Board: \n" +
+                "\t d: using the Dancing Links algorithm (Highly Reccommended) \n" +
+                "\t b: using the Backtracking algorithm \n\n" +
+                "\t Dancing Links works better for bigger and more complicated SudokuBoard but takes up more memory. \n" +
+                "\t Backtracking works better with simpler and smaller boards and takes up less memory, \n" +
+                "\t But may struggle with more complicated boards. \n");
+
+            // get the user input
+            Console.Write("Please enter your choice: ");
+            userInput = Console.ReadKey().KeyChar.ToString();
+
+            // while the user doesnt enter a valid charachter, put him in a while loop
+            while (userInput != "d" && userInput != "b" && userInput != "D" && userInput != "B")
+            {
+                Console.Write("\nPlease Enter a valid character (d or b): ");
+                userInput = Console.ReadKey().KeyChar.ToString(); ;
+            }
+
+            // if the user wanted to solve using dancing links
+            if (userInput == "d" || userInput == "D")
+            {
+                byte[,] matrix = IntBoardToByteMatrix(board.Board, board.Size);
+
+                boardSolver = new DancingLinks(matrix, board.Size);
+                return;
+            }
+            // if the user wanted to solve using backtracking
+            else if (userInput == "b" || userInput == "B")
+            {
+                boardSolver = new BackTracking(board.Board, board.Size);
+                return;
+            }
+
+            // this part will never be reached
+            boardSolver = new BoardSolver(board.Board, board.Size);
+        }
+
+        /// <summary>
+        /// function that will get a SudokuBoard that represents the values of the cells 
+        /// and the size of the SudokuBoard and will return a cover Matrix for the SudokuBoard
         /// that will be of size (size^3) * (constrains* size^2)
         /// </summary>
-        /// <param name="board"></param>
-        /// <param name="size"></param>
-        /// <param name="coverMatrix"></param>
+        /// <param name="board">the SudokuBoard</param>
+        /// <param name="size">the size of the SudokuBoard</param>
+        /// <param name="blockSize">the squared size of the SudokuBoard</param>
+        /// <param name="constrains">the amount of constraints</param>
+        /// <param name="coverMatrix">the result Matrix of 0'es and 1's</param>
         public static void ConvertMatrixToExactCoverMatrix(byte[,] board, int size, int blockSize, int constrains,
             out byte[,] coverMatrix)
         {
-            // initialize the new cover matrix
+            // initialize the new cover Matrix
             coverMatrix = new byte[size * size * size, constrains * size * size];
 
             // current row indicator
-            int CurrentRow = 0;
+            int currentRow = 0;
 
             // current value indicator
-            byte CurrentValue;
+            byte currentValue;
 
             // please note that the next part is hard coded for 4 constraints and for this exact order,
             // this is the order described in the thesis 'Solving Sudoku efficiently with Dancing Links'
             // by MATTIAS HARRYSSON and HJALMAR LAESTANDER and for a diffrent number of constraints or 
             // for a diffrent order, this function would need to be modified and so will the other functions
-            // that acsess the cover matrix that is created by this function
+            // that acsess the cover Matrix that is created by this function
 
             // indicator for each constraint
             // first 'size' portion of the array is for cell constraints
-            int CurrentCellConstraint = 0;
+            int currentCellConstraint = 0;
             // second 'size' portion of the array is for col constraints
-            int CurrentColConstraint = size * size;
+            int currentColConstraint = size * size;
             // third 'size' portion of the array is for row constraints
-            int CurrentRowConstraint = size * size * 2;
+            int currentRowConstraint = size * size * 2;
             // fourth 'size' portion of the array is for block constraints
-            int CurrentBlockConstraint = size * size * 3;
+            int currentBlockConstraint = size * size * 3;
 
             // current candidate row index
             // a-symetry shifting 
-            int CandidateRowIndex;
+            int candidateRowIndex;
 
             // current candidate block index;
-            int CandidateBlockIndex;
+            int candidateBlockIndex;
 
-            // go over the board
+            // go over the SudokuBoard
             for(int row = 0; row < size; row++)
             {
                 // reset the indicator for the current col constraint
-                CurrentColConstraint = size * size;
+                currentColConstraint = size * size;
                 
                 for (int col = 0; col < size; col++)
                 {
                     // the current value at row,col
-                    CurrentValue = board[row, col];
+                    currentValue = board[row, col];
 
                     // calcualte the block index
-                    CandidateBlockIndex = (row / blockSize) * blockSize + col / blockSize;
+                    candidateBlockIndex = (row / blockSize) * blockSize + col / blockSize;
 
                     // try all possible candidates for this size to see which one's fit and which ones dont
-                    for (int CurrentCandidate=1; CurrentCandidate<=size; CurrentCandidate++)
+                    for (int currentCandidate=1; currentCandidate<=size; currentCandidate++)
                     {
                         // if the current value is 0 or if the current candidate IS the current value, then
-                        // we update the cover matrix to contain 1's at the constraints
+                        // we update the cover Matrix to contain 1's at the constraints
                         // if not then we just move to the next row and the next ColConstraint indicator
-                        if(CurrentValue == 0 || CurrentValue == CurrentCandidate)
+                        if(currentValue == 0 || currentValue == currentCandidate)
                         {
                             // update the current cell constraint to be 1 at the appropriate location
-                            coverMatrix[CurrentRow, CurrentCellConstraint] = 1;
+                            coverMatrix[currentRow, currentCellConstraint] = 1;
 
                             // update the current col constraint to be 1 at the appropriate location
-                            coverMatrix[CurrentRow, CurrentColConstraint] = 1;
+                            coverMatrix[currentRow, currentColConstraint] = 1;
 
                             // update the current row constraint to be 1 at the appropriate location
-                            CandidateRowIndex = CurrentCandidate - 1;
-                            coverMatrix[CurrentRow, CurrentRowConstraint + CandidateRowIndex] = 1;
+                            candidateRowIndex = currentCandidate - 1;
+                            coverMatrix[currentRow, currentRowConstraint + candidateRowIndex] = 1;
 
                             // update the current block constraint to be 1 at the appropriate location
-                            coverMatrix[CurrentRow, CurrentBlockConstraint + CandidateBlockIndex * size + CandidateRowIndex] = 1;
+                            coverMatrix[currentRow, currentBlockConstraint + candidateBlockIndex * size + candidateRowIndex] = 1;
                         }
-                        // OUTSIDE THE IF STATEMENT IF VALUE IS 0 OR IS CURRENT CANDIDATE
-
                         // continue to the next row
-                        CurrentRow++;
+                        currentRow++;
                         // continue to the next col constraint indicator
-                        CurrentColConstraint++;
+                        currentColConstraint++;
                     }
-                    // OUTSIDE THE CANDIDATE LOOPING
-
                     // continue to the next cell constraint indicator
-                    CurrentCellConstraint++;
+                    currentCellConstraint++;
                 }
-                // OUTSIDE THE COL LOOPING
-
                 // continue to the next row constraint indicator
                 // this is done becaue every constraint take up 'size' amount in the array
                 // so we skip to next one by adding 'size' to the row constraint indicator
-                CurrentRowConstraint += size;
+                currentRowConstraint += size;
             }
-            // OUTSIDE THE ROW LOOPING
-
-            // return the ready cover matrix
+            // return the ready cover Matrix
             return;
         }
 
         /// <summary>
-        /// this is a function that takes in the cover matrix as a matrix of 0'es and one's and converts it to a new 
-        /// node matrix that will be used by the dancing links algorithm
-        /// this function just returns the root of the new matrix, of which the matrix is represented by the connections
+        /// this is a function that takes in the cover Matrix as a Matrix of 0'es and one's and converts it to a new 
+        /// node Matrix that will be used by the dancing links algorithm
+        /// this function just returns the root of the new Matrix, of which the Matrix is represented by the connections
         /// between the nodes themselves
         /// </summary>
-        /// <param name="coverMatrix"></param>
-        /// <param name="size"></param>
-        /// <param name="blockSize"></param>
-        /// <param name="rootOfNewMatrix"></param>
+        /// <param name="coverMatrix">the Matrix of 0'es and 1's</param>
+        /// <param name="rootOfNewMatrix">the root of the new node Matrix, root is connected to the left of the row of headers</param>
         public static void ConvertCoverMatrixToNodeMatrix(byte[,] coverMatrix, out HeaderNode rootOfNewMatrix)
         {
-            // create the root of the matrix that will be returned
+            // create the root of the Matrix that will be returned
             rootOfNewMatrix = new HeaderNode("root");
 
             // calcualte the amount of rows and cols
             // rows = n^3
-            int RowAmount = coverMatrix.GetLength(0);
+            int rowAmount = coverMatrix.GetLength(0);
             // cols = constraints*n^2
-            int ColAmount = coverMatrix.GetLength(1);
+            int colAmount = coverMatrix.GetLength(1);
 
             // create the row of headers (A-H) but for diffrent sizes that will be at the top of the 
-            // node matrix, will all be linked to one another and will all have link to the col that they
+            // node Matrix, will all be linked to one another and will all have link to the col that they
             // are 'heading', the headeers value will later be used to indentify the col and the row
-            // of the current cell to be placed in the final board that will represt the answer to the board
-            HeaderNode[] headersRow = new HeaderNode[ColAmount];
+            // of the current cell to be placed in the final SudokuBoard that will represt the answer to the SudokuBoard
+            HeaderNode[] headersRow = new HeaderNode[colAmount];
             
             // initialize the headers row with the given row index as the name 
-            for(int CurrentRowIndex = 0; CurrentRowIndex < ColAmount; CurrentRowIndex++)
+            for(int currentRowIndex = 0; currentRowIndex < colAmount; currentRowIndex++)
             {
                 // create new header and insert it into the headers row
                 // note that when debugging the names of the row will just be the index of the place
                 // where they are located 0 -> (size-1) and not A-Z letters as described
-                HeaderNode CurrentHeaderNode = new HeaderNode(CurrentRowIndex.ToString());
-                headersRow[CurrentRowIndex] = CurrentHeaderNode;
+                HeaderNode CurrentHeaderNode = new HeaderNode(currentRowIndex.ToString());
+                headersRow[currentRowIndex] = CurrentHeaderNode;
 
                 // attach the header node to the root (root will be to the left of the headers node and will point
                 // to to first header node at the index 0 at the headers row)
@@ -262,74 +305,74 @@ namespace SodukoSolver.Algoritms
 
             // keep track of the location of the node that we inserted last so that when we want
             // to insert a new node, we can link the last inserted node to the new node
-            Node LastInsertedNode;
+            Node lastInsertedNode;
 
-            // keep track of the current value at the 0,1 matrix
-            byte CurrentValue;
+            // keep track of the current value at the 0,1 Matrix
+            byte currentValue;
 
             // keep track of the current header node of this row
-            HeaderNode CurrentHeader;
+            HeaderNode currentHeader;
 
             // new node to be inserted
-            Node NodeToBeInserted;
+            Node nodeToBeInserted;
 
-            // go over all the rows in the 0,1 matrix and where there is a '1', insert a new node
-            for(int CurrentRowIndex = 0; CurrentRowIndex < RowAmount; CurrentRowIndex++)
+            // go over all the rows in the 0,1 Matrix and where there is a '1', insert a new node
+            for(int row = 0; row < rowAmount; row++)
             {
                 // reset the last inserted node with every passing row
-                LastInsertedNode = null;
+                lastInsertedNode = null;
 
                 // go over the cols in the current row index
-                for(int CurrentColIndex = 0; CurrentColIndex < ColAmount; CurrentColIndex++)
+                for(int col = 0; col < colAmount; col++)
                 {
                     // update the current value
-                    CurrentValue = coverMatrix[CurrentRowIndex, CurrentColIndex];
+                    currentValue = coverMatrix[row, col];
 
                     // if current value is 1, new node
                     // if current value 0, do nothing
-                    if (CurrentValue == 0) continue;
+                    if (currentValue == 0) continue;
 
                     // if we reached this place, the current value is 1
                     // get the coorespoinding header node
-                    CurrentHeader = headersRow[CurrentColIndex];
+                    currentHeader = headersRow[col];
 
-                    NodeToBeInserted = new Node(CurrentHeader);
+                    nodeToBeInserted = new Node(currentHeader);
 
                     // attach the header node to the node to be inserted
-                    CurrentHeader.Up.AttachDown(NodeToBeInserted);
+                    currentHeader.Up.AttachDown(nodeToBeInserted);
 
                     // if it is the first inserted node in this col, make it the last inserted node
                     // if not, attach the last inserted node to this node and then update the last inserted
-                    if(LastInsertedNode != null)
+                    if(lastInsertedNode != null)
                     {
-                        LastInsertedNode.AttachRight(NodeToBeInserted);
-                        LastInsertedNode = LastInsertedNode.Right;
+                        lastInsertedNode.AttachRight(nodeToBeInserted);
+                        lastInsertedNode = lastInsertedNode.Right;
                     }
                     // if no last inserted node exists, make the current one the last inserted
                     else
                     {
-                        LastInsertedNode = NodeToBeInserted;
+                        lastInsertedNode = nodeToBeInserted;
                     }
                     // update the size of the current header node after every insertion
-                    CurrentHeader.Size++;
+                    currentHeader.Size++;
                 }
             }
-            // return the root of the new node matrix
+            // return the root of the new node Matrix
             return;
         }
 
         /// <summary>
-        /// this is a fuction that gets the root of the matrix of nodes, and goes over
+        /// this is a fuction that gets the root of the Matrix of nodes, and goes over
         /// all the header nodes and compares their sizes and 
         /// it picks the header node with the smallest size
         /// </summary>
-        /// <param name="root"></param>
-        /// <param name="colWithMinSize"></param>
+        /// <param name="root">the root of the node Matrix</param>
+        /// <param name="colWithMinSize">the col with the least nodes in it</param>
         public static void FindHeaderWithLeastNodes(HeaderNode root, out HeaderNode colWithMinSize)
         {
             // current header node 
             // by deafult set to the first header node
-            HeaderNode CurrentHeaderNode = (HeaderNode)root.Right;
+            HeaderNode currentHeaderNode = (HeaderNode)root.Right;
 
             // the header node with the samllest size 
             // by deafult set to the first header node
@@ -337,14 +380,14 @@ namespace SodukoSolver.Algoritms
 
             // go over all the header nodes and change the min node if needed
             // while we havent reached the root
-            while (CurrentHeaderNode != root)
+            while (currentHeaderNode != root)
             {
                 // comapre the two sizes and change the min if 
                 // the current size is smaller then min node size
-                if (CurrentHeaderNode.Size < colWithMinSize.Size) colWithMinSize = CurrentHeaderNode;
+                if (currentHeaderNode.Size < colWithMinSize.Size) colWithMinSize = currentHeaderNode;
 
                 // continue going right untill we reach the root again
-                CurrentHeaderNode = (HeaderNode)CurrentHeaderNode.Right;
+                currentHeaderNode = (HeaderNode)currentHeaderNode.Right;
             }
             // return the heder node witht eh smallest size
             return;
@@ -352,102 +395,109 @@ namespace SodukoSolver.Algoritms
 
         /// <summary>
         /// this is a function that will get the stack of nodes that represent the solution
-        /// and will convert this stack to a board of bytes that willl visibally represent
-        /// the correct solution of the board
+        /// and will convert this stack to a SudokuBoard of bytes that willl visibally represent
+        /// the correct solution of the SudokuBoard
         /// </summary>
-        /// <param name="solutionStack"></param>
-        /// <param name="size"></param>
-        /// <param name="board"></param>
+        /// <param name="solutionStack">the stack of nodes that make out the solution of the SudokuBoard</param>
+        /// <param name="size">the size of the new SudokuBoard</param>
         public static int[,] ConvertSolutionStackToBoard(Stack<Node> solutionStack, int size)
         {
-            // initialize the board
+            // initialize the SudokuBoard
             int[,] board = new int[size, size];
 
             // keep track of the current node, the first node and the temp firstNode
-            Node CurrentNode, FirstNode, TempFirstNode;
+            Node currentNode, firstNode, tempFirstNode;
 
             // save the current header's name value and the min header value
-            int CurrentHeaderValue, MinHeaderValue;
+            int currentHeaderValue, minHeaderValue;
+
+            // The right node is needed to determine the value that should be placed in the SudokuBoard at the position represented by the first node.
+            // The name of the header node of the first node is used to calculate the row and column indices of this position,
+            // and the name of the header node of the right node is used to calculate the value to be placed at this position.
 
             // the right node's name's value
-            int RightHeaderValue;
+            int rightHeaderValue;
 
-            // the row, col and the value that will be placed in the board
-            int Row, Col, Value;
+            // the row, col and the value that will be placed in the SudokuBoard
+            int row, col, value;
 
             // go over all the nodes in the stack
             while (solutionStack.Count!= 0)
             {
                 // get the current node by poping the stack
-                CurrentNode = solutionStack.Pop();
+                currentNode = solutionStack.Pop();
                 // set the first node to be the current node and the temp to be the right 
                 // of he current node
-                FirstNode = CurrentNode;
-                TempFirstNode = FirstNode.Right;
+                firstNode = currentNode;
+                tempFirstNode = firstNode.Right;
 
                 // set the value of the name of the header col of the first node
-                MinHeaderValue = Convert.ToInt32(FirstNode.Header.Name);
+                minHeaderValue = Convert.ToInt32(firstNode.Header.Name);
 
                 // go over all the header's names of the nodes in the same row as the current node
                 // and find the header with the smallest name 
-                while (TempFirstNode != CurrentNode)
+                while (tempFirstNode != currentNode)
                 {
                     // get the value the name of the header col of the current node
-                    CurrentHeaderValue = (int)Int64.Parse(TempFirstNode.Header.Name);
+                    currentHeaderValue = (int)Int64.Parse(tempFirstNode.Header.Name);
 
                     // if the current vlaue is smaller then the min value
-                    if (CurrentHeaderValue < MinHeaderValue)
+                    if (currentHeaderValue < minHeaderValue)
                     {
                         // change the current value and the first node
-                        FirstNode = TempFirstNode;
-                        MinHeaderValue = (int)Int64.Parse(FirstNode.Header.Name);
+                        firstNode = tempFirstNode;
+                        minHeaderValue = (int)Int64.Parse(firstNode.Header.Name);
                     }
                     // go to the next node in the current row
-                    TempFirstNode = TempFirstNode.Right;
+                    tempFirstNode = tempFirstNode.Right;
                 }
                 // set the value of the node to the right that will be used to set the value
-                RightHeaderValue = (int)Int64.Parse(FirstNode.Right.Header.Name);
+                rightHeaderValue = (int)Int64.Parse(firstNode.Right.Header.Name);
 
                 // the name represents the inhe index from the start of the array of how many
-                // cells we need to move to rach the curent cell so for example in a 9 by 9 board
+                // cells we need to move to rach the curent cell so for example in a 9 by 9 SudokuBoard
                 // index of 64 means row = (64/9) = 7 and col = (64%9) = 1
 
+                // In this particular implementation, the names of the header nodes are integers that represent indices in a linear array.
+                // The row and column indices of a position in the Matrix are calculated by dividing and modding this integer by the size of the Matrix.
+                // The value to be placed at this position is calculated by modding the name of the header node of the right node by the size of the Matrix and adding 1.
+
                 // get the row, col from the Min value
-                Row = MinHeaderValue / size;
-                Col = MinHeaderValue % size;
+                row = minHeaderValue / size;
+                col = minHeaderValue % size;
 
                 // calculate the value from the value of the node to the right of the first node
-                Value = RightHeaderValue % size + 1;
+                value = rightHeaderValue % size + 1;
 
-                // insert the value into the board
-                board[Row, Col] = Value;
+                // insert the value into the SudokuBoard
+                board[row, col] = value;
 
                 // continue the recursion for all nodes in the stack
             }
 
-            // return the final board as a 2d array of ints
+            // return the final SudokuBoard as a 2d array of ints
             return board;
         }
 
         /// <summary>
         /// function that will get the row, col, and block and helper mask and will copy them into new copies of them
         /// </summary>
-        /// <param name="RowValues">row bitmask</param>
-        /// <param name="ColValues">col bitmask</param>
-        /// <param name="BlockValues">block bitmask</param>
-        /// <param name="HelperMask">helper bitmask</param>
+        /// <param name="oldRowValues">row bitmask</param>
+        /// <param name="oldColValues">col bitmask</param>
+        /// <param name="oldBlockValues">block bitmask</param>
+        /// <param name="oldHelperMask">helper bitmask</param>
         /// <param name="newRowValues">new row bitmask</param>
         /// <param name="newColValues">new col bitmask</param>
         /// <param name="newBlockValues">new block bitmask</param>
         /// <param name="newHelperMask">new helper bitmask</param>
-        public static void CopyBitMasks(int[] RowValues, int[] ColValues, int[] BlockValues, int[] HelperMask,
+        public static void CopyBitMasks(int[] oldRowValues, int[] oldColValues, int[] oldBlockValues, int[] oldHelperMask,
              out int[] newRowValues, out int[] newColValues, out int[] newBlockValues, out int[] newHelperMask)
         {
             // make the new row, col, and block values use the old one's memeory space
-            newRowValues = RowValues;
-            newColValues = ColValues;
-            newBlockValues = BlockValues;
-            newHelperMask = HelperMask;
+            newRowValues = oldRowValues;
+            newColValues = oldColValues;
+            newBlockValues = oldBlockValues;
+            newHelperMask = oldHelperMask;
         }
 
 
@@ -457,9 +507,25 @@ namespace SodukoSolver.Algoritms
         /// <param name="watch">the stopwatch</param>
         public static void PrintOutTime(Stopwatch watch)
         {
-            // print the elapsed times in seconds, milliseconds
+            // print the elapsed times in seconds and milliseconds (1000 ms =  1 sec)
             Console.WriteLine("\nElapsed time: {0} seconds", watch.Elapsed.TotalSeconds);
             Console.WriteLine("Elapsed time: {0} milliseconds", watch.Elapsed.TotalMilliseconds);
+        }
+
+        /// <summary>
+        /// function that takes in the SudokuBoard solver that contains the result and
+        /// prints out the solved SudokuBoard and the SudokuBoard string
+        /// </summary>
+        /// <param name="solver">the solved SudokuBoard</param>
+        public static void OutputBoard(BoardSolver solver)
+        {
+            // print the solved Board
+            Console.WriteLine("\nSolved Board is: \n");
+            PrintBoard(solver.BoardInts, solver.Size);
+
+            // print the solved Board string
+            Console.WriteLine("\nSolved Board string is: \n");
+            Console.WriteLine(ConvertToString(solver.BoardInts, solver.Size));
         }
 
         /// <summary>
@@ -470,31 +536,34 @@ namespace SodukoSolver.Algoritms
         /// <returns>if the Board is valid or not</returns>
         public static bool IsTheBoardValid(int size, string boardString)
         {
+            // to keep track if the SudokuBoard is valid or not
             bool valid = false;
+            // try and validate, if any exceptions appear, catch them
             try
             {
                 valid = Validate(size, boardString);
             }
-            // catch the custom exceptions, print their error messages and exit
+            // catch the custom exceptions, print their error messages and run the function
+            // that gets the input from user again
             catch (SizeException se)
             {
-                Console.WriteLine(se.Message);
-                Environment.Exit(0);
+                Console.WriteLine("\nERROR: " + se.Message);
+                AskUserForInput();
             }
             catch (InvalidCharacterException ice)
             {
-                Console.WriteLine(ice.Message);
-                Environment.Exit(0);
+                Console.WriteLine("\nERROR: " + ice.Message);
+                AskUserForInput();
             }
             catch (BoardCellsNotValidException bcne)
             {
-                Console.WriteLine(bcne.Message);
-                Environment.Exit(0);
+                Console.WriteLine("\nERROR: " + bcne.Message);
+                AskUserForInput();
             }
             catch (NullBoardException nbe)
             {
-                Console.WriteLine(nbe.Message);
-                Environment.Exit(0);
+                Console.WriteLine("\nERROR: " + nbe.Message);
+                AskUserForInput();
             }
             return valid;
         }
@@ -530,39 +599,12 @@ namespace SodukoSolver.Algoritms
         /// </summary>
         public static void PrintWelcomeMessage()
         {
-            // function that will ask the user for input and will perform the actions
+            // print out the welcome message
             Console.WriteLine("Welcome to the Soduko Solver! \n" +
                 "This is a program written in c# by @Eldar Aslanbeily \n" +
                 "For more information about the program, please visit: \n" +
                 "https://github.com/eldarush/CSSodokuSolver.git \n" +
                 "This is a program that will solve any soduko Board \n");
-        }
-
-        /// <summary>
-        /// function that converts a boardstring to a Board of ints
-        /// </summary>
-        /// <param name="boardstring">the string that represents the Board</param>
-        /// <param name="array">the 2d array where the Board will be stored</param>
-        /// <param name="size">the Size of the Board</param>
-        /// <returns>the 2d array of ints</returns>
-        public static int[,] ConvertTo2DArray(string boardstring, int[,] array, int size)
-        {
-            if (array is null)
-            {
-                throw new ArgumentNullException(nameof(array));
-            }
-
-            int[,] newBoard = new int[size, size];
-            int counter = 0;
-            for (int i = 0; i < size; i++)
-            {
-                for (int j = 0; j < size; j++)
-                {
-                    newBoard[i, j] = boardstring[counter] - '0';
-                    counter++;
-                }
-            }
-            return newBoard;
         }
 
         /// <summary>
@@ -573,40 +615,49 @@ namespace SodukoSolver.Algoritms
         /// <returns>the string that represents the Board</returns>
         public static string ConvertToString(int[,] array, int size)
         {
+            // the string that will hold the SudokuBoard representation
             string boardstring = "";
+            // go over the SudokuBoard
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
+                    // add the current value in string format
                     boardstring += (char)(array[i, j] + '0');
                 }
             }
+            // return the string
             return boardstring;
         }
     
         /// <summary>
-        /// function that converts a int board to a byte matrix
+        /// function that converts a int SudokuBoard to a byte Matrix
         /// </summary>
-        /// <param name="board"></param>
-        /// <returns></returns>
+        /// <param name="board">the SudokuBoard of ints</param>
+        /// <param name="size">size of each dimention</param>
+        /// <returns>tje converted Matrix</returns>
         public static byte[,] IntBoardToByteMatrix(int[,] board, int size)
         {
+            // create new Matrix of bytes of the same size as the int Matrix
             byte[,] matrix = new byte[size, size];
+            // go over the SudokuBoard
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
+                    // convert to byte and insert into Matrix
                     matrix[i, j] = (byte)board[i, j];   
                 }
             }
+            // return the resulted Matrix
             return matrix;
         }
         
         /// <summary>
-        /// function that prints the board 
+        /// function that prints the SudokuBoard 
         /// </summary>
-        /// <param name="board">the board</param>
-        /// <param name="size">the size of the board</param>
+        /// <param name="board">the SudokuBoard</param>
+        /// <param name="size">the size of the SudokuBoard</param>
         public static void PrintBoard(int[,] board, int size)
         {
             {
@@ -617,8 +668,10 @@ namespace SodukoSolver.Algoritms
                     for (int j = 0; j < size; j++)
                     {
                         int length = board[i, j].ToString().Length;
+                        // if the current length is bigger then the max length
                         if (length > maxLength)
                         {
+                            // make the amx size the current size
                             maxLength = length;
                         }
                     }
@@ -643,6 +696,7 @@ namespace SodukoSolver.Algoritms
                         Console.Write("+");
                     }
                 }
+
                 Console.WriteLine();
 
                 // Print the rows
@@ -658,22 +712,28 @@ namespace SodukoSolver.Algoritms
                         string element;
                         if (size >= 10)
                         {
-                            element = board[i, j].ToString().PadLeft(2, '0');  // add leading zero for single digit values
+                            // add leading zero for single digit values
+                            element = board[i, j].ToString().PadLeft(2, '0'); 
                         }
                         else
                         {
                             element = board[i, j].ToString();
                         }
+                        // calculate the padding and print it
                         int padding = (squareWidth - element.Length) / 2;
                         for (int k = 0; k < padding; k++)
                         {
                             Console.Write(" ");
                         }
+
+                        // print the next element
                         Console.Write(element);
+
                         for (int k = 0; k < padding; k++)
                         {
                             Console.Write(" ");
                         }
+
                         if ((j + 1) % subSquareSize == 0 && j != size - 1)
                         {
                             Console.Write("|");
@@ -728,14 +788,14 @@ namespace SodukoSolver.Algoritms
         /// <returns>counts the amount of activated bits in the number</returns>
         public static int GetActivatedBits(int value)
         {
-            // set value to the result of a bitwise AND operation between value and value - 1 and increment the counter
-            int bits = 0;
+            // set value to the result of a bitwise AND operation between value and value - 1 and increment the location
+            int numActivatedBits = 0;
             while (value > 0)
             {
                 value &= value - 1;
-                bits++;
+                numActivatedBits++;
             }
-            return bits;
+            return numActivatedBits;
         }
 
         /// <summary>
@@ -745,14 +805,14 @@ namespace SodukoSolver.Algoritms
         /// <returns>the index of the most significant bit that is set to 1</returns>
         public static int GetIndexOfMostSignificantActivatedBit(int value)
         {
-            int bits = 0;
+            int msbIndex = 0;
             while (value != 0)
             {
-                // divide value by 2 using right shift and increment the counter
+                // divide value by 2 using right shift and increment the location
                 value >>= 1;
-                bits++;
+                msbIndex++;
             }
-            return bits;
+            return msbIndex;
         }
     }
 }

@@ -7,18 +7,22 @@ using System.IO;
 using SodukoSolver.Interfaces;
 namespace SodukoSolver
 {
+    /// <summary>
+    /// class that reads the soduko board from a file
+    /// and save the solution in a file
+    /// </summary>
     public class FileReader : IReadable, IWritable
     {
         // the name of the file that will contain the soduko puzzle
-        private readonly string filepath;
+        private readonly string _filepath;
 
         /// <summary>
-        /// constructor that will set the filepath
+        /// constructor that will set the _filepath
         /// </summary>
         /// <param name="filepath">fiven file path</param>
         public FileReader(string filepath)
         {
-            this.filepath = filepath;
+            _filepath = filepath;
         }
 
         /// <summary>
@@ -30,13 +34,13 @@ namespace SodukoSolver
             try
             {
                 // first check if the file exists
-                if (!File.Exists(filepath))
+                if (!File.Exists(_filepath))
                 {
                     throw new FileNotFoundException("file path does not exist, cannot read file\n"+
-                        $"entered file path is: {filepath}\n");
+                        $"entered file path is: {_filepath}\n");
                 }
                 // read the file and return the Board string
-                string text = File.ReadAllText(filepath);
+                string text = File.ReadAllText(_filepath);
                 // keep just the characters that represent the values
                 text = text.Replace(" ", "");
                 text = text.Replace("\t", "");
@@ -44,6 +48,7 @@ namespace SodukoSolver
                 text = text.Replace("\r", "");
                 return text;
             }
+            // catch any exception, print the message and return an empty string
             catch (Exception e)
             {
                 // print the error message
@@ -61,11 +66,11 @@ namespace SodukoSolver
         public bool Write(string boardstring)
         {
             // get the file name from the file path
-            string filename = Path.GetFileName(filepath);
+            string filename = Path.GetFileName(_filepath);
             // change the name to the original file name + 'SOLVED'
             string solvedfilename = filename.Replace(".txt", "SOLVED.txt");
             // get the directory path from the file path
-            string directorypath = Path.GetDirectoryName(filepath);
+            string directorypath = Path.GetDirectoryName(_filepath);
             // create the new file path
             string solvedfilepath = Path.Combine(directorypath, solvedfilename);
             try
@@ -84,7 +89,7 @@ namespace SodukoSolver
             }
             catch (Exception e)
             {
-                // print the message
+                // print the message and return false
                 Console.WriteLine(e.Message);
                 return false;
             }

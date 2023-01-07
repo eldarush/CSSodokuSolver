@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SodukoSolver.Interfaces
 {
+    /// <summary>
+    /// interface for board solvers that will have to implement those functions
+    /// </summary>
     public interface Isolvable
     {
         /// <summary>
@@ -15,7 +18,7 @@ namespace SodukoSolver.Interfaces
         bool Solve();
 
         /// <summary>
-        /// function that solves the board and returns the solution string
+        /// function that solves the SudokuBoard and returns the solution string
         /// </summary>
         /// <returns></returns>
         string GetSolutionString();
