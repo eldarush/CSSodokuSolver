@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using static SodukoSolver.Exceptions.CustomExceptions;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
-using System.Diagnostics;
 using SodukoSolver.DataStructures;
 
 namespace SodukoSolver.Algoritms
@@ -359,10 +358,10 @@ namespace SodukoSolver.Algoritms
         /// <param name="solutionStack"></param>
         /// <param name="size"></param>
         /// <param name="board"></param>
-        public static void ConvertSolutionStackToBoard(Stack<Node> solutionStack, int size, out int[,] board)
+        public static int[,] ConvertSolutionStackToBoard(Stack<Node> solutionStack, int size)
         {
             // initialize the board
-            board = new int[size, size];
+            int[,] board = new int[size, size];
 
             // keep track of the current node, the first node and the temp firstNode
             Node CurrentNode, FirstNode, TempFirstNode;
@@ -427,7 +426,7 @@ namespace SodukoSolver.Algoritms
             }
 
             // return the final board as a 2d array of ints
-            return;
+            return board;
         }
 
         /// <summary>
@@ -585,6 +584,24 @@ namespace SodukoSolver.Algoritms
             return boardstring;
         }
     
+        /// <summary>
+        /// function that converts a int board to a byte matrix
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
+        public static byte[,] IntBoardToByteMatrix(int[,] board, int size)
+        {
+            byte[,] matrix = new byte[size, size];
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    matrix[i, j] = (byte)board[i, j];   
+                }
+            }
+            return matrix;
+        }
+        
         /// <summary>
         /// function that prints the board 
         /// </summary>

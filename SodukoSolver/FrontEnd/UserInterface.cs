@@ -9,7 +9,7 @@ using System.Diagnostics;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using static SodukoSolver.Algoritms.HelperFunctions;
 using SodukoSolver.Interfaces;
-using SodukoSolver.Algoritms;
+using SodukoSolver.BoardSolvers;
 
 namespace SodukoSolver
 {
@@ -79,22 +79,46 @@ namespace SodukoSolver
                 // if the user chose to input a manual console string
                 case 'S':
                 case 's':
+
+                    // ask the user in which way does he want to solve the Board
+                    Console.WriteLine("\nPlease choose the way you want to solve the Board: \n" +
+                        "\t d: using the Dancing Links algorithm \n" +
+                        "\t b: using the Backtracking algorithm \n");
+
+                    // get the user input
+                    Console.Write("Please enter your choice: ");
+                    tempInput = Console.ReadKey().KeyChar.ToString();
+                    Console.WriteLine("");
+                    validInput = false;
+                    while (tempInput != "d" && tempInput != "b")
+                    {
+                        Console.Write("\nPlease Enter a valid character (d or b): ");
+                        tempInput = Console.ReadKey().KeyChar.ToString(); ;
+                    }
+
                     // create a soduko Board from the string
                     board = new SodokuBoard();
+
+                    if (tempInput == "d")
+                    {
+                        byte[,] matrix = IntBoardToByteMatrix(board.Board, board.Size);
+
+                        solver = new DancingLinks(matrix, board.Size);
+                    }
+                    else {
+                        solver = new BackTracker(board.Board,board.Size);
+                    }
 
                     // print the input Board
                     //Console.WriteLine("\nInput Board is: \n");
                     //PrintBoard(Board.getBoard(), Board.getSize());
                     Console.WriteLine("\nBoard successfully read from console, Finding solution...");
 
-                    // create new solving functions object
-                    solver = new BoardSolver(board.Board, board.Size);
-
                     // Solve the Board and start the timer
                     watch.Start();
 
                     // run the algoritms to solve the Board
-                    CanBeSolved = Solve(solver);
+                    CanBeSolved = solver.Solve();
 
                     // stop the timer
                     watch.Stop();
@@ -129,6 +153,7 @@ namespace SodukoSolver
                 // in the case that the user wants to input a file path
                 case 'F':
                 case 'f':
+
                     // ask the user for the file path
                     Console.WriteLine("Please enter the file path:");
                     string filepath = Console.ReadLine();
@@ -140,22 +165,46 @@ namespace SodukoSolver
                     }
 
 
-                    // create a soduko Board from the file path
+                    // ask the user in which way does he want to solve the Board
+                    Console.WriteLine("\nPlease choose the way you want to solve the Board: \n" +
+                        "\t d: using the Dancing Links algorithm \n" +
+                        "\t b: using the Backtracking algorithm \n");
+
+                    // get the user input
+                    Console.Write("Please enter your choice: ");
+                    tempInput = Console.ReadKey().KeyChar.ToString();
+                    Console.WriteLine("");
+                    validInput = false;
+                    while (tempInput != "d" && tempInput != "b")
+                    {
+                        Console.Write("\nPlease Enter a valid character (d or b): ");
+                        tempInput = Console.ReadKey().KeyChar.ToString(); ;
+                    }
+
+                    // create a soduko Board from the string
                     board = new SodokuBoard(filepath);
+
+                    if (tempInput == "d")
+                    {
+                        byte[,] matrix = IntBoardToByteMatrix(board.Board, board.Size);
+
+                        solver = new DancingLinks(matrix, board.Size);
+                    }
+                    else
+                    {
+                        solver = new BackTracker(board.Board, board.Size);
+                    }
 
                     //// print the input Board
                     //Console.WriteLine("\nInput Board is: \n");
                     //PrintBoard(Board.getBoard(), Board.getSize());
                     Console.WriteLine("\nBoard successfully read from file, Finding solution...");
 
-                    // create new solving functions object
-                    solver = new BoardSolver(board.Board, board.Size);
-
                     // Solve the Board and start the timer
                     watch.Start();
 
                     // run the algoritms to solve the Board
-                    CanBeSolved = Solve(solver);
+                    CanBeSolved = solver.Solve();
 
                     // stop the timer
                     watch.Stop();
@@ -211,21 +260,5 @@ namespace SodukoSolver
                     break;
             }
         }
-
-        /// <summary>
-        /// general runung function that gets the solver and returns if it managed to solve the Board
-        /// </summary>
-        /// <param name="solver">the board solver</param>
-        /// <returns>result of solving</returns>
-        private static bool Solve(BoardSolver solver)
-        {
-            // copy the bit masks from the board class to the solver class
-            CopyBitMasks(VRowValues, VColValues, VBlockValues, VHelperMask,
-                     out solver.RowValues, out solver.ColumnValues, out solver.BlockValues, out solver.HelperMask);
-
-            // return if the backtacking sucseeded or not
-            return solver.Backtracking();
-        }
-
     }
 }
