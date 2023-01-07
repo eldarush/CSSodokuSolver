@@ -93,7 +93,7 @@ namespace SodukoSolver.Algoritms
         /// <param name="size"> the Size of the Board</param>
         /// <param name="boardString">the string that represents the Board</param>
         /// <param name="board">the Board to copy the string to</param>
-        private static void CopyBoardStringToBoard(int size, string boardString, int[,] board)
+        public static void CopyBoardStringToBoard(int size, string boardString, int[,] board)
         {
             // create a location for the Board string
             int location = 0;
@@ -604,7 +604,8 @@ namespace SodukoSolver.Algoritms
                 "This is a program written in c# by @Eldar Aslanbeily \n" +
                 "For more information about the program, please visit: \n" +
                 "https://github.com/eldarush/CSSodokuSolver.git \n" +
-                "This is a program that will solve any soduko Board \n");
+                "This is a program that will solve any soduko Board \n" +
+                "The compatable sizes are (1x1 4x4 9x9 16x16 25x25) \n");
         }
 
         /// <summary>
