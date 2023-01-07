@@ -7,6 +7,10 @@ using SodukoSolver.Interfaces;
 
 namespace SodukoSolver
 {
+    /// <summary>
+    /// class that will be respoinsible to read the soduko board from the user
+    /// and write back the solution in string format
+    /// </summary>
     public class ConsoleReader : IReadable, IWritable
     {
         /// <summary>

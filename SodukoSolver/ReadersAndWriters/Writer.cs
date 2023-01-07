@@ -7,18 +7,21 @@ using SodukoSolver.Interfaces;
 
 namespace SodukoSolver
 {
+    /// <summary>
+    /// abstract class that will be inherited by the classes that will read the soduko board
+    /// </summary>
     abstract class Writer
     {
         // an instance of a class that implements the IWritable interface
-        protected IWritable writer;
+        private readonly IWritable _writer;
 
         /// <summary>
         /// construcntor that takes an instance of a class that implements the IWritable interface
         /// </summary>
-        /// <param name="writer">the writer implemetation</param>
+        /// <param name="writer">the _writer implemetation</param>
         public Writer(IWritable writer)
         {
-            this.writer = writer;
+            this._writer = writer;
         }
 
         /// <summary>
@@ -28,7 +31,7 @@ namespace SodukoSolver
         /// <returns></returns>
         public bool Write(string boardstring)
         {
-            return writer.Write(boardstring);
+            return _writer.Write(boardstring);
         }
 
     }

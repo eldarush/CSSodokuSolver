@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SodukoSolver.Exceptions
 {
+    /// <summary>
+    /// thois the class the will hold all the custom exceptions
+    /// </summary>
     public class CustomExceptions
     {
         /// <summary>
@@ -70,7 +73,7 @@ namespace SodukoSolver.Exceptions
         public class NullBoardException : Exception
         {
             /// <summary>
-            /// constructor that just prints out of the board is null
+            /// constructor that just prints out of the SudokuBoard is null
             /// </summary>
             public NullBoardException()
                 : base("The Board is null")
