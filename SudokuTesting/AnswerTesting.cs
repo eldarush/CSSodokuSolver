@@ -14,6 +14,7 @@ namespace SudokuTesting
         string easyTestString;
         string mediumTestString;
         string hardTestString;
+        string unsolvableTestString;
 
         string correctAnswerEasy;
         string correctAnswerMedium;
@@ -23,15 +24,18 @@ namespace SudokuTesting
         int sizeEasy;
         int sizeMedium;
         int sizeHard;
-        
+        int sizeUnsolvable;
+
         int[,] easyBoard;
         int[,] mediumBoard;
         int[,] hardBoard;
-        
+        int[,] unsolvableBoard;
+
         byte[,] easyMatrix;
         byte[,] mediumMatrix;
         byte[,] hardMatrix;
-        
+        byte[,] unsolvableMatrix;
+
         BoardSolver dancingLinksSolver;
         BoardSolver backtrackingSolver;
 
@@ -42,6 +46,8 @@ namespace SudokuTesting
             easyTestString = "800000070006010053040600000000080400003000700020005038000000800004050061900002000";
             mediumTestString = "10023400<06000700080007003009:6;0<00:0010=0;00>0300?200>000900<0=000800:0<201?000;76000@000?005=000:05?0040800;0@0059<00100000800200000=00<580030=00?0300>80@000580010002000=9?000<406@0=00700050300<0006004;00@0700@050>0010020;1?900=002000>000>000;0200=3500<";
             hardTestString = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+            unsolvableTestString = "100000000000100000000000005000000100000000000000000000000000000000000010000000000";
+
 
             correctAnswerEasy = "831529674796814253542637189159783426483296715627145938365471892274958361918362547";
             correctAnswerMedium = "15:2349;<@6>?=78>@8=5?7<43129:6;9<47:@618=?;35>236;?2=8>75:94@<1=4>387;:5<261?@98;76412@9:>?<35=<91:=5?634@8>2;7@?259<>31;7=:68462@>;94=?1<587:37=91?235;>8:@<46583;1:<7264@=9?>?:<4>6@8=9372;152358<>:?6794;1=@:7=<@359>8;1642?;1?968=4@25<7>3:4>6@7;12:?=3589<";
@@ -55,6 +61,7 @@ namespace SudokuTesting
             sizeEasy = (int)Math.Sqrt(easyTestString.Length);
             sizeMedium = (int)Math.Sqrt(mediumTestString.Length);
             sizeHard = (int)Math.Sqrt(hardTestString.Length);
+            sizeUnsolvable = (int)Math.Sqrt(unsolvableTestString.Length);
         }
 
         // -------------------------------------------------------------------------------------------EASY-------------------------------------------------------------------------------------
@@ -263,6 +270,41 @@ namespace SudokuTesting
             // try and fet the correct solution string
             backtrackingSolver = new BackTracking(hardBoard, sizeHard);
             Assert.That(correctAnswerHardBacktracking, Is.EqualTo(backtrackingSolver.GetSolutionString()));
+        }
+
+        //--------------------------------------------------------------------------------UNSOLVABLE--------------------------------------------------
+
+        // test that an unsolvable board is not solvable using dancing links
+        [Test]
+        public void TestUnsolvableBoardDancingLinks()
+        {
+            // run the validation
+            IsTheBoardValid(sizeUnsolvable, unsolvableTestString);
+
+            // get the board
+            unsolvableBoard = Vboard;
+
+            // convert to matrix
+            unsolvableMatrix = IntBoardToByteMatrix(unsolvableBoard, sizeUnsolvable);
+
+            // try and solve using backtracking
+            dancingLinksSolver = new DancingLinks(unsolvableMatrix, sizeUnsolvable);
+            Assert.That(dancingLinksSolver.Solve(), Is.EqualTo(false));
+        }
+
+        // test that an unsolvable board is not solvable using backtracking
+        [Test]
+        public void TestUnsolvableBoardBacktracking()
+        {
+            // run the validation
+            IsTheBoardValid(sizeUnsolvable, unsolvableTestString);
+
+            // get the board
+            unsolvableBoard = Vboard;
+
+            // try and solve using backtracking
+            backtrackingSolver = new BackTracking(unsolvableBoard, sizeUnsolvable);
+            Assert.That(backtrackingSolver.Solve(), Is.EqualTo(false));
         }
     }
 }

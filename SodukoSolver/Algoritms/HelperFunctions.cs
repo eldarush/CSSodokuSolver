@@ -543,27 +543,26 @@ namespace SodukoSolver.Algoritms
             {
                 valid = Validate(size, boardString);
             }
-            // catch the custom exceptions, print their error messages and run the function
-            // that gets the input from user again
+            // catch the custom exceptions, print their error messages and return false;
             catch (SizeException se)
             {
                 Console.WriteLine("\nERROR: " + se.Message);
-                AskUserForInput();
+                return false;
             }
             catch (InvalidCharacterException ice)
             {
                 Console.WriteLine("\nERROR: " + ice.Message);
-                AskUserForInput();
+                return false;
             }
             catch (BoardCellsNotValidException bcne)
             {
                 Console.WriteLine("\nERROR: " + bcne.Message);
-                AskUserForInput();
+                return false;
             }
             catch (NullBoardException nbe)
             {
                 Console.WriteLine("\nERROR: " + nbe.Message);
-                AskUserForInput();
+                return false;
             }
             return valid;
         }
