@@ -573,7 +573,7 @@ namespace SodukoSolver.Algoritms
         public static void PrintAsciiArt()
         {
             // the most beautiful art known to mankind
-            var arr = new[] {
+            var art = new[] {
             @"┌────────────────────────────────────────────────────────────────────────────────────────────────────┐",
             @"│ ╔═══╗────╔╗──╔╗───────╔═══╗──╔╗──────────╔══╗───────╔═══╦╗──╔╗───────╔═══╗──╔╗──────╔╗─────╔╗───── │",
             @"│ ║╔═╗║────║║──║║───────║╔═╗║──║║──────────║╔╗║───────║╔══╣║──║║───────║╔═╗║──║║──────║║─────║║───── │",
@@ -586,11 +586,15 @@ namespace SodukoSolver.Algoritms
             @"└────────────────────────────────────────────────────────────────────────────────────────────────────┘"
             };
             Console.WriteLine("\n");
-            foreach (string line in arr)
+            // print in blue and then change it back to gray
+            Console.ForegroundColor = ConsoleColor.Blue;
+            foreach (string line in art)
                 Console.WriteLine(line);
             Console.WriteLine("\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
             // set the console title
             Console.Title = "Sudoku Solver by @Eldar Aslanbeily";
+            
         }
 
         /// <summary>
@@ -689,11 +693,11 @@ namespace SodukoSolver.Algoritms
                 {
                     for (int j = 0; j < squareWidth; j++)
                     {
-                        Console.Write("-");
+                        Console.Write(@"─");
                     }
                     if ((i + 1) % subSquareSize == 0 && i != size - 1)
                     {
-                        Console.Write("+");
+                        Console.Write(@" ");
                     }
                 }
 
@@ -703,7 +707,7 @@ namespace SodukoSolver.Algoritms
                 for (int i = 0; i < size; i++)
                 {
                     // Print the left border
-                    Console.Write("|");
+                    Console.Write("│");
 
                     // Print the elements in the row
                     for (int j = 0; j < size; j++)
@@ -731,17 +735,17 @@ namespace SodukoSolver.Algoritms
 
                         for (int k = 0; k < padding; k++)
                         {
-                            Console.Write(" ");
+                            Console.Write(@" ");
                         }
 
                         if ((j + 1) % subSquareSize == 0 && j != size - 1)
                         {
-                            Console.Write("|");
+                            Console.Write(@"│");
                         }
                     }
 
                     // Print the right border
-                    Console.WriteLine("|");
+                    Console.WriteLine(@"│");
 
                     // Print the bottom border for the row
                     if ((i + 1) % subSquareSize == 0 && i != size - 1)
@@ -751,11 +755,11 @@ namespace SodukoSolver.Algoritms
                         {
                             for (int k = 0; k < squareWidth; k++)
                             {
-                                Console.Write("-");
+                                Console.Write(@"─");
                             }
                             if ((j + 1) % subSquareSize == 0 && j != size - 1)
                             {
-                                Console.Write("+");
+                                Console.Write(@" ");
                             }
                         }
                         Console.WriteLine();
@@ -768,12 +772,12 @@ namespace SodukoSolver.Algoritms
                 {
                     for (int j = 0; j < squareWidth; j++)
                     {
-                        Console.Write("-");
+                        Console.Write(@"─");
                     }
 
                     if ((i + 1) % subSquareSize == 0 && i != size - 1)
                     {
-                        Console.Write("+");
+                        Console.Write(@" ");
                     }
                 }
                 Console.WriteLine();
