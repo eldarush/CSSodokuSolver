@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
-using static SodukoSolver.Algoritms.HelperFunctions;
 using static SodukoSolver.UserInterface;
 using SodukoSolver.Interfaces;
 

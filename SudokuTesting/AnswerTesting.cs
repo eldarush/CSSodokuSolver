@@ -1,6 +1,6 @@
 using SodukoSolver.BoardSolvers;
 using System.Drawing;
-using static SodukoSolver.Algoritms.HelperFunctions;
+using static SodukoSolver.Algoritms.BoardConvertors;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 
 namespace SudokuTesting

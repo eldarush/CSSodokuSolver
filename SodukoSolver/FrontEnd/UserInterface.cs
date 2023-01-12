@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using static SodukoSolver.Algoritms.HelperFunctions;
+using static SodukoSolver.Algoritms.PrintingFunctions;
+using static SodukoSolver.Algoritms.BoardConvertors;
 using SodukoSolver.Interfaces;
 using SodukoSolver.BoardSolvers;
 
@@ -101,7 +102,7 @@ namespace SodukoSolver
                     if (CanBeSolved)
                     {
                         // output the solved SudokuBoard and the SudokuBoard string
-                        OutputBoard(solver);
+                        PrintSolvedBoard(solver);
 
                         // print the time it took to solve
                         PrintOutTime(watch);
@@ -154,7 +155,7 @@ namespace SodukoSolver
                     {
 
                         // output the solved SudokuBoard and the SudokuBoard string
-                        OutputBoard(solver);
+                        PrintSolvedBoard(solver);
                         
                         string solvedboardstring = ConvertToString(solver.BoardInts, solver.Size);
 

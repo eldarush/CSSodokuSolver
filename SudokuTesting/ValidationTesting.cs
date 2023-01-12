@@ -1,6 +1,5 @@
 ﻿using SodukoSolver.BoardSolvers;
 using System.Drawing;
-using static SodukoSolver.Algoritms.HelperFunctions;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using static SodukoSolver.Exceptions.CustomExceptions;
 
