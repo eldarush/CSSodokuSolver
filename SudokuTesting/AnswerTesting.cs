@@ -8,36 +8,49 @@ namespace SudokuTesting
     /// <summary>
     /// this is class that is used to test that the algorithms give off 
     /// the correct answers for diffrent boards
+    /// this is the only test class that will contain any tests for the
+    /// backtracking algorithm since it is not the main algorithm used in the program
+    /// and it is included as a side algorithm that is only capable of solving less complex boards
     /// </summary>
     public class AnswerTesting
     {
+        // the board strings
         string easyTestString;
         string mediumTestString;
         string hardTestString;
         string unsolvableTestString;
 
+        // the answer board strings
         string correctAnswerEasy;
         string correctAnswerMedium;
         string correctAnswerHard;
         string correctAnswerHardBacktracking;
 
+        // the sizes
         int sizeEasy;
         int sizeMedium;
         int sizeHard;
         int sizeUnsolvable;
 
+        // the boards in int form
         int[,] easyBoard;
         int[,] mediumBoard;
         int[,] hardBoard;
         int[,] unsolvableBoard;
 
+        // the boards in byte form
         byte[,] easyMatrix;
         byte[,] mediumMatrix;
         byte[,] hardMatrix;
         byte[,] unsolvableMatrix;
 
+        // the solvers
         BoardSolver dancingLinksSolver;
         BoardSolver backtrackingSolver;
+
+        // the result of the test
+        bool result;
+        string resultString;
 
         [SetUp]
         public void Setup()
@@ -48,7 +61,7 @@ namespace SudokuTesting
             hardTestString = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
             unsolvableTestString = "100000000000100000000000005000000100000000000000000000000000000000000010000000000";
 
-
+            // give the correct answers to each board
             correctAnswerEasy = "831529674796814253542637189159783426483296715627145938365471892274958361918362547";
             correctAnswerMedium = "15:2349;<@6>?=78>@8=5?7<43129:6;9<47:@618=?;35>236;?2=8>75:94@<1=4>387;:5<261?@98;76412@9:>?<35=<91:=5?634@8>2;7@?259<>31;7=:68462@>;94=?1<587:37=91?235;>8:@<46583;1:<7264@=9?>?:<4>6@8=9372;152358<>:?6794;1=@:7=<@359>8;1642?;1?968=4@25<7>3:4>6@7;12:?=3589<";
             correctAnswerHard = "123456789:;<=>?@ABCDEFGHIDBGH<15;FI48:EC3?>962@=7AF;8EI2?@CG15DAB4=H7<39:6>9:=>@3DA<H276GF15I8E4?B;C?A67C4>E=B39IH@2:F;G158<DE1234IH5896D<:>;G@A?7BC=FCDIF>@16G?=357H829<B;4AE:=@9BH:27;>F1A8G645ECD3I?<;<AG?D3=EFC4B9I71:H>6258@5678:<4BAC?2@;ED3=IFG1>9H4I123?B958DE><:GCA6;@H7F=GH@<9FI16=BC357ED2?8:>4A;:E?CA>@27;HF1=8BI459<G3D6>8F=;CG3D<IA469H71@:?E25B75D6BHE4:A@G2?;<>3F=I81C934E1289?H5:=;F<A6CB@>IDG7AFCIDG=>167@E35:982HB;<4?H>:@GBFD278I?1A=;<45C693E<=B?8;CI3E9HG46>FD17A:@25695;7A:<4@>BC2D?EG3IF=H182349156F?D<:8C=I@;>AH7EBGIC>AE78GB15;9D3FH6:2=<?@4BGHDF9;CI2E>7@15<?=48A6:3@?<:=EAH>3G6FB4987D15C;I287;56=<:@4A?HI2CBEG39DF>1";
@@ -70,6 +83,7 @@ namespace SudokuTesting
         [Test]
         public void TestEasyBoardSolvableDancingLinks()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeEasy, easyTestString);
 
@@ -79,16 +93,20 @@ namespace SudokuTesting
             // convert to matrix
             easyMatrix = IntBoardToByteMatrix(easyBoard, sizeEasy);
 
+            // act test
             // try and solve using backtracking
             dancingLinksSolver = new DancingLinks(easyMatrix, sizeEasy);
-            Assert.That(dancingLinksSolver.Solve(), Is.EqualTo(true));
+            result = dancingLinksSolver.Solve();
+            
+            // assert test
+            Assert.That(result, Is.EqualTo(true));
         }
 
         // test if an easy board returns the correct asnwer using dancing links
         [Test]
         public void TestEasyBoardCorrectAsnwerDancingLinks()
         {
-
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeEasy, easyTestString);
 
@@ -98,39 +116,53 @@ namespace SudokuTesting
             // convert to matrix
             easyMatrix = IntBoardToByteMatrix(easyBoard, sizeEasy);
 
+            // act test
             // try and fet the correct solution string
             dancingLinksSolver = new DancingLinks(easyMatrix, sizeEasy);
-            Assert.That(correctAnswerEasy, Is.EqualTo(dancingLinksSolver.GetSolutionString()));
+            resultString = dancingLinksSolver.GetSolutionString();
+
+            // assert test
+            Assert.That(correctAnswerEasy, Is.EqualTo(resultString));
         }
 
         // check if an easy board is solvable using backtracking
         [Test]
         public void TestEasyBoardSolvableBacktracking()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeEasy, easyTestString);
 
             // get the board
             easyBoard = Vboard;
 
+            // act test
             // try and solve using backtracking
             backtrackingSolver = new BackTracking(easyBoard, sizeEasy);
-            Assert.That(backtrackingSolver.Solve(), Is.EqualTo(true));
+            result = backtrackingSolver.Solve();
+
+            // assert test
+            Assert.That(result, Is.EqualTo(true));
         }
 
         // test if an easy board returns the correct asnwer using backtracking
         [Test]
         public void TestEasyBoardCorrectAsnwerBacktracking()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeEasy, easyTestString);
 
             // get the board
             easyBoard = Vboard;
 
+            // act test
             // try and fet the correct solution string
             backtrackingSolver = new BackTracking(easyBoard, sizeEasy);
-            Assert.That(correctAnswerEasy, Is.EqualTo(backtrackingSolver.GetSolutionString()));
+            resultString = backtrackingSolver.GetSolutionString();
+
+            // assert test
+            Assert.That(correctAnswerEasy, Is.EqualTo(resultString));
         }
 
         //-----------------------------------------------------------------------------------------------MEDIUM-------------------------------------------------------------------------------------
@@ -139,6 +171,7 @@ namespace SudokuTesting
         [Test]
         public void TestMediumBoardSolvableDancingLinks()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeMedium, mediumTestString);
 
@@ -148,16 +181,20 @@ namespace SudokuTesting
             // convert to matrix
             mediumMatrix = IntBoardToByteMatrix(mediumBoard, sizeMedium);
 
+            // act test
             // try and solve using backtracking
             dancingLinksSolver = new DancingLinks(mediumMatrix, sizeMedium);
-            Assert.That(dancingLinksSolver.Solve(), Is.EqualTo(true));
+            result = dancingLinksSolver.Solve();
+
+            // assert test
+            Assert.That(result, Is.EqualTo(true));
         }
 
         // test if an easy board returns the correct asnwer using dancing links
         [Test]
         public void TestMediumBoardCorrectAsnwerDancingLinks()
         {
-
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeMedium, mediumTestString);
 
@@ -167,39 +204,53 @@ namespace SudokuTesting
             // convert to matrix
             mediumMatrix = IntBoardToByteMatrix(mediumBoard, sizeMedium);
 
+            // act test
             // try and fet the correct solution string
             dancingLinksSolver = new DancingLinks(mediumMatrix, sizeMedium);
-            Assert.That(correctAnswerMedium, Is.EqualTo(dancingLinksSolver.GetSolutionString()));
+            resultString = dancingLinksSolver.GetSolutionString();
+
+            // assert test
+            Assert.That(correctAnswerMedium, Is.EqualTo(resultString));
         }
 
         // check if an easy board is solvable using backtracking
         [Test]
         public void TestMediumBoardSolvableBacktracking()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeMedium, mediumTestString);
 
             // get the board
             mediumBoard = Vboard;
 
+            // act test
             // try and solve using backtracking
             backtrackingSolver = new BackTracking(mediumBoard, sizeMedium);
-            Assert.That(backtrackingSolver.Solve(), Is.EqualTo(true));
+            result = backtrackingSolver.Solve();
+
+            // assert test
+            Assert.That(result, Is.EqualTo(true));
         }
 
         // test if an easy board returns the correct asnwer using backtracking
         [Test]
         public void TestMediumBoardCorrectAsnwerBacktracking()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeMedium, mediumTestString);
 
             // get the board
             mediumBoard = Vboard;
 
+            // act test
             // try and fet the correct solution string
             backtrackingSolver = new BackTracking(mediumBoard, sizeMedium);
-            Assert.That(correctAnswerMedium, Is.EqualTo(backtrackingSolver.GetSolutionString()));
+            resultString = backtrackingSolver.GetSolutionString();
+
+            // assert test
+            Assert.That(correctAnswerMedium, Is.EqualTo(resultString));
         }
 
 
@@ -209,6 +260,7 @@ namespace SudokuTesting
         [Test]
         public void TestHardBoardSolvableDancingLinks()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeHard, hardTestString);
 
@@ -218,16 +270,20 @@ namespace SudokuTesting
             // convert to matrix
             hardMatrix = IntBoardToByteMatrix(hardBoard, sizeHard);
 
+            // act test
             // try and solve using backtracking
             dancingLinksSolver = new DancingLinks(hardMatrix, sizeHard);
-            Assert.That(dancingLinksSolver.Solve(), Is.EqualTo(true));
+            result = dancingLinksSolver.Solve();
+
+            // assert test
+            Assert.That(result, Is.EqualTo(true));
         }
 
         // test if an easy board returns the correct asnwer using dancing links
         [Test]
         public void TestHardBoardCorrectAsnwerDancingLinks()
         {
-
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeHard, hardTestString);
 
@@ -237,39 +293,53 @@ namespace SudokuTesting
             // convert to matrix
             hardMatrix = IntBoardToByteMatrix(hardBoard, sizeHard);
 
+            // act test
             // try and fet the correct solution string
             dancingLinksSolver = new DancingLinks(hardMatrix, sizeHard);
-            Assert.That(correctAnswerHard, Is.EqualTo(dancingLinksSolver.GetSolutionString()));
+            resultString = dancingLinksSolver.GetSolutionString();
+
+            // assert test
+            Assert.That(correctAnswerHard, Is.EqualTo(resultString));
         }
 
         // check if an easy board is solvable using backtracking
         [Test]
         public void TestHardBoardSolvableBacktracking()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeHard, hardTestString);
 
             // get the board
             hardBoard = Vboard;
 
+            // act test
             // try and solve using backtracking
             backtrackingSolver = new BackTracking(hardBoard, sizeHard);
-            Assert.That(backtrackingSolver.Solve(), Is.EqualTo(true));
+            result = backtrackingSolver.Solve();
+
+            // assert test
+            Assert.That(result, Is.EqualTo(true));
         }
 
         // test if an easy board returns the correct asnwer using backtracking
         [Test]
         public void TestHardBoardCorrectAsnwerBacktracking()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeHard, hardTestString);
 
             // get the board
             hardBoard = Vboard;
 
+            // act test
             // try and fet the correct solution string
             backtrackingSolver = new BackTracking(hardBoard, sizeHard);
-            Assert.That(correctAnswerHardBacktracking, Is.EqualTo(backtrackingSolver.GetSolutionString()));
+            resultString = backtrackingSolver.GetSolutionString();
+
+            // assert test
+            Assert.That(correctAnswerHardBacktracking, Is.EqualTo(resultString));
         }
 
         //--------------------------------------------------------------------------------UNSOLVABLE--------------------------------------------------
@@ -278,6 +348,7 @@ namespace SudokuTesting
         [Test]
         public void TestUnsolvableBoardDancingLinks()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeUnsolvable, unsolvableTestString);
 
@@ -287,24 +358,33 @@ namespace SudokuTesting
             // convert to matrix
             unsolvableMatrix = IntBoardToByteMatrix(unsolvableBoard, sizeUnsolvable);
 
+            // act test
             // try and solve using backtracking
             dancingLinksSolver = new DancingLinks(unsolvableMatrix, sizeUnsolvable);
-            Assert.That(dancingLinksSolver.Solve(), Is.EqualTo(false));
+            result = dancingLinksSolver.Solve();
+
+            // assert test
+            Assert.That(result, Is.EqualTo(false));
         }
 
         // test that an unsolvable board is not solvable using backtracking
         [Test]
         public void TestUnsolvableBoardBacktracking()
         {
+            // arrange test
             // run the validation
             IsTheBoardValid(sizeUnsolvable, unsolvableTestString);
 
             // get the board
             unsolvableBoard = Vboard;
 
+            // act test
             // try and solve using backtracking
             backtrackingSolver = new BackTracking(unsolvableBoard, sizeUnsolvable);
-            Assert.That(backtrackingSolver.Solve(), Is.EqualTo(false));
+            result = backtrackingSolver.Solve();
+
+            // assert test
+            Assert.That(result, Is.EqualTo(false));
         }
     }
 }

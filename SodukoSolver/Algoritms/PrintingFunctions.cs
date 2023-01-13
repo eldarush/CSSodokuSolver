@@ -27,13 +27,18 @@ namespace SodukoSolver.Algoritms
             string userInput;
 
             // ask the user in which way does he want to solve the Board
-            Console.WriteLine("\nPlease choose the way you want to solve the Board: \n" +
-                "\t d: using the Dancing Links algorithm (Highly Reccommended) \n" +
-                "\t b: using the Backtracking algorithm \n\n" +
-                "\t Dancing Links works better for bigger and more complicated SudokuBoard but takes up more memory. \n" +
-                "\t Backtracking works better with simpler and smaller boards and takes up less memory, \n" +
+            Console.WriteLine("\nPlease choose the way you want to solve the Board:");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\t d: using the Dancing Links algorithm (Highly Reccommended)");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\t b: using the Backtracking algorithm \n");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\t Dancing Links works better for bigger and more complicated SudokuBoard but takes up more memory.");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\t Backtracking works better with simpler and smaller boards and takes up less memory, \n" +
                 "\t But may struggle with more complicated boards. \n");
-
+            Console.ForegroundColor = ConsoleColor.White;
+            
             // get the user input
             Console.Write("Please enter your choice: ");
             userInput = Console.ReadKey().KeyChar.ToString();
@@ -111,12 +116,12 @@ namespace SodukoSolver.Algoritms
             @"└────────────────────────────────────────────────────────────────────────────────────────────────────┘"
             };
             Console.WriteLine("\n");
-            // print in blue and then change it back to gray
+            // print in blue and then change it back to white
             Console.ForegroundColor = ConsoleColor.Blue;
             foreach (string line in art)
                 Console.WriteLine(line);
             Console.WriteLine("\n");
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.White;
             // set the console title
             Console.Title = "Sudoku Solver by @Eldar Aslanbeily";
 
@@ -143,6 +148,7 @@ namespace SodukoSolver.Algoritms
         /// <param name="size">the size of the SudokuBoard</param>
         public static void PrintBoard(int[,] board, int size)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             {
                 // Find the maximum length of the string representation of any element in the Board
                 int maxLength = 0;
@@ -261,6 +267,7 @@ namespace SodukoSolver.Algoritms
                 }
                 Console.WriteLine();
             }
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

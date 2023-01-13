@@ -111,7 +111,9 @@ namespace SodukoSolver
                     else
                     {
                         // if the Board can not be solved then display message 
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("\nBoard Cannot Be Solved :( please try again with a different Board");
+                        Console.ForegroundColor = ConsoleColor.White;
 
                         PrintOutTime(watch);
 
