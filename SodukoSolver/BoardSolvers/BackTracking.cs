@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static SodukoSolver.Algoritms.HelperFunctions;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
+using static SodukoSolver.Algoritms.BackTrackingCreatingFunctions;
+using static SodukoSolver.Algoritms.BoardConvertors;
 
 namespace SodukoSolver.BoardSolvers
 {
@@ -327,11 +328,14 @@ namespace SodukoSolver.BoardSolvers
         /// <returns>the SudokuBoard of the solved SudokuBoard</returns>
         public override string GetSolutionString()
         {
+            // check if the board is solved
             bool solved = Backtracking();
             if (solved)
             {
+                // if the board is solved, return the board string
                 return ConvertToString(BoardInts, Size);
             }
+            // if not solved, return empty string
             return "";
         }
 

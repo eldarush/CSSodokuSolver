@@ -22,16 +22,8 @@ namespace SodukoSolver.Exceptions
             /// <param name="size">the size</param>
             public SizeException(int size)
                 : base("The Board string cannot be used to create a Board with the given dimensions, \n" +
-                    $"The current Board string's Size is {size} and that's not a square number.")
-            {
-            }
-            
-            /// <summary>
-            /// constructor that just prints out a message for this specific case
-            /// </summary>
-            public SizeException()
-                : base("The Board string cannot be used to create a Board with the given dimensions, \n" +
-                    $"The current Board string's length is 4, but a 2 by 2 Board is not a thing.")
+                    $"The current Board string's Size is {size} and the aquare root of {size} is {Math.Sqrt(size)}, \n" +
+                      $"and for a borad to be valid, the square root of the total number of chars has to be a square number.")
             {
             }
         }

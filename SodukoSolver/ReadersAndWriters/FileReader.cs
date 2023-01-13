@@ -41,11 +41,6 @@ namespace SodukoSolver
                 }
                 // read the file and return the Board string
                 string text = File.ReadAllText(_filepath);
-                // keep just the characters that represent the values
-                text = text.Replace(" ", "");
-                text = text.Replace("\t", "");
-                text = text.Replace("\n", "");
-                text = text.Replace("\r", "");
                 return text;
             }
             // catch any exception, print the message and return an empty string

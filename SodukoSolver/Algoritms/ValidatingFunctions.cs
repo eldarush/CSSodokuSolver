@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static SodukoSolver.Exceptions.CustomExceptions;
-using static SodukoSolver.Algoritms.HelperFunctions;
+using static SodukoSolver.Algoritms.BoardConvertors;
 
 namespace SodukoSolver.Algoritms
 {
@@ -74,11 +74,8 @@ namespace SodukoSolver.Algoritms
             // if the Size is negrive return false
             if (boardString.Length < 1) return false;
 
-            // if the boardstring length is 4, then retues false because a 2 by 2 Board is not valid
-            if (boardString.Length == 4) throw new SizeException();
-
             // check the the square root of the Board string length is an integer
-            return Math.Sqrt(boardString.Length) % 1 == 0;
+            return Math.Sqrt(Math.Sqrt(boardString.Length)) % 1 == 0;
         }
 
         /// <summary>
@@ -212,6 +209,45 @@ namespace SodukoSolver.Algoritms
             // if the Board is valid
             // return true
             return true;
+        }
+
+        /// <summary>
+        /// Function that chekcs if the Board is valid
+        /// </summary>
+        /// <param name="size">the Size of the Board</param>
+        /// <param name="boardString">the string that represents the Board</param>
+        /// <returns>if the Board is valid or not</returns>
+        public static bool IsTheBoardValid(int size, string boardString)
+        {
+            // to keep track if the SudokuBoard is valid or not
+            bool valid = false;
+            // try and validate, if any exceptions appear, catch them
+            try
+            {
+                valid = Validate(size, boardString);
+            }
+            // catch the custom exceptions, print their error messages and return false;
+            catch (SizeException se)
+            {
+                Console.WriteLine("\nERROR: " + se.Message);
+                return false;
+            }
+            catch (InvalidCharacterException ice)
+            {
+                Console.WriteLine("\nERROR: " + ice.Message);
+                return false;
+            }
+            catch (BoardCellsNotValidException bcne)
+            {
+                Console.WriteLine("\nERROR: " + bcne.Message);
+                return false;
+            }
+            catch (NullBoardException nbe)
+            {
+                Console.WriteLine("\nERROR: " + nbe.Message);
+                return false;
+            }
+            return valid;
         }
     }
 }

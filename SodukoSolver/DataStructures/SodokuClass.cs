@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
-using static SodukoSolver.Algoritms.HelperFunctions;
+using static SodukoSolver.UserInterface;
 using SodukoSolver.Interfaces;
 
 namespace SodukoSolver
@@ -54,7 +54,11 @@ namespace SodukoSolver
                 // because it is valid
                 Board = Vboard;
             }
-            // if the Board is not valid, an exception will be thrown 
+            // if the Board is not valid, return to the function that asks the user for input
+            else
+            {
+                AskUserForInput();
+            }
         }
 
         #endregion console cunstructor
@@ -85,7 +89,11 @@ namespace SodukoSolver
                 // because it is valid
                 Board = Vboard;
             }
-            // if the Board is not valid, an exception will be thrown 
+            // if the Board is not valid, return to the function that asks the user for input
+            else
+            {
+                AskUserForInput();
+            }
         }
 
         #endregion file cunstructor

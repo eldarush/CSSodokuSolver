@@ -5,7 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static SodukoSolver.Algoritms.HelperFunctions;
+using static SodukoSolver.Algoritms.DancingLinksCreatingFunctions;
+using static SodukoSolver.Algoritms.BoardConvertors;
 
 namespace SodukoSolver.BoardSolvers
 {
