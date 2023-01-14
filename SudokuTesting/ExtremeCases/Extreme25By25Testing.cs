@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using static SodukoSolver.Algoritms.BoardConvertors;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 
-namespace SudokuTesting
+namespace SudokuTesting.ExtremeCases
 {
     /// <summary>
     /// this is a test class for the DancingLinks class
@@ -34,7 +34,7 @@ namespace SudokuTesting
 
         // the result
         bool result;
-        
+
         // testing for diffrent extreme cases of boards
 
         // very hard 25 by 25 board

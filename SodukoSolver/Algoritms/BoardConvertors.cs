@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SodukoSolver.Algoritms
 {
     /// <summary>
-    /// this is a class that will be responsible to have functions
+    /// this is a module that will be responsible to have functions
     /// to convert board from diffrent formats
     /// </summary>
     public static class BoardConvertors

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SodukoSolver.Algoritms
 {
     /// <summary>
-    /// this is a class that will contain the functions used to convert
+    /// this is a module that will contain the functions used to convert
     /// the board to the dancing links format and handling the result stack
     /// </summary>
     public static class DancingLinksCreatingFunctions

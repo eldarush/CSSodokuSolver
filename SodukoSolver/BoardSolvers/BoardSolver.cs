@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SodukoSolver.BoardSolvers
 {
     /// <summary>
-    /// this is an abstract class for every board solver that will implement a different algorithm
+    /// this is an abstract class for every board solver that will implement a dif
     /// </summary>
     public abstract class BoardSolver : Isolvable
     {

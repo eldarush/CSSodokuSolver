@@ -10,7 +10,7 @@ using static SodukoSolver.Algoritms.BoardConvertors;
 namespace SodukoSolver.Algoritms
 {
     /// <summary>
-    /// this class will contain all the functions to print stuff
+    /// this module will contain all the functions to print stuff
     /// on the console
     /// </summary>
     public static class PrintingFunctions

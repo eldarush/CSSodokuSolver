@@ -4,7 +4,7 @@ using System.Drawing;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using static SodukoSolver.Exceptions.CustomExceptions;
 
-namespace SudokuTesting
+namespace SudokuTesting.Validation
 {
     /// <summary>
     /// this is the class that is used to check that the validation
@@ -49,7 +49,7 @@ namespace SudokuTesting
             sizeInvalidSize = (int)Math.Sqrt(invalidSize.Length);
             sizeInvalidCells = (int)Math.Sqrt(invalidCells.Length);
         }
-        
+
         // tests that the validation returns true for a simple valid matrix
         [Test]
         public void TestValidMatrix()

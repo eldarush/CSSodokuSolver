@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SodukoSolver.Algoritms
 {
+    /// <summary>
+    /// this is a module that contains the sub-functions that are used in the backtracking algorithm
+    /// </summary>
     public static class BackTrackingCreatingFunctions
     {
         /// <summary>

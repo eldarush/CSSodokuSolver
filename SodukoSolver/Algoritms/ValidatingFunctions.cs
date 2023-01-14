@@ -9,7 +9,7 @@ using static SodukoSolver.Algoritms.BoardConvertors;
 namespace SodukoSolver.Algoritms
 {
     /// <summary>
-    /// class that holds all the validating functions for the SudokuBoard
+    /// module that holds all the validating functions for the SudokuBoard
     /// </summary>
     public static class ValidatingFunctions
     {

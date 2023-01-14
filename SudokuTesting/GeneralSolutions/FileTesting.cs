@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using static SodukoSolver.Algoritms.BoardConvertors;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 
-namespace SudokuTesting
+namespace SudokuTesting.GeneralSolutions
 {
     /// <summary>
     /// this is a class that tests the reading and writing of files
