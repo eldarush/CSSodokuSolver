@@ -3,6 +3,7 @@ using SodukoSolver.BoardSolvers;
 using System.Drawing;
 using static SodukoSolver.Algoritms.BoardConvertors;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
 namespace SudokuTesting.GeneralSolutions
 {

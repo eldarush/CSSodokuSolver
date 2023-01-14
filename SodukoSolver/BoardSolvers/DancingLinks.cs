@@ -161,6 +161,5 @@ namespace SodukoSolver.BoardSolvers
         }
 
         #endregion dancing links functions
-
     }
 }

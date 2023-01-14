@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 
 namespace SodukoSolver.Algoritms
 {
@@ -45,7 +46,7 @@ namespace SodukoSolver.Algoritms
             // first 'size' portion of the array is for cell constraints
             int currentCellConstraint = 0;
             // second 'size' portion of the array is for col constraints
-            int currentColConstraint = size * size;
+            int currentColConstraint; // is set to 'size * size' in the loop
             // third 'size' portion of the array is for row constraints
             int currentRowConstraint = size * size * 2;
             // fourth 'size' portion of the array is for block constraints

@@ -8,6 +8,8 @@ using static SodukoSolver.Algoritms.PrintingFunctions;
 using static SodukoSolver.Algoritms.BoardConvertors;
 using SodukoSolver.Interfaces;
 using SodukoSolver.BoardSolvers;
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
 namespace SodukoSolver
 {
@@ -18,7 +20,7 @@ namespace SodukoSolver
     public class UserInterface
     {
         // create a sudoku Board object
-        public static SudokuBoard SudokuBoard;
+        private static SudokuBoard _sudokuBoard;
 
         /// <summary>
         /// function that will run the program
@@ -87,10 +89,10 @@ namespace SodukoSolver
                 case 's':
 
                     // create a soduko Board from the string
-                    SudokuBoard = new SudokuBoard();
+                    _sudokuBoard = new SudokuBoard();
 
                     // create new type of solver based on user input
-                    GetTypeOfBoardSolver(SudokuBoard, out solver);
+                    GetTypeOfBoardSolver(_sudokuBoard, out solver);
 
                     // Solve the Board and start the timer
                     watch.Start();
@@ -143,10 +145,10 @@ namespace SodukoSolver
                     }
 
                     // create a soduko Board from the string
-                    SudokuBoard = new SudokuBoard(filepath);
+                    _sudokuBoard = new SudokuBoard(filepath);
 
                     // create new type of solver based on user input
-                    GetTypeOfBoardSolver(SudokuBoard, out solver);
+                    GetTypeOfBoardSolver(_sudokuBoard, out solver);
 
                     // Solve the Board and start the timer
                     watch.Start();

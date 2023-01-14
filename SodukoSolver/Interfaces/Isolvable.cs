@@ -9,7 +9,7 @@ namespace SodukoSolver.Interfaces
     /// <summary>
     /// interface for board solvers that will have to implement those functions
     /// </summary>
-    public interface Isolvable
+    public interface ISolvable
     {
         /// <summary>
         /// solve function that will be implemented in the calsses that implement this interface

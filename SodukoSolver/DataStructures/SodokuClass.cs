@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using static SodukoSolver.UserInterface;
 using SodukoSolver.Interfaces;
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 
 namespace SodukoSolver
 {

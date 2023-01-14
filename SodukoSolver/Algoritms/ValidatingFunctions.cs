@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using static SodukoSolver.Exceptions.CustomExceptions;
 using static SodukoSolver.Algoritms.BoardConvertors;
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+#pragma warning disable CA2211 // Non-constant fields should not be visible
 
 namespace SodukoSolver.Algoritms
 {

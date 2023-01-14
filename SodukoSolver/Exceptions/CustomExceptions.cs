@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SodukoSolver.Exceptions
 {
     /// <summary>
-    /// thois the class the will hold all the custom exceptions
+    /// this the class the will hold all the custom exceptions
     /// </summary>
     public class CustomExceptions
     {

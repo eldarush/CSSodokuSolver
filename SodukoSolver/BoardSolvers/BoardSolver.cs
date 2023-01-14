@@ -7,12 +7,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
 namespace SodukoSolver.BoardSolvers
 {
     /// <summary>
     /// this is an abstract class for every board solver that will implement a dif
     /// </summary>
-    public abstract class BoardSolver : Isolvable
+    public abstract class BoardSolver : ISolvable
     {
         // Size of the Board
         public int Size { get; set; }

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using SodukoSolver.Interfaces;
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+
 namespace SodukoSolver
 {
     /// <summary>
