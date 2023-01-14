@@ -220,7 +220,7 @@ namespace SodukoSolver.Algoritms
         public static bool IsTheBoardValid(int size, string boardString)
         {
             // to keep track if the SudokuBoard is valid or not
-            bool valid = false;
+            bool valid;
             // try and validate, if any exceptions appear, catch them
             try
             {

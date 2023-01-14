@@ -1,4 +1,5 @@
-﻿using SodukoSolver.BoardSolvers;
+﻿using NUnit.Framework;
+using SodukoSolver.BoardSolvers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace SudokuTesting
     /// this class containts extreme cases and tests that the algorithm can solve them
     /// this class contains boards that are 25 by 25 in size
     /// </summary>
-    public class Extreme25By25BoardTesting
+    public class Extreme25By25Testing
     {
         // the board size
         int size;

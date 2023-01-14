@@ -1,4 +1,5 @@
-﻿using SodukoSolver.BoardSolvers;
+﻿using NUnit.Framework;
+using SodukoSolver.BoardSolvers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,6 @@ namespace SudokuTesting
             // assert test
             Assert.That(result, Is.EqualTo(true));
         }
-
 
         // test that the algorithm can solve an empty 4 by 4 Board
         [Test]

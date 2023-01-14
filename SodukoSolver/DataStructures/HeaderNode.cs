@@ -38,7 +38,7 @@ namespace SodukoSolver.DataStructures
         public void CoverCol()
         {
             // remove the header node from the row of header nodes
-            RemoveLeftRight();
+            RemoveFromRow();
 
             // keep track of what row we are on
             Node currentRow = Down;
@@ -53,7 +53,7 @@ namespace SodukoSolver.DataStructures
                 while (currentNode != currentRow)
                 {
                     // remove the current node from the col and change the size 
-                    currentNode.RemoveUpDown();
+                    currentNode.RemoveFromCol();
                     currentNode.Header.Size--;
                     // continue to the next node in this row
                     currentNode = currentNode.Right;

@@ -1,4 +1,5 @@
-﻿using SodukoSolver.BoardSolvers;
+﻿using NUnit.Framework;
+using SodukoSolver.BoardSolvers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

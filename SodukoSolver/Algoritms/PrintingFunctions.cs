@@ -66,7 +66,7 @@ namespace SodukoSolver.Algoritms
             }
 
             // this part will never be reached
-            boardSolver = new BoardSolver(board.Board, board.Size);
+            boardSolver = new BackTracking(board.Board, board.Size);
         }
 
 

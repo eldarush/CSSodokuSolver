@@ -29,7 +29,7 @@ namespace SodukoSolver.BoardSolvers
         private readonly HeaderNode _root;
 
         // stack of Nodes that represent the current solution
-        private Stack<Node> _solutionStack;
+        private readonly Stack<Node> _solutionStack;
 
         /// <summary>
         /// constructor that gets in a string and converts the string into a Matrix
@@ -67,8 +67,7 @@ namespace SodukoSolver.BoardSolvers
             }
 
             // get the col with the least amount of nodes in it and cover it
-            HeaderNode leastPopulatedCol;
-            FindHeaderWithLeastNodes(_root, out leastPopulatedCol);
+            FindHeaderWithLeastNodes(_root, out HeaderNode leastPopulatedCol);
             leastPopulatedCol.CoverCol();
 
             // go over the nodes in the current col and cover all the other cols that 

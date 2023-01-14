@@ -141,7 +141,7 @@ namespace SodukoSolver.Algoritms
                 // create new header and insert it into the headers row
                 // note that when debugging the names of the row will just be the index of the place
                 // where they are located 0 -> (size-1) and not A-Z letters as described
-                HeaderNode CurrentHeaderNode = new HeaderNode(currentRowIndex.ToString());
+                HeaderNode CurrentHeaderNode = new(currentRowIndex.ToString());
                 headersRow[currentRowIndex] = CurrentHeaderNode;
 
                 // attach the header node to the root (root will be to the left of the headers node and will point

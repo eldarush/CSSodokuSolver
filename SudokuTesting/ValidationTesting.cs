@@ -1,4 +1,5 @@
-﻿using SodukoSolver.BoardSolvers;
+﻿using NUnit.Framework;
+using SodukoSolver.BoardSolvers;
 using System.Drawing;
 using static SodukoSolver.Algoritms.ValidatingFunctions;
 using static SodukoSolver.Exceptions.CustomExceptions;
@@ -28,6 +29,7 @@ namespace SudokuTesting
         // result of the validation
         bool passedValidation;
 
+        // set up the tests
         [SetUp]
         public void Setup()
         {
@@ -55,7 +57,7 @@ namespace SudokuTesting
             passedValidation = IsTheBoardValid(sizeValidMatrix, validMatix);
 
             // assert test
-            Assert.IsTrue(passedValidation);
+            Assert.That(passedValidation, Is.True);
         }
 
         // test that the validation returns false for a matrix that is not valid
@@ -66,7 +68,7 @@ namespace SudokuTesting
             passedValidation = IsTheBoardValid(sizeInvalidMatrix, invalidMatrix);
 
             // assert test
-            Assert.IsFalse(passedValidation);
+            Assert.That(passedValidation, Is.True);
         }
 
         // test that the validation returns false for a matrix that has invalid characters

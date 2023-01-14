@@ -250,21 +250,6 @@ namespace SodukoSolver.BoardSolvers
             return;
         }
 
-
-        // TODO: implement this hidden singles optimization
-
-        /// <summary>
-        /// this is an implementation of the hidden singles algorithm,
-        /// what this algorithm does is that it goes over all cells in each house and checks if there
-        /// is a cell in a house where one of it's candidates only appears once in that cell, if that is
-        /// the case then the cell's value automatically becomes that value and the other cell's candidates are updated
-        /// to no longer have that candidate
-        /// </summary>
-        private void HiddenSingles()
-        {
-            
-        }
-
         /// <summary>
         /// function that solves a sudoku using backtracking algorithm with candidate values updating in real time
         /// </summary>

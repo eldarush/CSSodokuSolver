@@ -9,7 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 namespace SodukoSolver.BoardSolvers
 {
-    public class BoardSolver : Isolvable
+    /// <summary>
+    /// this is an abstract class for every board solver that will implement a different algorithm
+    /// </summary>
+    public abstract class BoardSolver : Isolvable
     {
         // Size of the Board
         public int Size { get; set; }

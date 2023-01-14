@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using SodukoSolver.BoardSolvers;
 using System.Drawing;
 using static SodukoSolver.Algoritms.BoardConvertors;
@@ -253,7 +254,6 @@ namespace SudokuTesting
             Assert.That(correctAnswerMedium, Is.EqualTo(resultString));
         }
 
-
         //-----------------------------------------------------------------------------------------------HARD-------------------------------------------------------------------------------------
 
         // check if an easy board is solvable using dancing links
@@ -342,7 +342,7 @@ namespace SudokuTesting
             Assert.That(correctAnswerHardBacktracking, Is.EqualTo(resultString));
         }
 
-        //--------------------------------------------------------------------------------UNSOLVABLE--------------------------------------------------
+        //--------------------------------------------------------------------------------UNSOLVABLE--------------------------------------------------------------------------------
 
         // test that an unsolvable board is not solvable using dancing links
         [Test]

@@ -17,7 +17,7 @@ namespace SodukoSolver
     /// </summary>
     public class UserInterface
     {
-        // create a soduko Board object
+        // create a sudoku Board object
         public static SudokuBoard SudokuBoard;
 
         /// <summary>
@@ -77,8 +77,11 @@ namespace SodukoSolver
             // reset the stopwatch
             watch.Reset();
 
+            // get input from user
             switch (tempInput[0])
             {
+                #region console input
+
                 // if the user chose to input a manual console string
                 case 'S':
                 case 's':
@@ -121,7 +124,9 @@ namespace SodukoSolver
                     // continue to run the program recursivally
                     AskUserForInput();
                     break;
+                #endregion console input
 
+                #region file input
                 // in the case that the user wants to input a file path
                 case 'F':
                 case 'f':
@@ -188,6 +193,8 @@ namespace SodukoSolver
                     // continue to run the program recursivally
                     AskUserForInput();
                     break;
+
+                #endregion file input
 
                 // if the user pressed any other key then exit the program
                 default:

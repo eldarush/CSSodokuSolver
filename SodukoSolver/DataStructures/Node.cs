@@ -72,14 +72,14 @@ namespace SodukoSolver.DataStructures
         }
 
         // remove the node from the row
-        public void RemoveLeftRight()
+        public void RemoveFromRow()
         {
             Right.Left = Left;
             Left.Right = Right;
         }
 
         // remove the node from the column
-        public void RemoveUpDown()
+        public void RemoveFromCol()
         {
             Down.Up = Up;
             Up.Down = Down;         
