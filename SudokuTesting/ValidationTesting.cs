@@ -12,6 +12,7 @@ namespace SudokuTesting
     /// </summary>
     public class ValidationTesting
     {
+        // test arranges are done here
         // the board strings
         string validMatix;
         string invalidMatrix;
