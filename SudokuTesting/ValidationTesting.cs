@@ -68,7 +68,7 @@ namespace SudokuTesting
             passedValidation = IsTheBoardValid(sizeInvalidMatrix, invalidMatrix);
 
             // assert test
-            Assert.That(passedValidation, Is.True);
+            Assert.That(passedValidation, Is.False);
         }
 
         // test that the validation returns false for a matrix that has invalid characters
