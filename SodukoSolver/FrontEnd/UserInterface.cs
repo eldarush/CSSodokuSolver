@@ -42,10 +42,10 @@ namespace SodukoSolver
         /// </summary>
         public static void AskUserForInput()
         {
-            Console.WriteLine("\nPlease choose the form of input for the soduko: \n" +
-                "\t s: input a Board string that will represent a Board \n" +
-                "\t f: input a file that will conntain the Board \n" +
-                "\t press any other key to exit the program");
+            Console.WriteLine("\nPlease choose the form of input for the sudoku: \n" +
+                "\t C: Use the console to input the board string by hand \n" +
+                "\t F: Input a file that will contain the board string\n" +
+                "\t Press any other key to exit the program");
 
             // get the user input
             Console.Write("\nPlease enter your choice: ");
@@ -61,7 +61,7 @@ namespace SodukoSolver
                 validInput = (!string.IsNullOrWhiteSpace(tempInput));
                 if (!validInput)
                 {
-                    Console.Write("\nPlease Enter a valid character (s or f): ");
+                    Console.Write("\nPlease Enter a valid character (C or F): ");
                     tempInput = Console.ReadKey().KeyChar.ToString(); ;
                 }
             }
@@ -85,8 +85,8 @@ namespace SodukoSolver
                 #region console input
 
                 // if the user chose to input a manual console string
-                case 'S':
-                case 's':
+                case 'C':
+                case 'c':
 
                     // create a soduko Board from the string
                     _sudokuBoard = new SudokuBoard();
