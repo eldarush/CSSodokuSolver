@@ -11,25 +11,25 @@
 
 ## The main algorithm used to solve is called the "Dancing Links" algorithm, and this is how this algorithm works:
 
-## Dancing Links (DLX) is a technique for adding and deleting a node from a circular doubly linked list. It is particularly useful for efficiently implementing backtracking algorithms, such as Knuth's Algorithm X for the exact cover problem.
+### Dancing Links (DLX) is a technique for adding and deleting a node from a circular doubly linked list. It is particularly useful for efficiently implementing backtracking algorithms, such as Knuth's Algorithm X for the exact cover problem.
 
-## Algorithm X is a recursive, nondeterministic, depth-first, backtracking algorithm that finds all solutions to the exact cover problem.
+### Algorithm X is a recursive, nondeterministic, depth-first, backtracking algorithm that finds all solutions to the exact cover problem.
 
-## Firstly, the algorithm gets a board and converts it to an "Exact Cover" matrix which is a huge matrix filled with ones and zeroes. 
+### Firstly, the algorithm gets a board and converts it to an "Exact Cover" matrix which is a huge matrix filled with ones and zeroes. 
 
 ## Here is an example of how the matrix looks for an empty 4 by 4 board:
 
 ![WhatsApp Image 2023-01-06 at 17 33 00](https://user-images.githubusercontent.com/89807526/212379488-65528b11-aff0-4f28-9bfc-e9bd7b8ae9c5.jpeg)
 
-## In this example, every 1 represents a possible value and every 0 represents a not valid value for the constraint and the location that they represent.
+### In this example, every 1 represents a possible value and every 0 represents a not valid value for the constraint and the location that they represent.
 
-## In this example, the order of constraints is: Cell, Col, Row, and Value.
+### In this example, the order of constraints is: Cell, Col, Row, and Value.
 
-## After this, the algorithm transforms this board into a matrix of doubly linked nodes that will be used to find the answer. This matrix will look like this: (The following matrix has no connection to the 4 by 4 board shown above)
+### After this, the algorithm transforms this board into a matrix of doubly linked nodes that will be used to find the answer. This matrix will look like this: (The following matrix has no connection to the 4 by 4 board shown above)
 
 ![nodesmatrix2](https://user-images.githubusercontent.com/89807526/212380602-727924da-c7a0-46b0-bfb3-101ef2520753.png)
 
-## After this is done, the algorithm will solve the matrix as if it was an exact cover problem, meaning that it will remove and restore columns until it finds the combination of columns for which each row is only appearing once, and that will be the solution of the board. 
+### After this is done, the algorithm will solve the matrix as if it was an exact cover problem, meaning that it will remove and restore columns until it finds the combination of columns for which each row is only appearing once, and that will be the solution of the board. 
 
 ## The secondary algorithm used to solve the sudoku puzzle is called a backtracking algorithm, this is how the algorithm works:
 ## (this is an example with a 9 by 9 board but the same logic is used for a board of any size):
@@ -71,4 +71,4 @@
 
 ![solved](https://user-images.githubusercontent.com/89807526/212382617-62cf7c41-a5e9-41f2-bd4b-426b2705f025.png)
 
-## The program can be run recursively until the user either chooses to exit it via entering a different char to 's' or 'f' at the board inputting menu or presses Ctrl+c at any given time
+## The program can be run recursively until the user either chooses to exit it via entering a different char to 'c' or 'f' at the board inputting menu or presses Ctrl+c at any given time
