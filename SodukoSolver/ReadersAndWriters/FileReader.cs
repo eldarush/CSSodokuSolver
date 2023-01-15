@@ -38,18 +38,18 @@ namespace SodukoSolver
                 // first check if the file exists
                 if (!File.Exists(_filepath))
                 {
-                    throw new FileNotFoundException("file path does not exist, cannot read file\n"+
-                        $"entered file path is: {_filepath}\n");
+                    throw new FileNotFoundException("\nERROR: file path does not exist, cannot read file\n"+
+                        $"entered file path is: \n{_filepath}");
                 }
                 // read the file and return the Board string
                 string text = File.ReadAllText(_filepath);
                 return text;
             }
-            // catch any exception, print the message and return an empty string
-            catch (Exception e)
+            // catch an exception, print the message and return an empty string
+            catch (FileNotFoundException fnfe)
             {
                 // print the error message
-                Console.WriteLine(e.Message);
+                Console.WriteLine(fnfe.Message);
                 return "";
             }
         }
@@ -79,15 +79,15 @@ namespace SodukoSolver
                 }
                 else
                 {
-                    Console.WriteLine("NOTICE - A new file was created during this process");
+                    Console.WriteLine("\nNOTICE - A new file was created during this process\n");
                     // create new file with this name and write the Board string to it
                     File.WriteAllText(solvedfilepath, boardstring);
                 }
             }
-            catch (Exception e)
+            catch (FileNotFoundException fnfe)
             {
                 // print the message and return false
-                Console.WriteLine(e.Message);
+                Console.WriteLine(fnfe.Message);
                 return false;
             }
             return true;

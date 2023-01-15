@@ -36,8 +36,9 @@ namespace SodukoSolver.Exceptions
             /// <summary>
             /// constructor that prints out the message
             /// </summary>
-            public InvalidCharacterException()
-                : base("The Board string contains invalid characters")
+            public InvalidCharacterException(char[] allowedValues)
+                : base("The Board string contains invalid characters, \n" +
+                    $"The allowed characters are: \n{string.Join(", ", allowedValues)}")
             {
             }
         }

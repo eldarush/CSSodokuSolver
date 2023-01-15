@@ -55,7 +55,7 @@ namespace SodukoSolver.Algoritms
             // check if the Board string contains only numbers
             if (!ValidateBoardString(boardString))
             {
-                throw new InvalidCharacterException();
+                throw new InvalidCharacterException(_allowedValues);
             }
 
             // copy the Board string to the Board

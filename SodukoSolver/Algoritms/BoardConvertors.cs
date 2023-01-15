@@ -39,7 +39,7 @@ namespace SodukoSolver.Algoritms
         /// <param name="size"> the Size of the Board</param>
         /// <param name="boardString">the string that represents the Board</param>
         /// <param name="board">the Board to copy the string to</param>
-        public static void CopyBoardStringToBoard(int size, string boardString, int[,] board)
+        private static void CopyBoardStringToBoard(int size, string boardString, int[,] board)
         {
             // create a location for the Board string
             int location = 0;

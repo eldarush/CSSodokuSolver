@@ -95,6 +95,8 @@ namespace SodukoSolver
                     GetTypeOfBoardSolver(_sudokuBoard, out solver);
 
                     // Solve the Board and start the timer
+                    // this only the time it took the algorithm to solve the board,
+                    // and does not include the time it took it to create or convert the board
                     watch.Start();
 
                     // run the algoritms to solve the Board
@@ -138,7 +140,7 @@ namespace SodukoSolver
                     string filepath = Console.ReadLine();
                     
                     // while the Board string is null or white space, ask the user to enter Board again
-                    while (String.IsNullOrWhiteSpace(filepath))
+                    while (string.IsNullOrWhiteSpace(filepath))
                     {
                         Console.WriteLine("The entered file path is empty, please enter a valid path:");
                         filepath = Console.ReadLine();
@@ -151,6 +153,8 @@ namespace SodukoSolver
                     GetTypeOfBoardSolver(_sudokuBoard, out solver);
 
                     // Solve the Board and start the timer
+                    // this only the time it took the algorithm to solve the board,
+                    // and does not include the time it took it to create or convert the board
                     watch.Start();
 
                     // run the algoritms to solve the Board

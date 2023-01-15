@@ -29,9 +29,9 @@ namespace SodukoSolver.Algoritms
             // ask the user in which way does he want to solve the Board
             Console.WriteLine("\nPlease choose the way you want to solve the Board:");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\t d: using the Dancing Links algorithm (Highly Reccommended)");
+            Console.WriteLine("\t D: using the Dancing Links algorithm (Highly Reccommended)");
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\t b: using the Backtracking algorithm \n");
+            Console.WriteLine("\t B: using the Backtracking algorithm \n");
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\t Dancing Links works better for bigger and more complicated SudokuBoard but takes up more memory.");
             Console.ForegroundColor = ConsoleColor.Red;
@@ -126,7 +126,6 @@ namespace SodukoSolver.Algoritms
             Console.Title = "Sudoku Solver by @Eldar Aslanbeily";
 
         }
-
         /// <summary>
         /// function that print the welcome message that greets the user
         /// </summary>
