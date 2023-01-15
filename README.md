@@ -3,6 +3,9 @@
  
 ## This Project is made by @Eldar Aslanbeily (username on GitHub: eldarush)
 
+# Importent note: (not related to the algorithm):
+## I accidentally merged all the branches into the main branch using "squash and merge", and they don't show on the site, but if you look under the "adding the working project to the main branch" commit to the "main" branch, you will see all the previous commits in the description that contain the work with brances in the project
+
 ## The main algorithm used to solve is called the "Dancing Links" algorithm, and this is how this algorithm works:
 
 ## Dancing Links (DLX) is a technique for adding and deleting a node from a circular doubly linked list. It is particularly useful for efficiently implementing backtracking algorithms, such as Knuth's Algorithm X for the exact cover problem.
