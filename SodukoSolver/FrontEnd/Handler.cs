@@ -4,20 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using static SodukoSolver.Algoritms.HelperFunctions;
-using static SodukoSolver.Algoritms.SolvingFunctions;
-using static SodukoSolver.Algoritms.ValidatingFunctions;
 
 namespace SodukoSolver
 {
+    /// <summary>
+    /// this is the class that will run the program
+    /// </summary>
     public class Handler
     {
+        /// <summary>
+        /// defined entry point for the project
+        /// </summary>
         static void Main()
         {
-            // start the program that gets soduko board from the user 
+            // start the program that gets soduko Board from the user 
             // and runs the algorithm
             UserInterface.Run();
-
         }
     }
 }

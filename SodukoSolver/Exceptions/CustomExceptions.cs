@@ -6,47 +6,70 @@ using System.Threading.Tasks;
 
 namespace SodukoSolver.Exceptions
 {
+    /// <summary>
+    /// this the class the will hold all the custom exceptions
+    /// </summary>
     public class CustomExceptions
     {
-        // size exception that gets a size as its value and dispalys it in the message
+        /// <summary>
+        /// Size exception that gets a Size as its value and dispalys it in the message
+        /// </summary>
         public class SizeException : Exception
         {
+            /// <summary>
+            ///  constructor that takes the size as a parameter
+            /// </summary>
+            /// <param name="size">the size</param>
             public SizeException(int size)
-                : base("The board string cannot be used to create a board with the given dimensions, " +
-                    $"the current board string's size is {size} and that's not a square number.")
-            {
-            }
-            public SizeException()
-                : base("The board string cannot be used to create a board with the given dimensions, " +
-                    $"the current board string's length is 4, but a 2 by 2 board is not a thing.")
+                : base("The Board string cannot be used to create a Board with the given dimensions, \n" +
+                    $"The current Board string's Size is {size} and the aquare root of {size} is {Math.Sqrt(size)}, \n" +
+                      $"and for a borad to be valid, the square root of the total number of chars has to be a square number.")
             {
             }
         }
 
-        // invalid character exception that just prints the message
+        /// <summary>
+        /// invalid character exception that just prints the message
+        /// </summary>
         public class InvalidCharacterException : Exception
         {
-            public InvalidCharacterException()
-                : base("The board string contains invalid characters")
+            /// <summary>
+            /// constructor that prints out the message
+            /// </summary>
+            public InvalidCharacterException(char[] allowedValues)
+                : base("The Board string contains invalid characters, \n" +
+                    $"The allowed characters are: \n{string.Join(", ", allowedValues)}")
             {
             }
         }
 
 
-        // exception if the board's cells are not valid
+        /// <summary>
+        /// exception if the Board's cells are not valid
+        /// </summary>
         public class BoardCellsNotValidException : Exception
         {
+            /// <summary>
+            ///  constructor that taked the row and the col and prints out the message
+            /// </summary>
+            /// <param name="row">the row</param>
+            /// <param name="col">the col</param>
             public BoardCellsNotValidException(int row, int col)
                 : base($"Cell ({row},{col}) is invalid")
             {
             }
         }
 
-        // exception if the board is null
+        /// <summary>
+        ///exception if the Board is null
+        /// </summary>
         public class NullBoardException : Exception
         {
+            /// <summary>
+            /// constructor that just prints out of the SudokuBoard is null
+            /// </summary>
             public NullBoardException()
-                : base("The board is null")
+                : base("The Board is null")
             {
             }
         }
