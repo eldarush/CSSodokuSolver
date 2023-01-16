@@ -7,6 +7,8 @@ This Project is made by @Eldar Aslanbeily (username on GitHub: eldarush)
 I accidentally merged all the branches into the main branch using "squash and merge",
 and they don't show on the site, but if you look under the "adding the working project to the main branch" commit to the "main" branch, you will see all the previous commits in the description that contain the work with branches in the project!
 here are some of the branches that are still saved locally on my computer:
+
+
 ![brances](https://user-images.githubusercontent.com/89807526/212556124-d46d42cb-af26-487a-b6ae-3233d68b6b9d.JPG)
 
 
