@@ -53,6 +53,9 @@ namespace SudokuTesting.GeneralSolutions
         [SetUp]
         public void Setup()
         {
+            // please note that this will not work on any computer,
+            // and paths need to be changed to the correct location on every
+            // diffrent cumpoter
             // set the file paths
             path = "C:\\Users\\eldar\\source\\repos\\eldarush\\CSSodokuSolver\\SodukoSolver\\TextFiles\\testboard.txt";
             resultPath = "C:\\Users\\eldar\\source\\repos\\eldarush\\CSSodokuSolver\\SodukoSolver\\TextFiles\\testboardSOLVED.txt";
