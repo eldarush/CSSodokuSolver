@@ -29,11 +29,11 @@ namespace SodukoSolver.Algoritms
             // ask the user in which way does he want to solve the Board
             Console.WriteLine("\nPlease choose the way you want to solve the Board:");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\t D: using the Dancing Links algorithm (Highly Reccommended)");
+            Console.WriteLine("\t D: using the Dancing Links algorithm (Highly Recommended)");
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\t B: using the Backtracking algorithm \n");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\t Dancing Links works better for bigger and more complicated SudokuBoard but takes up more memory.");
+            Console.WriteLine("\t Dancing Links works better for bigger and more complicated Sudoku Board but takes up more memory.");
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\t Backtracking works better with simpler and smaller boards and takes up less memory, \n" +
                 "\t But may struggle with more complicated boards. \n");
@@ -132,12 +132,12 @@ namespace SodukoSolver.Algoritms
         public static void PrintWelcomeMessage()
         {
             // print out the welcome message
-            Console.WriteLine("Welcome to the Soduko Solver! \n" +
+            Console.WriteLine("Welcome to the Sudoku Solver! \n" +
                 "This is a program written in c# by @Eldar Aslanbeily \n" +
                 "For more information about the program, please visit: \n" +
                 "https://github.com/eldarush/CSSodokuSolver.git \n" +
-                "This is a program that will solve any soduko Board \n" +
-                "The compatable sizes are (1x1 4x4 9x9 16x16 25x25) \n");
+                "This is a program that will solve any sudoku Board \n" +
+                "The compatible sizes are (1x1 4x4 9x9 16x16 25x25) \n");
         }
 
         /// <summary>
