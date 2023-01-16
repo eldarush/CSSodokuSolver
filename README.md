@@ -14,7 +14,7 @@ here are some of the branches that are still saved locally on my computer:
 
 ### The main algorithm used to solve is called the "Dancing Links" algorithm, and this is how this algorithm works:
 
-This is an implementation of this algorithm based on ["Solving Sudoku efficiently with Dancing Links",](https://www.kth.se/social/files/58861771f276547fe1dbf8d1/HLaestanderMHarrysson_dkand14.pdf), a paper done on this algorithm by Mattias Harryson and
+This is an implementation of this algorithm based on ["Solving Sudoku efficiently with Dancing Links"](https://www.kth.se/social/files/58861771f276547fe1dbf8d1/HLaestanderMHarrysson_dkand14.pdf),  a paper done on this algorithm by Mattias Harryson and
 Hjalmar Laestander, that insipred me to search for the most efficiant algorithm to solve this [NP-Complete problem](https://en.wikipedia.org/wiki/NP-completeness).
 
 Dancing Links (DLX) is a technique for adding and deleting a node from a circular doubly linked list. It is particularly useful for efficiently implementing backtracking algorithms, such as Knuth's Algorithm X for the exact cover problem.
