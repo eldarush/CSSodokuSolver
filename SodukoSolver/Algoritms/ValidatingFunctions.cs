@@ -92,9 +92,9 @@ namespace SodukoSolver.Algoritms
             char[] allowed = new char[size + 1];
 
             // add the allowed chars to the array
-            for (int i = 0; i <= size; i++)
+            for (int index = 0; index <= size; index++)
             {
-                allowed[i] = (char)(i + '0');
+                allowed[index] = (char)(index + '0');
             }
             // return the array of allowed chars
             return allowed;
@@ -118,10 +118,10 @@ namespace SodukoSolver.Algoritms
             }
 
             // check for every char in the string that it is a number
-            for (int i = 0; i < boardString.Length; i++)
+            for (int index = 0; index < boardString.Length; index++)
             {
 
-                if (!_allowedValues.Contains(boardString[i]))
+                if (!_allowedValues.Contains(boardString[index]))
                 {
                     return false;
                 }
@@ -167,7 +167,7 @@ namespace SodukoSolver.Algoritms
             // This is done by performing a bitwise AND operation between the element at index row in the RowValues array
             // and the mask at index value in the masks array.
             // If the result is 0, it means that the value is valid for the row
-            // (i.e., the bit corresponding to value is not set in the binary representation of the element).
+            // (index.e., the bit corresponding to value is not set in the binary representation of the element).
             return (VRowValues[row] & VHelperMask[value]) == 0
                 && (VColValues[col] & VHelperMask[value]) == 0
                 && (VBlockValues[squareLocation] & VHelperMask[value]) == 0;

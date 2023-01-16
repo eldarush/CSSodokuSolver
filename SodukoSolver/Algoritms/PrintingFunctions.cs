@@ -151,11 +151,11 @@ namespace SodukoSolver.Algoritms
             {
                 // Find the maximum length of the string representation of any element in the Board
                 int maxLength = 0;
-                for (int i = 0; i < size; i++)
+                for (int row = 0; row < size; row++)
                 {
-                    for (int j = 0; j < size; j++)
+                    for (int col = 0; col < size; col++)
                     {
-                        int length = board[i, j].ToString().Length;
+                        int length = board[row, col].ToString().Length;
                         // if the current length is bigger then the max length
                         if (length > maxLength)
                         {
@@ -173,13 +173,13 @@ namespace SodukoSolver.Algoritms
 
                 // Print the top border
                 Console.Write(" ");
-                for (int i = 0; i < size; i++)
+                for (int row = 0; row < size; row++)
                 {
-                    for (int j = 0; j < squareWidth; j++)
+                    for (int col = 0; col < squareWidth; col++)
                     {
                         Console.Write(@"─");
                     }
-                    if ((i + 1) % subSquareSize == 0 && i != size - 1)
+                    if ((row + 1) % subSquareSize == 0 && row != size - 1)
                     {
                         Console.Write(@" ");
                     }
@@ -188,24 +188,24 @@ namespace SodukoSolver.Algoritms
                 Console.WriteLine();
 
                 // Print the rows
-                for (int i = 0; i < size; i++)
+                for (int row = 0; row < size; row++)
                 {
                     // Print the left border
                     Console.Write("│");
 
                     // Print the elements in the row
-                    for (int j = 0; j < size; j++)
+                    for (int col = 0; col < size; col++)
                     {
                         // if the Size more then 9, print the value with a 0 in front
                         string element;
                         if (size >= 10)
                         {
                             // add leading zero for single digit values
-                            element = board[i, j].ToString().PadLeft(2, '0');
+                            element = board[row, col].ToString().PadLeft(2, '0');
                         }
                         else
                         {
-                            element = board[i, j].ToString();
+                            element = board[row, col].ToString();
                         }
                         // calculate the padding and print it
                         int padding = (squareWidth - element.Length) / 2;
@@ -222,7 +222,7 @@ namespace SodukoSolver.Algoritms
                             Console.Write(@" ");
                         }
 
-                        if ((j + 1) % subSquareSize == 0 && j != size - 1)
+                        if ((col + 1) % subSquareSize == 0 && col != size - 1)
                         {
                             Console.Write(@"│");
                         }
@@ -232,16 +232,16 @@ namespace SodukoSolver.Algoritms
                     Console.WriteLine(@"│");
 
                     // Print the bottom border for the row
-                    if ((i + 1) % subSquareSize == 0 && i != size - 1)
+                    if ((row + 1) % subSquareSize == 0 && row != size - 1)
                     {
                         Console.Write(" ");
-                        for (int j = 0; j < size; j++)
+                        for (int row1 = 0; row1 < size; row1++)
                         {
-                            for (int k = 0; k < squareWidth; k++)
+                            for (int col1 = 0; col1 < squareWidth; col1++)
                             {
                                 Console.Write(@"─");
                             }
-                            if ((j + 1) % subSquareSize == 0 && j != size - 1)
+                            if ((row1 + 1) % subSquareSize == 0 && row1 != size - 1)
                             {
                                 Console.Write(@" ");
                             }
@@ -252,14 +252,14 @@ namespace SodukoSolver.Algoritms
 
                 // Print the bottom border
                 Console.Write(" ");
-                for (int i = 0; i < size; i++)
+                for (int row = 0; row < size; row++)
                 {
-                    for (int j = 0; j < squareWidth; j++)
+                    for (int col = 0; col < squareWidth; col++)
                     {
                         Console.Write(@"─");
                     }
 
-                    if ((i + 1) % subSquareSize == 0 && i != size - 1)
+                    if ((row + 1) % subSquareSize == 0 && row != size - 1)
                     {
                         Console.Write(@" ");
                     }

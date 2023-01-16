@@ -110,12 +110,12 @@ namespace SodukoSolver.Algoritms
             // the string that will hold the SudokuBoard representation
             string boardstring = "";
             // go over the SudokuBoard
-            for (int i = 0; i < size; i++)
+            for (int row = 0; row < size; row++)
             {
-                for (int j = 0; j < size; j++)
+                for (int col = 0; col < size; col++)
                 {
                     // add the current value in string format
-                    boardstring += (char)(array[i, j] + '0');
+                    boardstring += (char)(array[row, col] + '0');
                 }
             }
             // return the string
@@ -133,12 +133,12 @@ namespace SodukoSolver.Algoritms
             // create new Matrix of bytes of the same size as the int Matrix
             byte[,] matrix = new byte[size, size];
             // go over the SudokuBoard
-            for (int i = 0; i < size; i++)
+            for (int row = 0; row < size; row++)
             {
-                for (int j = 0; j < size; j++)
+                for (int col = 0; col < size; col++)
                 {
                     // convert to byte and insert into Matrix
-                    matrix[i, j] = (byte)board[i, j];
+                    matrix[row, col] = (byte)board[row, col];
                 }
             }
             // return the resulted Matrix
